@@ -19,8 +19,8 @@ class InvoiceInfo extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      districtsData: [],      
-      wardsData: []      
+      districtsData: props.user ? districts[props.user.province] : [],      
+      wardsData: props.user ? wards[props.user.district] : []     
     };
   }
 
@@ -33,7 +33,7 @@ class InvoiceInfo extends Component {
       district: undefined,
       ward: undefined
     });
-
+    
     this.setState({
       districtsData: districts[value],
       wardsData: []
@@ -46,20 +46,20 @@ class InvoiceInfo extends Component {
     const query = `?pick_province=${champoochampAddress.city}&pick_district=${champoochampAddress.district}&province=${this.props.form.getFieldsValue().province}&district=${value}&weight=1000&transport=road`;
 
     callghtkAPI(url, query)
-      .then(res => {
-        if (res) {
-          getTransportFee(res.fee);
-          console.log("success");
-        }
-        else {
-          notification.warning({
-            message: 'Phí vận chuyển tạm thời không khả dụng, vui lòng tải lại trang!',
-            placement: 'topRight',
-            onClick: () => notification.destroy(),
-            duration: time.durationNotification,
-          });
-        }
-      });
+    .then(res => {
+      if (res) {
+        getTransportFee(res.fee);
+        console.log("success");
+      }
+      else {
+        notification.warning({
+          message: 'Phí vận chuyển tạm thời không khả dụng, vui lòng tải lại trang!',
+          placement: 'topRight',
+          onClick: () => notification.destroy(),
+          duration: time.durationNotification,
+        });
+      }
+    });
 
     this.props.form.setFieldsValue({
       ward: undefined
@@ -77,9 +77,11 @@ class InvoiceInfo extends Component {
 
     return (
       <Fragment>
-        <NavLink to="/dang-nhap">
-          <Link content="Đăng nhập" onClick={this.login} />
-        </NavLink>
+        {!user && 
+          <NavLink to="/dang-nhap">
+            <Link content="Đăng nhập" onClick={this.login} />
+          </NavLink>
+        }        
 
         <Wrapper>
           <Form.Item>
@@ -126,7 +128,7 @@ class InvoiceInfo extends Component {
                   ],
                   onChange: this.handleCityChange
                 })(
-                  <Select placeholder="Tỉnh / thành phố *">
+                  <Select showSearch placeholder="Tỉnh / thành phố *">
                     {cities.map(city => (
                       <Option key={city}>{city}</Option>
                     ))}
@@ -146,7 +148,7 @@ class InvoiceInfo extends Component {
                   ],
                   onChange: this.handleDistrictChange
                 })(
-                  <Select placeholder="Quận / huyện *">
+                  <Select showSearch placeholder="Quận / huyện *">
                     {districtsData.map(district => (
                       <Option key={district}>{district}</Option>
                     ))}
@@ -168,7 +170,7 @@ class InvoiceInfo extends Component {
                     }
                   ],
                 })(
-                  <Select placeholder="Phường / xã *">
+                  <Select showSearch placeholder="Phường / xã *">
                     {wardsData.map(ward => (
                       <Option key={ward}>{ward}</Option>
                     ))}

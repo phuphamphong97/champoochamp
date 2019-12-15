@@ -236,7 +236,7 @@ class RegisterPage extends Component {
                     ],
                     onChange: this.handleCityChange
                   })(
-                    <Select placeholder="Tỉnh / thành phố *">
+                    <Select showSearch placeholder="Tỉnh / thành phố *">
                       {cities.map(city => (
                         <Option key={city}>{city}</Option>
                       ))}
@@ -255,7 +255,7 @@ class RegisterPage extends Component {
                     ],
                     onChange: this.handleDistrictChange
                   })(
-                    <Select placeholder="Quận / huyện *">
+                    <Select showSearch placeholder="Quận / huyện *">
                       {districtsData.map(district => (
                         <Option key={district}>{district}</Option>
                       ))}
@@ -276,7 +276,7 @@ class RegisterPage extends Component {
                       }
                     ],
                   })(
-                    <Select placeholder="Phường / xã *">
+                    <Select showSearch placeholder="Phường / xã *">
                       {wardsData.map(ward => (
                         <Option key={ward}>{ward}</Option>
                       ))}

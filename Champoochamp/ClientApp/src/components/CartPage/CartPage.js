@@ -1,5 +1,7 @@
-﻿import React, { Component } from 'react';
+﻿import React, { Component, Fragment } from 'react';
+import { NavLink } from 'react-router-dom';
 import { notification } from 'antd';
+import styled from '@emotion/styled';
 
 import {
   callAPI,
@@ -8,9 +10,13 @@ import {
 } from '../../shared/utils';
 import { localStorageKey, time } from '../../shared/constants';
 
-import { PageContainer, Section, SectionTitle } from '../elements';
+import { PageContainer, Section, SectionTitle, Link } from '../elements';
 import CartItemList from './components/CartItemList';
 import CartInfo from './components/CartInfo';
+
+const BackButton = styled('div')`
+  margin-top: 10px;
+`;
 
 class CartPage extends Component {
   constructor(props) {
@@ -78,16 +84,20 @@ class CartPage extends Component {
 
   onDeleteProduct = productVariantId => {
     const { shoppingCartList } = this.state;
-    const { user } = this.props;
+    const { user, getDiscount } = this.props;
     const shoppingCartListNew = shoppingCartList.filter(
       p => p.productVariant.id !== productVariantId
     );
-
+    
     updateShoppingCart(
       getStrShoppingCart(shoppingCartListNew),
       user,
       this.props.updateShoppingCart
     );
+
+    if (shoppingCartListNew.length === 0) {
+      getDiscount(null);
+    }
 
     notification.info({
       message: 'Xóa sản phẩm thành công!',
@@ -99,14 +109,27 @@ class CartPage extends Component {
 
   render() {
     const { shoppingCartList } = this.state;
-    const { getDiscount } = this.props;
-    
+    const { discount, getDiscount } = this.props;
+
     return (
       <PageContainer>
         <Section>
           <SectionTitle content="Giỏ hàng" />
-          <CartItemList shoppingCartList={shoppingCartList} onUpdateQuantity={this.onUpdateQuantity} onDeleteProduct={this.onDeleteProduct} />
-          <CartInfo shoppingCartList={shoppingCartList} getDiscount={getDiscount} />
+          {shoppingCartList.length > 0 ? (
+            <Fragment>
+              <CartItemList shoppingCartList={shoppingCartList} onUpdateQuantity={this.onUpdateQuantity} onDeleteProduct={this.onDeleteProduct} />
+              <CartInfo shoppingCartList={shoppingCartList} discount={discount} getDiscount={getDiscount} />
+            </Fragment>
+          ) : (
+            <Fragment>
+              <span>Không có sản phẩm nào trong giỏ hàng.</span>
+              <NavLink to="/">
+                <BackButton>
+                  <Link content="Về trang chủ" iconType="fas fa-chevron-left" />
+                </BackButton>
+              </NavLink>
+            </Fragment>
+          )}
         </Section>
       </PageContainer>
     );

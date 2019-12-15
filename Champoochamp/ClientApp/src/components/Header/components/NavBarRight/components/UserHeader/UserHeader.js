@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 
 import { getImageUrl } from '../../../../../../shared/utils';
 import { imagesGroup } from '../../../../../../shared/constants';
-import { colors } from '../../../../../../shared/principles';
+import { colors, breakpoint } from '../../../../../../shared/principles';
 
 const Wrapper = styled('div')`
   position: relative;
@@ -24,6 +24,11 @@ const UserAvatar = styled('div')`
   cursor: pointer;
   height: 25px;
   width: 25px;
+
+  ${breakpoint.lg`
+    height: 20px;
+    width: 20px;
+  `};
 `;
 
 const Panel = styled('div')`
@@ -84,7 +89,7 @@ class UserHeader extends Component {
   };
 
   render() {
-    const { onLogout } = this.props;
+    const { onLogout, getDiscount } = this.props;
     const { showPanel, user } = this.state;
 
     return (
@@ -113,7 +118,8 @@ class UserHeader extends Component {
                 <ActionItem
                   onClick={() => {
                     onLogout();
-                    this.onHidePanel();
+                    getDiscount(null);
+                    this.onHidePanel();                    
                   }}
                 >
                   Đăng xuất

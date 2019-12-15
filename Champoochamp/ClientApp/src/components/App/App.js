@@ -18,7 +18,8 @@ class App extends Component {
       isCartDrawerVisible: false,
       isRenderMenu: true,
       user: null,
-      strShoppingCart: null
+      strShoppingCart: null,
+      discount: null
     };
   }
 
@@ -65,6 +66,10 @@ class App extends Component {
     }, () => this.getStrShoppingCartByUser(this.state.user));
   }
 
+  getDiscount = discount => {
+    this.setState({ discount });
+  };
+
   updateShoppingCart = strShoppingCart => {
     this.setState({ strShoppingCart });
   }
@@ -80,7 +85,7 @@ class App extends Component {
   }
 
   render() {
-    const { isCartDrawerVisible, isRenderMenu, user, strShoppingCart } = this.state;
+    const { isCartDrawerVisible, isRenderMenu, user, strShoppingCart, discount } = this.state;
 
     return (
       <Router history={history}>
@@ -93,6 +98,7 @@ class App extends Component {
             updateShoppingCart={this.updateShoppingCart}
             onRenderCart={this.onRenderCart}
             isCartDrawerVisible={isCartDrawerVisible}
+            getDiscount={this.getDiscount}
           />
         }
         <RouterConfig
@@ -102,6 +108,8 @@ class App extends Component {
           updateShoppingCart={this.updateShoppingCart}
           onRenderMenu={this.onRenderMenu}
           onRenderCart={this.onRenderCart}
+          discount={discount}
+          getDiscount={this.getDiscount}
         />
       </Router>
     );
