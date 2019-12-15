@@ -92,7 +92,7 @@ class CheckoutPage extends Component {
 
   render() {
     const { shoppingCartList, transportFee } = this.state;
-    const { user, form, discount } = this.props;
+    const { user, form, discount, getDiscount } = this.props;
 
     return (
       <PageContainer>
@@ -111,7 +111,7 @@ class CheckoutPage extends Component {
             <Col xs={24} sm={12} md={10}>
               <Section>
                 <SmallTitle>Chi tiết đơn hàng</SmallTitle>
-                <CartInfo shoppingCartList={shoppingCartList} discount={discount} transportFee={transportFee}/>
+                <CartInfo shoppingCartList={shoppingCartList} discount={discount} getDiscount={getDiscount} transportFee={transportFee}/>
               </Section>
             </Col>
           </Form>

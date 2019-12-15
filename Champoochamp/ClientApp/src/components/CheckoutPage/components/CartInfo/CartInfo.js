@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, withRouter } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { typography, colors } from '../../../../shared/principles';
@@ -65,6 +65,12 @@ class CartInfo extends Component {
     return null;
   }
 
+  onEditShoppingCart = () => {
+    const { getDiscount, discount, history } = this.props;
+    getDiscount(discount);
+    history.push(`/gio-hang`);
+  }
+
   renderCartItem = shoppingCartList =>
     shoppingCartList.map(item => {
       const { id, product } = item.productVariant;
@@ -89,9 +95,7 @@ class CartInfo extends Component {
 
     return (
       <Fragment>
-        <NavLink to="/gio-hang">
-          <Link content="Chỉnh sửa" />
-        </NavLink>
+        <Link content="Chỉnh sửa" onClick={this.onEditShoppingCart} />
 
         <CartItemWrapper>
           {this.renderCartItem(shoppingCartList)}
@@ -126,4 +130,4 @@ class CartInfo extends Component {
   }
 }
 
-export default CartInfo;
+export default withRouter(CartInfo);

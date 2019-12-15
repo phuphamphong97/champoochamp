@@ -34,13 +34,14 @@ class TextInput extends Component {
   };
 
   render() {
-    const { placeholder, width } = this.props;
+    const { placeholder, width, value } = this.props;
 
     return (
       <SingleInput
         onChange={this.handleInputChange}
         placeholder={placeholder}
         width={width}
+        value={value ? value : ``}
       />
     );
   }
@@ -50,6 +51,7 @@ TextInput.propsTypes = {
   callback: PropTypes.func,
   placeholder: PropTypes.string,
   type: PropTypes.string,
+  value: PropTypes.string,
   width: PropTypes.string
 };
 

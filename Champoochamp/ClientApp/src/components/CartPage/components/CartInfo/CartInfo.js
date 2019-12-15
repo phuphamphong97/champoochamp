@@ -29,20 +29,19 @@ class CartInfo extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      discount: null,
-      code: ''
+      discount: props.discount,
+      code: props.discount ? props.discount.code : ''
     };
   }
 
   applyDiscountCode = () => {
     const { code } = this.state;
-    if (code && code!=='') {
+    if (code && code !== '') {
       const url = `Discount/GetDiscountByCode-${code}`;
 
-      callAPI(url).then(res => this.setState(
-        {
-          discount: res.data
-        }, () => {
+      callAPI(url).then(res => {
+        this.props.getDiscount(res.data);
+        this.setState({ discount: res.data }, () => {
           if (!this.state.discount) {
             notification.warning({
               message: 'Mã giảm giá không chính xác!',
@@ -51,8 +50,8 @@ class CartInfo extends Component {
               duration: time.durationNotification,
             });
           }
-        }
-      ));
+        })
+      });
     }
     else {
       this.setState({ discount: null })
@@ -71,7 +70,7 @@ class CartInfo extends Component {
   };
 
   render() {
-    const { discount } = this.state;
+    const { discount, code } = this.state;
     const { shoppingCartList } = this.props;
     const discountAmount = discount ? discount.rate : 0;
     const tempMoney = formatMoney(getTotalMoney(shoppingCartList), false);
@@ -88,12 +87,13 @@ class CartInfo extends Component {
           <ContentRow>
             <InfoText>Giảm giá: -{formatMoney(discountMoney, true)}đ</InfoText>
           </ContentRow>
-        }        
+        }
         <ContentRow>
           <TextInput
             id="name"
             placeholder="Nhập mã giảm giá"
             width="200px"
+            value={code}
             callback={this.getCode}
           />
         </ContentRow>
@@ -109,7 +109,7 @@ class CartInfo extends Component {
               content="Tiếp tục mua sắm"
               iconType="fas fa-chevron-left"
             />
-          </NavLink>          
+          </NavLink>
         </ContentRow>
         <ContentRow>
           <Button onClick={this.checkout} title="Thanh toán" width="250px" />

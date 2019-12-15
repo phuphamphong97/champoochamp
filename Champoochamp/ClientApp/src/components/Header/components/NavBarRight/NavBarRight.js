@@ -11,6 +11,7 @@ import SearchBar from '../SearchBar';
 import CartSummary from './components/CartSummary';
 import ShoppingCartHeader from './components/ShoppingCartHeader';
 import UserHeader from './components/UserHeader';
+import { Link, MainMenu } from '../../../elements';
 
 const Wrapper = styled('div')`
   align-items: center;
@@ -39,7 +40,7 @@ const MenuItem = styled('div')`
   `}
 `;
 
-const CartDrawer = styled(Drawer)`
+const StyledDrawer = styled(Drawer)`
   .ant-drawer-content-wrapper {
     max-width: 425px;
     width: 100vw !important;
@@ -58,10 +59,16 @@ const CollapseMenuButton = styled(Icon)`
   `}
 `;
 
+const BackButton = styled('div')`
+  margin-top: 20px;
+`;
+
 class NavBarRight extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      categoryMenu: [],
+      collectionMenu: [],
       isMenuDrawerVisible: false,
       isCartDrawerVisible: false,
       searchData: []
@@ -81,6 +88,16 @@ class NavBarRight extends Component {
   componentDidMount() {
     callAPI(`Search/GetSearchData`).then(res =>
       this.setState({ searchData: res.data })
+    );
+    callAPI(`Category/GetAllCategories`, `?$filter=parent eq null`).then(res =>
+      this.setState({
+        categoryMenu: res.data
+      })
+    );
+    callAPI(`Collection/GetAllCollections`).then(res =>
+      this.setState({
+        collectionMenu: res.data
+      })
     );
   }
 
@@ -110,14 +127,12 @@ class NavBarRight extends Component {
   };
 
   render() {
-    const { user, strShoppingCart, updateShoppingCart, history } = this.props;
-    const { isMenuDrawerVisible, isCartDrawerVisible, searchData } = this.state;
+    const { user, strShoppingCart, updateShoppingCart, getDiscount, history } = this.props;
+    const { categoryMenu, collectionMenu, isMenuDrawerVisible, isCartDrawerVisible, searchData } = this.state;
 
     return (
       <Wrapper>
-        <MenuItem>
-          <SearchBar suggestions={searchData} history={history} />
-        </MenuItem>
+        <SearchBar suggestions={searchData} history={history} />
         <MenuItem>
           <ShoppingCartHeader
             strShoppingCart={strShoppingCart}
@@ -125,7 +140,7 @@ class NavBarRight extends Component {
           />
         </MenuItem>
         <MenuItem>
-          <UserHeader user={user} onLogout={this.onLogout} />
+          <UserHeader user={user} onLogout={this.onLogout} getDiscount={getDiscount} />
         </MenuItem>
         <MenuItem>
           <CollapseMenuButton
@@ -134,16 +149,7 @@ class NavBarRight extends Component {
           />
         </MenuItem>
 
-        <Drawer
-          placement="right"
-          closable={false}
-          onClose={() => this.onCloseDrawer('isMenuDrawerVisible')}
-          visible={isMenuDrawerVisible}
-        >
-          <SearchBar suggestions={searchData} history={history} />
-        </Drawer>
-
-        <CartDrawer
+        <StyledDrawer
           placement="right"
           closable={false}
           onClose={() => this.onCloseDrawer('isCartDrawerVisible')}
@@ -153,9 +159,25 @@ class NavBarRight extends Component {
             user={user}
             strShoppingCart={strShoppingCart}
             updateShoppingCart={updateShoppingCart}
-            onCloseDrawer={() => this.onCloseDrawer('isCartDrawerVisible')}
+            onCloseDrawer={() => this.onCloseDrawer('isCartDrawerVisible')}            
           />
-        </CartDrawer>
+        </StyledDrawer>
+
+        <StyledDrawer
+          placement="right"
+          closable={false}
+          onClose={() => this.onCloseDrawer('isMenuDrawerVisible')}
+          visible={isMenuDrawerVisible}
+        >
+          <MainMenu mode="inline" categoryMenu={categoryMenu} collectionMenu={collectionMenu} />
+          <BackButton>
+            <Link
+              content="Quay lại"
+              iconType="fas fa-chevron-left"
+              onClick={() => this.onCloseDrawer('isMenuDrawerVisible')}
+            />
+          </BackButton>
+        </StyledDrawer>
       </Wrapper>
     );
   }

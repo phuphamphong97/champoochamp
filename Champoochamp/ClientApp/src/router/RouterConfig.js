@@ -18,8 +18,7 @@ class RouterConfig extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoginAdminSuccess: false,
-      discount: null,
+      isLoginAdminSuccess: false,      
       strShoppingCart: props.strShoppingCart
     };
   }
@@ -38,18 +37,16 @@ class RouterConfig extends Component {
     this.setState({ isLoginAdminSuccess });
   };
 
-  getDiscount = discount => {
-    this.setState({ discount });
-  };
-
   render() {
-    const { isLoginAdminSuccess, discount, strShoppingCart } = this.state;
+    const { isLoginAdminSuccess, strShoppingCart } = this.state;
     const {
       onRenderCart,
       onRenderMenu,
       user,     
       updateShoppingCart,
       getLoginUser,
+      discount,
+      getDiscount,
       history
     } = this.props;
 
@@ -96,16 +93,14 @@ class RouterConfig extends Component {
         <Route
           path="/gio-hang"
           render={props => 
-            strShoppingCart ?               
-              <Cart
-                {...props}
-                user={user}
-                strShoppingCart={strShoppingCart}
-                updateShoppingCart={updateShoppingCart}
-                getDiscount={this.getDiscount}
-              />              
-              :
-              history.push('/')            
+            <Cart
+              {...props}
+              user={user}
+              strShoppingCart={strShoppingCart}
+              updateShoppingCart={updateShoppingCart}
+              discount={discount}
+              getDiscount={getDiscount}
+            />           
           }
         />
         <Route
@@ -117,7 +112,7 @@ class RouterConfig extends Component {
                 user={user}
                 updateShoppingCart={updateShoppingCart}
                 discount={discount}
-                getDiscount={this.getDiscount}
+                getDiscount={getDiscount}
                 history={history}
               />
               :

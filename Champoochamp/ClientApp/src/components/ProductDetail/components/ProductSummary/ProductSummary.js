@@ -75,12 +75,12 @@ class ProductSummary extends Component {
     }
 
     if (productVariant) {
-      if (
-        shoppingCartList.size > 0 &&
-        shoppingCartList.has(productVariant.id)
-      ) {
-        const quantity =
-          productVariant.quantity - shoppingCartList.get(productVariant.id);
+      if (productVariant.quantity === 0) {
+        return -1;
+      }
+
+      if (shoppingCartList.size > 0 && shoppingCartList.has(productVariant.id)) {
+        const quantity = productVariant.quantity - shoppingCartList.get(productVariant.id);
         return quantity > 0 ? quantity : -1;
       }
 
@@ -178,14 +178,8 @@ class ProductSummary extends Component {
           quantityMax={quantityMax}
         />
         <Button
-          title={
-            colors.length > 0
-              ? quantityMax > -1
-                ? 'Thêm vào giỏ'
-                : 'Tạm thời hết hàng'
-              : 'Tạm thời hết hàng'
-          }
-          disabled={!(colors.length > 0 && quantityMax > -1)}
+          title={quantityMax < 0 ? `Tạm thời hết hàng` : `Thêm vào giỏ`}
+          disabled={quantityMax < 0}
           isBlockButton
           onClick={() => this.onAddCartItem(user)}
         />
