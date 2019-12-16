@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Business;
 using Data.Entity;
+using Data.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,14 +14,16 @@ namespace API.Controllers
   [ApiController]
   public class InvoiceController : ControllerBase
   {
-    [Route("GetAllInvoice")]
-    public IEnumerable<Invoice> GetAllInvoice()
+    InvoiceBusiness invoiceBusiness = new InvoiceBusiness();
+
+    [Route("GetAllInvoices")]
+    public IEnumerable<Invoice> GetAllInvoices()
     {
       using (champoochampContext db = new champoochampContext())
       {
         try
         {
-          return db.Invoice.ToList();
+          return db.Invoice.Where(p => p.Status != -1).ToList();
         }
         catch (Exception e)
         {
@@ -27,6 +31,13 @@ namespace API.Controllers
           return null;
         }
       }
+    }
+
+    [HttpPost]
+    [Route("UpdateInvoices")]
+    public IEnumerable<Invoice> UpdateInvoices(InvoiceModel invoiceModel)
+    {
+      return invoiceBusiness.UpdateInvoices(invoiceModel);
     }
   }
 }

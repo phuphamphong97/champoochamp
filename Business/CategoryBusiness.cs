@@ -23,5 +23,15 @@ namespace Business
         }
       }
     }
+
+    public IEnumerable<Category> shortCategoryList(IEnumerable<Category> categoryList)
+    {
+      foreach(Category c in categoryList)
+      {
+        c.InverseParent = null;
+      }
+
+      return categoryList;
+    }
   }
 }

@@ -1,5 +1,17 @@
 ﻿const apiPort = 'http://localhost:4000';
 
+const adminPage = {
+  invoicePage: 'invoicePage',
+  invoiceDetailPage: 'invoiceDetailPage',
+  productPage: 'productPage',
+  categoryPage: 'categoryPage',
+  collectionPage: 'collectionPage',
+  colorPage: 'colorPage',
+  sizePage: 'sizePage',
+  userPage: 'userPage',
+  employeePage: 'employeePage'
+}
+
 const localStorageKey = {
   storageShoppingCartKey: 'MyShoppingCart',
   emailKey: 'ChampoochampEmail',
@@ -84,6 +96,7 @@ const viewportWidth = {
 };
 
 export {
+  adminPage,
   apiPort,
   localStorageKey,
   champoochampAddress,

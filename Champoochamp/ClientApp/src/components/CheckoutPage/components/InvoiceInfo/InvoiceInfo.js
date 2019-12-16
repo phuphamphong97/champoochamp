@@ -45,6 +45,9 @@ class InvoiceInfo extends Component {
     const url = `${ghtk.apiTransportFee}`;
     const query = `?pick_province=${champoochampAddress.city}&pick_district=${champoochampAddress.district}&province=${this.props.form.getFieldsValue().province}&district=${value}&weight=1000&transport=road`;
 
+
+  
+
     callghtkAPI(url, query)
     .then(res => {
       if (res) {
@@ -60,6 +63,8 @@ class InvoiceInfo extends Component {
         });
       }
     });
+
+
 
     this.props.form.setFieldsValue({
       ward: undefined

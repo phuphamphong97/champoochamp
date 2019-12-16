@@ -1,55 +1,102 @@
-﻿import React, { Component } from 'react';
-import { Table, Input, Button, Icon } from 'antd';
+﻿import React, { Component, Fragment } from 'react';
+import { Table, Input, Button, Checkbox, Icon, notification } from 'antd';
 
 import { callAPI } from '../../../../shared/utils';
+import { time } from '../../../../shared/constants';
+import { Link } from '../../../elements';
 
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 1,
-    address: 'New York No. 1 Lake Park',
-  },
-  {
-    key: '2',
-    name: 'C Black',
-    age: 2,
-    address: 'London No. 1 Lake Park',
-  },
-  {
-    key: '3',
-    name: 'A Green',
-    age: 3,
-    address: 'Sidney No. 1 Lake Park',
-  },
-  {
-    key: '4',
-    name: 'B Red',
-    age: 4,
-    address: 'London No. 2 Lake Park',
-  },
-];
 
 class InvoicePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      invoiceList: {},
+      selectedRowKeys: [],
       searchText: '',
       searchedColumn: '',
       sortedInfo: null,
-      data: [],
-      pagination: {},
-      loading: false,
+      invoiceList: [],
+      isEdit: false
     };
   }
 
-  componentDidMount() {
+  componentWillMount() {
+    this.mapCheckInvoice = new Map();
   }
 
-  getAllInvoice = () => {
-    callAPI('Checkout/GetAllInvoice').then(res => this.setState({ invoiceList: res.data }));    
+  componentDidMount() {
+    this.getAllInvoices();
   }
+
+  getAllInvoices = () => {
+    callAPI('Invoice/GetAllInvoices')
+      .then(res => this.setState({ invoiceList: res.data }));
+  }
+
+  onEdit = () => {
+    this.setState({ isEdit: true })
+  }
+
+  onSave = () => {
+    const { employee } = this.props;
+    const arr = Array.from(this.mapCheckInvoice.keys());
+    const data = {
+      employee,
+      invoiceIds: arr
+    }
+
+    callAPI('Invoice/UpdateInvoices', '', 'POST', data).then(res => {      
+      this.mapCheckInvoice = new Map();
+
+      if (res.data) {
+        this.setState({
+          selectedRowKeys: [],
+          invoiceList: res.data,
+          isEdit: false
+        });
+        notification.info({
+          message: 'Sửa hóa đơn thành công!',
+          placement: 'topRight',
+          onClick: () => notification.destroy(),
+          duration: time.durationNotification,
+        });
+      }
+      else {
+        this.setState({
+          selectedRowKeys: [],
+          isEdit: false
+        });
+        notification.warning({
+          message: 'Sửa hóa đơn thất bại!',
+          placement: 'topRight',
+          onClick: () => notification.destroy(),
+          duration: time.durationNotification,
+        });
+      }  
+    });    
+  }
+
+  onRollBack = () => {
+    this.setState({
+      selectedRowKeys: [],
+      isEdit: false
+    })
+    this.mapCheckInvoice = new Map();
+  }
+
+  changeStatus = invoice => {
+    const { mapCheckInvoice } = this;
+    if (mapCheckInvoice.has(invoice.id)) {
+      mapCheckInvoice.delete(invoice.id);
+    }
+    else {
+      mapCheckInvoice.set(invoice.id, '');
+    }
+    this.setState({ selectedRowKeys: Array.from(mapCheckInvoice.keys()) })
+  }
+
+  onSelectChange = selectedRowKeys => {
+    this.setState({ selectedRowKeys });
+  };
 
   handleChange = (pagination, filters, sorter) => {
     this.setState({
@@ -114,43 +161,77 @@ class InvoicePage extends Component {
   };
 
   render() {
-    let { sortedInfo, invoiceList } = this.state;
+    let { selectedRowKeys, sortedInfo, invoiceList, isEdit } = this.state;    
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.onSelectChange,
+    };
     sortedInfo = sortedInfo || {};
+    
 
     const columns = [
       {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
-        width: '30%',
-        ...this.getColumnSearchProps('name'),
-        sorter: (a, b) => a.name.length - b.name.length,
-        sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
-        ellipsis: true,
-      },
-      {
-        title: 'Age',
-        dataIndex: 'age',
-        key: 'age',
+        title: 'Tên khách hàng',
+        dataIndex: 'customerName',
         width: '20%',
-        ...this.getColumnSearchProps('age'),
-        sorter: (a, b) => a.age - b.age,
-        sortOrder: sortedInfo.columnKey === 'age' && sortedInfo.order,
+        ...this.getColumnSearchProps('customerName'),
+        sorter: (a, b) => a.customerName.length - b.customerName.length,
+        sortOrder: sortedInfo.columnKey === 'customerName' && sortedInfo.order,
         ellipsis: true,
       },
       {
-        title: 'Address',
-        dataIndex: 'address',
-        key: 'address',
-        ...this.getColumnSearchProps('address'),
-        sorter: (a, b) => a.address.length - b.address.length,
-        sortOrder: sortedInfo.columnKey === 'address' && sortedInfo.order,
+        title: 'Số điện thoại',
+        dataIndex: 'customerPhone',
+        width: '15%',
+        ...this.getColumnSearchProps('customerPhone'),
+        sorter: (a, b) => a.customerPhone - b.customerPhone,
+        sortOrder: sortedInfo.columnKey === 'customerPhone' && sortedInfo.order,
+        ellipsis: true,
+      },
+      {
+        title: 'Địa chỉ',
+        dataIndex: 'customerAddress',
+        width: '30%',
+        ...this.getColumnSearchProps('customerAddress'),
+        sorter: (a, b) => a.customerAddress.length - b.customerAddress.length,
+        sortOrder: sortedInfo.columnKey === 'customerAddress' && sortedInfo.order,
+      },
+      {
+        title: 'Tổng tiền',
+        dataIndex: 'total',
+        width: '20%',
+        ...this.getColumnSearchProps('total'),
+        sorter: (a, b) => a.total - b.total,
+        sortOrder: sortedInfo.columnKey === 'total' && sortedInfo.order,
+      },
+      {
+        title: 'Trạng thái',
+        width: '15%',
+        render: (text, record) => (
+          <Fragment>
+            {
+              isEdit ?
+                <Checkbox onChange={() => this.changeStatus(record)} defaultChecked={record.status === 1 ? true : false} />
+                :
+                record.status === 1 ? <span>Đã thanh toán</span> : <span>Chưa thanh toán</span>
+            }
+          </Fragment>
+        ),
       },
     ];
 
     return (
       <div>
-        <Table columns={columns} dataSource={invoiceList} onChange={this.handleChange} />
+        <Link onClick={this.onEdit} content="Chỉnh sửa" />
+        <Link onClick={this.onSave} content="Lưu" />
+        <Link onClick={this.onRollBack} content="Thay đổi trở lại" />
+        <Table
+          rowKey='id'
+          rowSelection={rowSelection}
+          columns={columns}
+          dataSource={invoiceList}
+          onChange={this.handleChange}
+        />
       </div>
     );
   }
