@@ -284,7 +284,7 @@ class FilterPanel extends Component {
           key={currentMoneyFilter.id}
           group={group}
           filterItem={currentMoneyFilter}
-          title={`${formatMoney(currentMoneyFilter.fromMoney)}đ - ${formatMoney(currentMoneyFilter.toMoney)}đ`}
+          title={`${formatMoney(currentMoneyFilter.fromMoney, true)}đ - ${formatMoney(currentMoneyFilter.toMoney, true)}đ`}
           iconType="fas fa-times"
           callback={this.selectedFilterItem}
         />
