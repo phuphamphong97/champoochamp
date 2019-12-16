@@ -36,6 +36,24 @@ namespace API.Controllers
     }
 
     [EnableQuery]
+    [Route("GetAdminAllCategories")]
+    public IEnumerable<Category> GetAdminAllCategories()
+    {
+      using (champoochampContext db = new champoochampContext())
+      {
+        try
+        {
+          return categoryBusiness.shortCategoryList(db.Category.ToList());
+        }
+        catch (Exception e)
+        {
+          Console.WriteLine(e.Message);
+          return null;
+        }
+      }
+    }
+
+    [EnableQuery]
     [Route("GetCategoryById-{id}")]
     public Category GetCategoryById(int id)
     {

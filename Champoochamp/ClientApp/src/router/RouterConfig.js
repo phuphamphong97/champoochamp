@@ -18,6 +18,7 @@ class RouterConfig extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      employee: null,
       isLoginAdminSuccess: false,      
       strShoppingCart: props.strShoppingCart
     };
@@ -33,12 +34,12 @@ class RouterConfig extends Component {
     return null;
   }
 
-  onLoginAdmin = isLoginAdminSuccess => {
-    this.setState({ isLoginAdminSuccess });
+  onLoginAdmin = employee => {
+    this.setState({ employee });
   };
 
   render() {
-    const { isLoginAdminSuccess, strShoppingCart } = this.state;
+    const { employee, strShoppingCart } = this.state;
     const {
       onRenderCart,
       onRenderMenu,
@@ -126,7 +127,7 @@ class RouterConfig extends Component {
               {...props}
               onRenderMenu={onRenderMenu}
               onLoginAdmin={this.onLoginAdmin}
-              isLoginAdminSuccess={isLoginAdminSuccess}
+              employee={employee}
               history={history}
             />
           )}
@@ -136,7 +137,7 @@ class RouterConfig extends Component {
           render={props => (
             <AdminPage
               {...props}
-              isLoginAdminSuccess={isLoginAdminSuccess}
+              employee={employee}
               history={history}
             />
           )}
