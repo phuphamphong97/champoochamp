@@ -13,7 +13,8 @@ import {
 import {
   callAPI,
   getMoneyFilterGroup,
-  checkCurrentFilter
+  checkCurrentFilter,
+  formatMoney
 } from '../../../../../../shared/utils';
 
 import { Link } from '../../../../../elements';
@@ -206,7 +207,7 @@ class FilterPanel extends Component {
             <SingleFilter
               group={moneyFilterGroup.name}
               filterItem={item}
-              title={`Dưới ${item.toMoney}`}
+              title={`Dưới ${formatMoney(item.toMoney, true)}đ`}
               callback={this.selectedFilterItem}
             />
           </Col>
@@ -217,7 +218,7 @@ class FilterPanel extends Component {
             <SingleFilter
               group={moneyFilterGroup.name}
               filterItem={item}
-              title={`Trên ${item.fromMoney}`}
+              title={`Trên ${formatMoney(item.fromMoney, true)}đ`}
               callback={this.selectedFilterItem}
             />
           </Col>
@@ -228,7 +229,7 @@ class FilterPanel extends Component {
             <SingleFilter
               group={moneyFilterGroup.name}
               filterItem={item}
-              title={`${item.fromMoney} - ${item.toMoney}`}
+              title={`${formatMoney(item.fromMoney, true)}đ - ${formatMoney(item.toMoney, true)}đ`}
               callback={this.selectedFilterItem}
             />
           </Col>
@@ -261,7 +262,7 @@ class FilterPanel extends Component {
           key={currentMoneyFilter.id}
           group={group}
           filterItem={currentMoneyFilter}
-          title={`Dưới ${currentMoneyFilter.toMoney}`}
+          title={`Dưới ${formatMoney(currentMoneyFilter.toMoney, true)}đ`}
           iconType="fas fa-times"
           callback={this.selectedFilterItem}
         />
@@ -272,7 +273,7 @@ class FilterPanel extends Component {
           key={currentMoneyFilter.id}
           group={group}
           filterItem={currentMoneyFilter}
-          title={`Trên ${currentMoneyFilter.fromMoney}`}
+          title={`Trên ${formatMoney(currentMoneyFilter.fromMoney, true)}đ`}
           iconType="fas fa-times"
           callback={this.selectedFilterItem}
         />
@@ -283,7 +284,7 @@ class FilterPanel extends Component {
           key={currentMoneyFilter.id}
           group={group}
           filterItem={currentMoneyFilter}
-          title={`${currentMoneyFilter.fromMoney} - ${currentMoneyFilter.toMoney}`}
+          title={`${formatMoney(currentMoneyFilter.fromMoney)}đ - ${formatMoney(currentMoneyFilter.toMoney)}đ`}
           iconType="fas fa-times"
           callback={this.selectedFilterItem}
         />
