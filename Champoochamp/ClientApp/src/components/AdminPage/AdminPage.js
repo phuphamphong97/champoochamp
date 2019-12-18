@@ -6,6 +6,7 @@ import { adminPage } from '../../shared/constants';
 import { PageContainer, Button } from '../elements';
 import InvoicePage from './components/InvoicePage';
 import CategoryPage from './components/CategoryPage';
+import ProphetPage from './components/ProphetPage';
 
 class AdminPage extends Component {
   constructor(props) {
@@ -33,6 +34,7 @@ class AdminPage extends Component {
         <Button title="Kích thước" isBlockButton isSecondary={pageCurrent === adminPage.sizePage ? false : true} onClick={() => this.onPage(adminPage.sizePage)} />
         <Button title="Khách hàng" isBlockButton isSecondary={pageCurrent === adminPage.userPage ? false : true} onClick={() => this.onPage(adminPage.userPage)} />
         <Button title="Nhân viên" isBlockButton isSecondary={pageCurrent === adminPage.employeePage ? false : true} onClick={() => this.onPage(adminPage.employeePage)} />
+        <Button title="Dự báo" isBlockButton isSecondary={pageCurrent === adminPage.prophetPage ? false : true} onClick={() => this.onPage(adminPage.prophetPage)} />
       </Fragment>
     );
   }
@@ -57,6 +59,8 @@ class AdminPage extends Component {
         return (<InvoicePage employee={employee} />);
       case adminPage.employeePage:
         return (<InvoicePage employee={employee} />);
+      case adminPage.prophetPage:
+        return (<ProphetPage />);
     }
   }
 

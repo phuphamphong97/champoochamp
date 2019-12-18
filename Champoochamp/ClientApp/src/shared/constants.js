@@ -1,4 +1,5 @@
 ﻿const apiPort = 'http://localhost:4000';
+const prophetPort = 'http://localhost:3000';
 
 const adminPage = {
   invoicePage: 'invoicePage',
@@ -9,7 +10,8 @@ const adminPage = {
   colorPage: 'colorPage',
   sizePage: 'sizePage',
   userPage: 'userPage',
-  employeePage: 'employeePage'
+  employeePage: 'employeePage',
+  prophetPage: 'prophetPage'
 }
 
 const localStorageKey = {
@@ -105,6 +107,7 @@ export {
   imagesGroup,
   time,
   paymentMethod,
+  prophetPort,
   productQuantity,
   searchGroup,
   sortsGroup,
