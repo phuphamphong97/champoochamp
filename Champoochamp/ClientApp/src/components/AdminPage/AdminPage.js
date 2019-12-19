@@ -71,10 +71,10 @@ class AdminPage extends Component {
     return (
       <PageContainer>
         <Row className="product-list-wrapper">
-          <Col xs={24} lg={6}>
+          <Col xs={24} lg={4}>
             {this.renderButton(pageCurrent)}
           </Col>
-          <Col xs={24} lg={18}>
+          <Col xs={24} lg={20}>
             {this.renderPage(pageCurrent, employee)}
           </Col>
         </Row>

@@ -15,26 +15,18 @@ namespace Business
       {
         try
         {
-          foreach(string id in invoiceModel.invoiceIds)
+          foreach(Invoice i in invoiceModel.invoiceList)
           {
-            Invoice invoice = db.Invoice.Find(Int32.Parse(id));
+            Invoice invoice = db.Invoice.Find(i.Id);
             if (invoice != null)
             {
-              if(invoice.Status == 0)
-              {
-                invoice.Status = 1;
-                invoice.ModifiedBy = invoiceModel.employee.Id;
-              }
-              else if(invoice.Status == 1)
-              {
-                invoice.Status = 0;
-                invoice.ModifiedBy = invoiceModel.employee.Id;
-              }
+              invoice.Status = i.Status;
+              invoice.ModifiedBy = invoiceModel.employee.Id;
             }
           }
 
           db.SaveChanges();
-          return db.Invoice.Where(p => p.Status != -1).ToList();
+          return db.Invoice.ToList();
         }
         catch (Exception e)
         {

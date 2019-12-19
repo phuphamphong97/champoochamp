@@ -21,8 +21,6 @@ namespace Data.Entity
         public short CreatedBy { get; set; }
         public DateTime? ModifiedDate { get; set; }
         public short? ModifiedBy { get; set; }
-        public string MetaKeywords { get; set; }
-        public string MetaDescriptions { get; set; }
         public bool? Status { get; set; }
 
         public virtual Category Parent { get; set; }

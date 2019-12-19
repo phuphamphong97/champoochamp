@@ -22,26 +22,19 @@ namespace Data.Entity
         public virtual DbSet<Contact> Contact { get; set; }
         public virtual DbSet<Discount> Discount { get; set; }
         public virtual DbSet<Employee> Employee { get; set; }
-        public virtual DbSet<EmployeeGroupRules> EmployeeGroupRules { get; set; }
         public virtual DbSet<Feedback> Feedback { get; set; }
         public virtual DbSet<GoodsReceipt> GoodsReceipt { get; set; }
         public virtual DbSet<GoodsReceiptDetail> GoodsReceiptDetail { get; set; }
-        public virtual DbSet<GroupRules> GroupRules { get; set; }
         public virtual DbSet<Invoice> Invoice { get; set; }
         public virtual DbSet<InvoiceDetail> InvoiceDetail { get; set; }
         public virtual DbSet<Material> Material { get; set; }
-        public virtual DbSet<Post> Post { get; set; }
-        public virtual DbSet<PostTag> PostTag { get; set; }
         public virtual DbSet<Product> Product { get; set; }
         public virtual DbSet<ProductImages> ProductImages { get; set; }
         public virtual DbSet<ProductVariant> ProductVariant { get; set; }
         public virtual DbSet<Reviews> Reviews { get; set; }
-        public virtual DbSet<Role> Role { get; set; }
-        public virtual DbSet<Rule> Rule { get; set; }
         public virtual DbSet<Size> Size { get; set; }
         public virtual DbSet<Slide> Slide { get; set; }
         public virtual DbSet<Suplier> Suplier { get; set; }
-        public virtual DbSet<Tag> Tag { get; set; }
         public virtual DbSet<Unit> Unit { get; set; }
         public virtual DbSet<User> User { get; set; }
 
@@ -108,10 +101,6 @@ namespace Data.Entity
                     .HasColumnType("smallint(6)")
                     .HasDefaultValueSql("'1'");
 
-                entity.Property(e => e.MetaDescriptions).HasColumnType("varchar(2555)");
-
-                entity.Property(e => e.MetaKeywords).HasColumnType("varchar(255)");
-
                 entity.Property(e => e.MetaTitle).HasColumnType("varchar(255)");
 
                 entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
@@ -151,10 +140,6 @@ namespace Data.Entity
                     .HasColumnType("smallint(6)")
                     .HasDefaultValueSql("'1'");
 
-                entity.Property(e => e.MetaDescriptions).HasColumnType("varchar(2555)");
-
-                entity.Property(e => e.MetaKeywords).HasColumnType("varchar(255)");
-
                 entity.Property(e => e.MetaTitle).HasColumnType("varchar(255)");
 
                 entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
@@ -184,10 +169,6 @@ namespace Data.Entity
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
-
-                entity.Property(e => e.DisplayOrder)
-                    .HasColumnType("smallint(6)")
-                    .HasDefaultValueSql("'1'");
 
                 entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
 
@@ -273,9 +254,6 @@ namespace Data.Entity
             {
                 entity.ToTable("employee");
 
-                entity.HasIndex(e => e.RoleId)
-                    .HasName("fk_employee__role");
-
                 entity.Property(e => e.Id).HasColumnType("smallint(6)");
 
                 entity.Property(e => e.Address).HasColumnType("varchar(2555)");
@@ -287,12 +265,6 @@ namespace Data.Entity
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
-
-                entity.Property(e => e.DateOfBirth).HasColumnType("date");
-
-                entity.Property(e => e.Email)
-                    .IsRequired()
-                    .HasColumnType("varchar(255)");
 
                 entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
 
@@ -306,47 +278,14 @@ namespace Data.Entity
 
                 entity.Property(e => e.Phone).HasColumnType("varchar(255)");
 
-                entity.Property(e => e.RoleId).HasColumnType("smallint(6)");
-
                 entity.Property(e => e.Status)
                     .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("'b\\'1\\''");
 
-                entity.HasOne(d => d.Role)
-                    .WithMany(p => p.Employee)
-                    .HasForeignKey(d => d.RoleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_employee__role");
-            });
-
-            modelBuilder.Entity<EmployeeGroupRules>(entity =>
-            {
-                entity.ToTable("employee_group_rules");
-
-                entity.HasIndex(e => e.EmployeeId)
-                    .HasName("fk_employee_group_rules__employee");
-
-                entity.HasIndex(e => e.GroupRulesId)
-                    .HasName("fk_employee_group_rules__group_rules");
-
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.EmployeeId).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.GroupRulesId).HasColumnType("smallint(6)");
-
-                entity.HasOne(d => d.Employee)
-                    .WithMany(p => p.EmployeeGroupRules)
-                    .HasForeignKey(d => d.EmployeeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_employee_group_rules__employee");
-
-                entity.HasOne(d => d.GroupRules)
-                    .WithMany(p => p.EmployeeGroupRules)
-                    .HasForeignKey(d => d.GroupRulesId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_employee_group_rules__group_rules");
+                entity.Property(e => e.UserName)
+                    .IsRequired()
+                    .HasColumnType("varchar(255)");
             });
 
             modelBuilder.Entity<Feedback>(entity =>
@@ -366,9 +305,7 @@ namespace Data.Entity
 
                 entity.Property(e => e.Email).HasColumnType("varchar(255)");
 
-                entity.Property(e => e.FirstName).HasColumnType("varchar(255)");
-
-                entity.Property(e => e.LastName).HasColumnType("varchar(255)");
+                entity.Property(e => e.Name).HasColumnType("varchar(255)");
 
                 entity.Property(e => e.Status)
                     .IsRequired()
@@ -478,46 +415,12 @@ namespace Data.Entity
                     .HasConstraintName("fk_goods_receipt_detail__product_variant");
             });
 
-            modelBuilder.Entity<GroupRules>(entity =>
-            {
-                entity.ToTable("group_rules");
-
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("'current_timestamp()'");
-
-                entity.Property(e => e.Discription).HasColumnType("varchar(2555)");
-
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
-
-                entity.Property(e => e.Name).HasColumnType("varchar(255)");
-
-                entity.Property(e => e.Rules)
-                    .IsRequired()
-                    .HasColumnName("rules")
-                    .HasColumnType("varchar(2555)");
-
-                entity.Property(e => e.Status)
-                    .IsRequired()
-                    .HasColumnType("bit(1)")
-                    .HasDefaultValueSql("'b\\'1\\''");
-            });
-
             modelBuilder.Entity<Invoice>(entity =>
             {
                 entity.ToTable("invoice");
 
                 entity.HasIndex(e => e.DiscountId)
                     .HasName("fk_invoice__discount");
-
-                entity.HasIndex(e => e.EmployeeId)
-                    .HasName("fk_invoice__employee");
 
                 entity.HasIndex(e => e.UserId)
                     .HasName("fk_invoice__user");
@@ -544,8 +447,6 @@ namespace Data.Entity
 
                 entity.Property(e => e.DiscountId).HasColumnType("smallint(6)");
 
-                entity.Property(e => e.EmployeeId).HasColumnType("smallint(6)");
-
                 entity.Property(e => e.Message).HasColumnType("varchar(2555)");
 
                 entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
@@ -554,15 +455,13 @@ namespace Data.Entity
 
                 entity.Property(e => e.PaymentMethod).HasColumnType("varchar(255)");
 
-                entity.Property(e => e.ShipDate).HasColumnType("datetime");
-
                 entity.Property(e => e.ShipMoney)
                     .HasColumnType("decimal(10,0)")
                     .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.Status)
-                    .HasColumnType("smallint(6)")
-                    .HasDefaultValueSql("'0'");
+                    .HasColumnType("varchar(255)")
+                    .HasDefaultValueSql("'Chưa thanh toán'");
 
                 entity.Property(e => e.Total)
                     .HasColumnType("decimal(10,0)")
@@ -574,11 +473,6 @@ namespace Data.Entity
                     .WithMany(p => p.Invoice)
                     .HasForeignKey(d => d.DiscountId)
                     .HasConstraintName("fk_invoice__discount");
-
-                entity.HasOne(d => d.Employee)
-                    .WithMany(p => p.Invoice)
-                    .HasForeignKey(d => d.EmployeeId)
-                    .HasConstraintName("fk_invoice__employee");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Invoice)
@@ -666,82 +560,6 @@ namespace Data.Entity
                     .HasDefaultValueSql("'b\\'1\\''");
             });
 
-            modelBuilder.Entity<Post>(entity =>
-            {
-                entity.ToTable("post");
-
-                entity.HasIndex(e => e.EmployeeId)
-                    .HasName("fk_post__employee");
-
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.Content).HasColumnType("text");
-
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("'current_timestamp()'");
-
-                entity.Property(e => e.EmployeeId).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.MetaDescriptions).HasColumnType("varchar(2555)");
-
-                entity.Property(e => e.MetaKeywords).HasColumnType("varchar(255)");
-
-                entity.Property(e => e.MetaTittle).HasColumnType("varchar(255)");
-
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
-
-                entity.Property(e => e.Status)
-                    .IsRequired()
-                    .HasColumnType("bit(1)")
-                    .HasDefaultValueSql("'b\\'1\\''");
-
-                entity.Property(e => e.Tags).HasColumnType("varchar(2555)");
-
-                entity.Property(e => e.Views)
-                    .HasColumnType("int(11)")
-                    .HasDefaultValueSql("'0'");
-
-                entity.HasOne(d => d.Employee)
-                    .WithMany(p => p.Post)
-                    .HasForeignKey(d => d.EmployeeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_post__employee");
-            });
-
-            modelBuilder.Entity<PostTag>(entity =>
-            {
-                entity.ToTable("post_tag");
-
-                entity.HasIndex(e => e.PostId)
-                    .HasName("fk_post_tag__post");
-
-                entity.HasIndex(e => e.TagId)
-                    .HasName("fk_post_tag__tag");
-
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.PostId).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.TagId).HasColumnType("smallint(6)");
-
-                entity.HasOne(d => d.Post)
-                    .WithMany(p => p.PostTag)
-                    .HasForeignKey(d => d.PostId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_post_tag__post");
-
-                entity.HasOne(d => d.Tag)
-                    .WithMany(p => p.PostTag)
-                    .HasForeignKey(d => d.TagId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_post_tag__tag");
-            });
-
             modelBuilder.Entity<Product>(entity =>
             {
                 entity.ToTable("product");
@@ -787,10 +605,6 @@ namespace Data.Entity
                     .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.MaterialId).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.MetaDescriptions).HasColumnType("varchar(2555)");
-
-                entity.Property(e => e.MetaKeywords).HasColumnType("varchar(255)");
 
                 entity.Property(e => e.MetaTitle).HasColumnType("varchar(255)");
 
@@ -1001,46 +815,6 @@ namespace Data.Entity
                     .HasConstraintName("fk_reviews__user");
             });
 
-            modelBuilder.Entity<Role>(entity =>
-            {
-                entity.ToTable("role");
-
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("'current_timestamp()'");
-
-                entity.Property(e => e.Discription).HasColumnType("varchar(2555)");
-
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
-
-                entity.Property(e => e.Name).HasColumnType("varchar(255)");
-
-                entity.Property(e => e.Status)
-                    .IsRequired()
-                    .HasColumnType("bit(1)")
-                    .HasDefaultValueSql("'b\\'1\\''");
-            });
-
-            modelBuilder.Entity<Rule>(entity =>
-            {
-                entity.ToTable("rule");
-
-                entity.Property(e => e.Id).HasColumnType("varchar(255)");
-
-                entity.Property(e => e.Discription).HasColumnType("varchar(2555)");
-
-                entity.Property(e => e.Status)
-                    .IsRequired()
-                    .HasColumnType("bit(1)")
-                    .HasDefaultValueSql("'b\\'1\\''");
-            });
-
             modelBuilder.Entity<Size>(entity =>
             {
                 entity.ToTable("size");
@@ -1054,10 +828,6 @@ namespace Data.Entity
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
-
-                entity.Property(e => e.DisplayOrder)
-                    .HasColumnType("smallint(6)")
-                    .HasDefaultValueSql("'1'");
 
                 entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
 
@@ -1137,30 +907,6 @@ namespace Data.Entity
                     .HasDefaultValueSql("'b\\'1\\''");
             });
 
-            modelBuilder.Entity<Tag>(entity =>
-            {
-                entity.ToTable("tag");
-
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("'current_timestamp()'");
-
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
-
-                entity.Property(e => e.Name).HasColumnType("varchar(255)");
-
-                entity.Property(e => e.Status)
-                    .IsRequired()
-                    .HasColumnType("bit(1)")
-                    .HasDefaultValueSql("'b\\'1\\''");
-            });
-
             modelBuilder.Entity<Unit>(entity =>
             {
                 entity.ToTable("unit");
@@ -1198,8 +944,6 @@ namespace Data.Entity
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
-
-                entity.Property(e => e.DateOfBirth).HasColumnType("date");
 
                 entity.Property(e => e.District).HasColumnType("varchar(255)");
 
