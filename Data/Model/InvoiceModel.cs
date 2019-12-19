@@ -8,12 +8,17 @@ namespace Data.Model
   public class InvoiceModel
   {
     public Employee employee { get; set; }
-    public string[] invoiceIds { get; set; }
+    public List<Invoice> invoiceList { get; set; }
 
-    public InvoiceModel(Employee employee, string[] invoiceIds)
+    public InvoiceModel()
+    {
+      invoiceList = new List<Invoice>();
+    }
+
+    public InvoiceModel(Employee employee, List<Invoice> invoiceList)
     {
       this.employee = employee;
-      this.invoiceIds = invoiceIds;
+      this.invoiceList = invoiceList;
     }
   }
 }

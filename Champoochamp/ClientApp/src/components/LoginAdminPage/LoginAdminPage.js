@@ -77,7 +77,7 @@ class LoginAdminPage extends Component {
           <LoginForm onSubmit={this.onSubmit}>
             <SectionTitle content="Đăng nhập" />
             <Form.Item>
-              {getFieldDecorator('email', {
+              {getFieldDecorator('userName', {
                 rules: [{ required: true, message: 'Vui lòng nhập tài khoản!' }]
               })(<Input type="text" placeholder="Tài khoản" />)}
             </Form.Item>

@@ -23,7 +23,7 @@ namespace API.Controllers
       {
         try
         {
-          return db.Invoice.Where(p => p.Status != -1).ToList();
+          return db.Invoice.ToList();
         }
         catch (Exception e)
         {

@@ -21,7 +21,7 @@ namespace API.Controllers
     [HttpPost]
     public Employee CheckLogin(Employee e)
     {
-      return employeeBusiness.checkLogin(e.Email, e.Password);      
+      return employeeBusiness.checkLogin(e.UserName, e.Password);      
     }
   }
 }

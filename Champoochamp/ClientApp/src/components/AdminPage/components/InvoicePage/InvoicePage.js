@@ -1,10 +1,11 @@
 ﻿import React, { Component, Fragment } from 'react';
-import { Table, Input, Button, Checkbox, Icon, notification } from 'antd';
+import { Table, Input, Button, Select, Icon, notification } from 'antd';
 
 import { callAPI } from '../../../../shared/utils';
 import { time } from '../../../../shared/constants';
 import { Link } from '../../../elements';
 
+const { Option } = Select;
 
 class InvoicePage extends Component {
   constructor(props) {
@@ -38,10 +39,17 @@ class InvoicePage extends Component {
 
   onSave = () => {
     const { employee } = this.props;
-    const arr = Array.from(this.mapCheckInvoice.keys());
+    const arr = [];
+    for (let [key, value] of myMap) {
+      const object = {
+        id: key,
+        status: value
+      };
+      arr.push(object);
+    }
     const data = {
       employee,
-      invoiceIds: arr
+      invoiceList: arr
     }
 
     callAPI('Invoice/UpdateInvoices', '', 'POST', data).then(res => {      
@@ -83,14 +91,10 @@ class InvoicePage extends Component {
     this.mapCheckInvoice = new Map();
   }
 
-  changeStatus = invoice => {
+  onChangeStatus = (invoice, value) => {
     const { mapCheckInvoice } = this;
-    if (mapCheckInvoice.has(invoice.id)) {
-      mapCheckInvoice.delete(invoice.id);
-    }
-    else {
-      mapCheckInvoice.set(invoice.id, '');
-    }
+    debugger
+    mapCheckInvoice.set(invoice.id, value);
     this.setState({ selectedRowKeys: Array.from(mapCheckInvoice.keys()) })
   }
 
@@ -173,7 +177,7 @@ class InvoicePage extends Component {
       {
         title: 'Tên khách hàng',
         dataIndex: 'customerName',
-        width: '20%',
+        width: '18%',
         ...this.getColumnSearchProps('customerName'),
         sorter: (a, b) => a.customerName.length - b.customerName.length,
         sortOrder: sortedInfo.columnKey === 'customerName' && sortedInfo.order,
@@ -182,7 +186,7 @@ class InvoicePage extends Component {
       {
         title: 'Số điện thoại',
         dataIndex: 'customerPhone',
-        width: '15%',
+        width: '17%',
         ...this.getColumnSearchProps('customerPhone'),
         sorter: (a, b) => a.customerPhone - b.customerPhone,
         sortOrder: sortedInfo.columnKey === 'customerPhone' && sortedInfo.order,
@@ -199,21 +203,30 @@ class InvoicePage extends Component {
       {
         title: 'Tổng tiền',
         dataIndex: 'total',
-        width: '20%',
+        width: '15%',
         ...this.getColumnSearchProps('total'),
         sorter: (a, b) => a.total - b.total,
         sortOrder: sortedInfo.columnKey === 'total' && sortedInfo.order,
       },
       {
         title: 'Trạng thái',
-        width: '15%',
+        width: '20%',
         render: (text, record) => (
           <Fragment>
             {
               isEdit ?
-                <Checkbox onChange={() => this.changeStatus(record)} defaultChecked={record.status === 1 ? true : false} />
+                <Select
+                  style={{width: 150}}
+                  defaultValue={record.status}
+                  onChange={val => this.onChangeStatus(record, val)}
+                >
+                  <Option value="Đã thanh toán">Đã thanh toán</Option>
+                  <Option value="Chưa thanh toán">Chưa thanh toán</Option>
+                  <Option value="Đang giao hàng">Đang giao hàng</Option>
+                  <Option value="Đã hủy">Đã hủy</Option>
+                </Select>
                 :
-                record.status === 1 ? <span>Đã thanh toán</span> : <span>Chưa thanh toán</span>
+                <span>{record.status}</span>
             }
           </Fragment>
         ),
@@ -222,9 +235,14 @@ class InvoicePage extends Component {
 
     return (
       <div>
-        <Link onClick={this.onEdit} content="Chỉnh sửa" />
+        {
+          isEdit ?
+            <Link onClick={this.onRollBack} content="Hủy" />
+            :
+            <Link onClick={this.onEdit} content="Chỉnh sửa" />
+        }        
         <Link onClick={this.onSave} content="Lưu" />
-        <Link onClick={this.onRollBack} content="Thay đổi trở lại" />
+        
         <Table
           rowKey='id'
           rowSelection={rowSelection}
