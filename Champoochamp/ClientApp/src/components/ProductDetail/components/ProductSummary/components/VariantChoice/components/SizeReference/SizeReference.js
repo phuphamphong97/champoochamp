@@ -9,7 +9,6 @@ const Wrapper = styled('div')`
   display: flex;
   justify-content: flex-end;
   margin-top: 10px;
-  max-width: 80vw;
 `;
 
 class SizeReference extends Component {

@@ -1,4 +1,3 @@
-/** @jsx jsx */
 import { css } from '@emotion/core';
 import { colors } from '../principles';
 

@@ -74,7 +74,7 @@ class UserHeader extends Component {
 
   onShowPanel = () => {
     this.setState({
-      showPanel: true
+      showPanel: !this.state.showPanel
     });
   };
 
@@ -119,7 +119,7 @@ class UserHeader extends Component {
                   onClick={() => {
                     onLogout();
                     getDiscount(null);
-                    this.onHidePanel();                    
+                    this.onHidePanel();
                   }}
                 >
                   Đăng xuất
