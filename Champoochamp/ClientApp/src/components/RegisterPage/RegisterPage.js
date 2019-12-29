@@ -42,7 +42,7 @@ const LoginButton = styled(Button)`
 `;
 
 const NotificationButton = styled(Button)`
-  margin-left: 10px;
+  margin: 5px 0 0 5px;
   padding: 0.5rem 1rem;
 `;
 
@@ -274,7 +274,7 @@ class RegisterPage extends Component {
                         required: true,
                         message: 'Vui lòng chọn phường / xã!'
                       }
-                    ],
+                    ]
                   })(
                     <Select showSearch placeholder="Phường / xã *">
                       {wardsData.map(ward => (

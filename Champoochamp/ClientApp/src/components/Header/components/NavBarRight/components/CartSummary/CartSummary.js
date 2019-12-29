@@ -47,6 +47,11 @@ const ProductName = styled('span')`
   ${typography.boldText};
 `;
 
+const ProductVariant = styled('span')`
+  ${typography.lightText};
+  display: block;
+`;
+
 const ProductPrice = styled('div')`
   color: ${colors.black};
   text-align: right;
@@ -66,7 +71,7 @@ const TotalPrice = styled('div')`
 `;
 
 const BackButton = styled('div')`
-  margin-top: 20px;
+  margin-top: 30px;
 `;
 
 class CartSummary extends Component {
@@ -124,8 +129,12 @@ class CartSummary extends Component {
           isShoppingCartChanged: false,
           shoppingCartList: res ? res.data : []
         },
-        () => {          
-          !user && localStorage.setItem(localStorageKey.storageShoppingCartKey, getStrShoppingCart(this.state.shoppingCartList))
+        () => {
+          !user &&
+            localStorage.setItem(
+              localStorageKey.storageShoppingCartKey,
+              getStrShoppingCart(this.state.shoppingCartList)
+            );
           if (this.state.isUserChanged) {
             this.setState({ isUserChanged: false });
             updateShoppingCart(
@@ -161,7 +170,7 @@ class CartSummary extends Component {
 
   renderCartItem = shoppingCartList =>
     shoppingCartList.map(item => {
-      const { product, id, thumbnail } = item.productVariant;
+      const { product, id, thumbnail, color, size } = item.productVariant;
 
       return (
         <CartItem key={id}>
@@ -173,6 +182,9 @@ class CartSummary extends Component {
               <ProductName>
                 {item.quantity} x {product.name}
               </ProductName>
+              <ProductVariant>
+                {color.name}, {size.name}
+              </ProductVariant>
               <Link onClick={() => this.onDeleteProduct(id)} content="Xoá" />
             </Col>
             <Col span={8}>

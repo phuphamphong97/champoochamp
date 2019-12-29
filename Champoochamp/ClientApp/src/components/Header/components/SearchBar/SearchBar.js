@@ -14,11 +14,18 @@ const Wrapper = styled('div')`
   background: ${colors.offWhite};
   border-radius: 5px;
   display: flex;
+  justify-content: space-between;
+  min-width: 300px;
   padding: 5px;
   position: relative;
+  width: 100%;
+
+  ${breakpoint.xl`
+    min-width: 250px;
+  `}
 
   ${breakpoint.lg`
-    display: none;
+    min-width: 0;
   `}
 `;
 
@@ -27,11 +34,7 @@ const SearchInput = styled('input')`
   border: none;
   color: ${colors.black};
   outline: none;
-  width: 250px;
-
-  ${breakpoint.xl`
-    width: 200px;
-  `}
+  width: 100%;
 `;
 
 const SearchIcon = styled(Icon)`
@@ -177,7 +180,11 @@ class SearchBar extends Component {
 
     return (
       <Wrapper>
-        <NavLink to={`/tim-kiem/${userInput}`} onClick={this.onHideSuggestions} disabled={!userInput}>
+        <NavLink
+          to={`/tim-kiem/${userInput}`}
+          onClick={this.onHideSuggestions}
+          disabled={!userInput}
+        >
           <SearchIcon type="search" title="Tìm kiếm" />
         </NavLink>
         <SearchInput

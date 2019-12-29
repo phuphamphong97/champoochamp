@@ -1,15 +1,16 @@
-﻿import React, { Component } from "react";
+﻿import React, { Component } from 'react';
 import { Router } from 'react-router-dom';
-import history from "../App/history";
+import history from '../App/history';
 
-import Header from "../Header";
-import RouterConfig from "../../router/RouterConfig";
+import Header from '../Header';
+import Footer from '../Footer';
+import RouterConfig from '../../router/RouterConfig';
 
 import { callAPI, setCookie, getCookie } from '../../shared/utils';
 import { localStorageKey } from '../../shared/constants';
 
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 class App extends Component {
   constructor(props) {
@@ -24,8 +25,9 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.checkLoginUserByCookie()
-    .then(res => !res && this.getStrShoppingCartByUser(this.state.user))
+    this.checkLoginUserByCookie().then(
+      res => !res && this.getStrShoppingCartByUser(this.state.user)
+    );
   }
 
   checkLoginUserByCookie = () => {
@@ -40,31 +42,37 @@ class App extends Component {
           setCookie(localStorageKey.passwordKey, data.password, 1);
           this.getLoginUser(res.data);
           return resolve(true);
-        }
-        else {
+        } else {
           return resolve(false);
         }
       });
-    });    
-  }
+    });
+  };
 
   getStrShoppingCartByUser = user => {
     const url = 'Cart/GetStrShoppingCart';
     const data = {
       email: user && user.email,
-      shoppingCarts: `${localStorage.getItem(localStorageKey.storageShoppingCartKey)}`
+      shoppingCarts: `${localStorage.getItem(
+        localStorageKey.storageShoppingCartKey
+      )}`
     };
 
-    callAPI(url, '', 'POST', data).then(res => this.setState({
-      strShoppingCart: res.data
-    }));
-  }
+    callAPI(url, '', 'POST', data).then(res =>
+      this.setState({
+        strShoppingCart: res.data
+      })
+    );
+  };
 
   getLoginUser = user => {
-    this.setState({
-      user
-    }, () => this.getStrShoppingCartByUser(this.state.user));
-  }
+    this.setState(
+      {
+        user
+      },
+      () => this.getStrShoppingCartByUser(this.state.user)
+    );
+  };
 
   getDiscount = discount => {
     this.setState({ discount });
@@ -72,25 +80,30 @@ class App extends Component {
 
   updateShoppingCart = strShoppingCart => {
     this.setState({ strShoppingCart });
-  }
+  };
 
   onRenderCart = isCartDrawerVisible => {
     this.setState({ isCartDrawerVisible });
-  }
+  };
 
   onRenderMenu = isRenderMenu => {
     if (isRenderMenu !== this.state.isRenderMenu) {
       this.setState({ isRenderMenu });
     }
-  }
+  };
 
   render() {
-    const { isCartDrawerVisible, isRenderMenu, user, strShoppingCart, discount } = this.state;
+    const {
+      isCartDrawerVisible,
+      isRenderMenu,
+      user,
+      strShoppingCart,
+      discount
+    } = this.state;
 
     return (
       <Router history={history}>
-        {
-          isRenderMenu &&
+        {isRenderMenu && (
           <Header
             user={user}
             getLoginUser={this.getLoginUser}
@@ -100,7 +113,7 @@ class App extends Component {
             isCartDrawerVisible={isCartDrawerVisible}
             getDiscount={this.getDiscount}
           />
-        }
+        )}
         <RouterConfig
           user={user}
           getLoginUser={this.getLoginUser}
@@ -111,6 +124,7 @@ class App extends Component {
           discount={discount}
           getDiscount={this.getDiscount}
         />
+        {isRenderMenu && <Footer />}
       </Router>
     );
   }

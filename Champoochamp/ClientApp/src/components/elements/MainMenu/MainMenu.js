@@ -1,61 +1,27 @@
-﻿/** @jsx jsx */
-import React, { Component } from 'react';
+﻿import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu } from 'antd';
-import { css, jsx } from '@emotion/core';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 
-import { breakpoint, colors, typography } from '../../../shared/principles';
+import { typography, breakpoint } from '../../../shared/principles';
+import { menuStyle, menuItemStyle } from '../../../shared/utils';
 
-const menuStyle = (mode)=> css`
-  border: none;
-  display: inline-block;
-  vertical-align: middle;
+const StyledMenu = styled(Menu)`
+  ${props => menuStyle(props.mode)};
+`;
 
-  .ant-menu-submenu {
-    border-bottom: 3px solid transparent;
-
-    &:active,
-    &:focus,
-    &:hover {
-      border-bottom: 3px solid ${colors.black};
-      outline: none;
-    }
-
-    .ant-menu-submenu-title {
-      padding: 0 15px;
-    }
-  }
-
-  ${breakpoint.lg`
-    display: ${mode === `horizontal` && `none`};
-  `}
+const StyledMenuItem = styled(Menu.Item)`
+  ${menuItemStyle};
 `;
 
 const MenuItemTitle = styled('span')`
   ${typography.boldText};
   letter-spacing: 1px;
-`;
 
-const menuItemGroupStyle = css`
-  .ant-menu-item {
-    background: none !important;
-
-    &:hover {
-      background: ${colors.lightGray} !important;
-      border: none;
-      outline: none;
-    }
-
-    a {
-      color: ${colors.darkGray};
-
-      &:hover {
-        color: ${colors.black};
-      }
-    }
-  }
+  ${breakpoint.lg`
+    font-weight: normal !important;
+  `}
 `;
 
 class MainMenu extends Component {
@@ -75,11 +41,7 @@ class MainMenu extends Component {
         );
       } else if (category.inverseParent.length > 0) {
         return (
-          <Menu.ItemGroup
-            key={category.id}
-            title={category.name}
-            css={menuItemGroupStyle}
-          >
+          <Menu.ItemGroup key={category.id} title={category.name}>
             {this.renderCategoryMenu(
               category.inverseParent,
               `${url}/${category.metaTitle}`
@@ -88,11 +50,11 @@ class MainMenu extends Component {
         );
       } else if (category.inverseParent.length === 0) {
         return (
-          <Menu.Item key={category.id}>
+          <StyledMenuItem key={category.id}>
             <NavLink to={`${url}/${category.metaTitle}-${category.id}`}>
               {category.name}
             </NavLink>
-          </Menu.Item>
+          </StyledMenuItem>
         );
       }
 
@@ -102,11 +64,11 @@ class MainMenu extends Component {
   renderCollectionMenu = collectionMenu =>
     collectionMenu.map(collection => {
       return (
-        <Menu.Item key={collection.id}>
+        <StyledMenuItem key={collection.id}>
           <NavLink to={`/bo-suu-tap/${collection.metaTitle}-${collection.id}`}>
             {collection.name}
           </NavLink>
-        </Menu.Item>
+        </StyledMenuItem>
       );
     });
 
@@ -114,12 +76,12 @@ class MainMenu extends Component {
     const { mode, categoryMenu, collectionMenu } = this.props;
 
     return (
-      <Menu mode={mode} css={()=>menuStyle(mode)}>
+      <StyledMenu mode={mode}>
         {this.renderCategoryMenu(categoryMenu, '/san-pham')}
         <Menu.SubMenu title={<MenuItemTitle>Bộ sưu tập</MenuItemTitle>}>
           {this.renderCollectionMenu(collectionMenu)}
         </Menu.SubMenu>
-      </Menu>
+      </StyledMenu>
     );
   }
 }

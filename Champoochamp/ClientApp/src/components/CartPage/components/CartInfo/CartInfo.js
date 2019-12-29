@@ -47,20 +47,19 @@ class CartInfo extends Component {
               message: 'Mã giảm giá không chính xác!',
               placement: 'topRight',
               onClick: () => notification.destroy(),
-              duration: time.durationNotification,
+              duration: time.durationNotification
             });
           }
-        })
+        });
       });
-    }
-    else {
-      this.setState({ discount: null })
+    } else {
+      this.setState({ discount: null });
     }
   };
 
   getCode = code => {
-    this.setState({ code })
-  }
+    this.setState({ code });
+  };
 
   checkout = () => {
     const { discount } = this.state;
@@ -74,7 +73,10 @@ class CartInfo extends Component {
     const { shoppingCartList } = this.props;
     const discountAmount = discount ? discount.rate : 0;
     const tempMoney = formatMoney(getTotalMoney(shoppingCartList), false);
-    const discountMoney = formatMoney(tempMoney * discountAmount / 100, false);
+    const discountMoney = formatMoney(
+      (tempMoney * discountAmount) / 100,
+      false
+    );
     const totalMoney = tempMoney - discountMoney;
 
     return (
@@ -82,37 +84,33 @@ class CartInfo extends Component {
         <ContentRow>
           <InfoText>Tạm tính: {formatMoney(tempMoney, true)}đ</InfoText>
         </ContentRow>
-        {
-          discountAmount > 0 &&
+        {discountAmount > 0 && (
           <ContentRow>
             <InfoText>Giảm giá: -{formatMoney(discountMoney, true)}đ</InfoText>
           </ContentRow>
-        }
+        )}
         <ContentRow>
           <TextInput
             id="name"
             placeholder="Nhập mã giảm giá"
-            width="200px"
+            width="150px"
             value={code}
             callback={this.getCode}
           />
+          <Button onClick={this.applyDiscountCode} title="Áp dụng" />
         </ContentRow>
         <ContentRow>
-          <Button onClick={this.applyDiscountCode} title="Áp dụng" width="250px" />
-        </ContentRow>
-        <ContentRow>
-          <InfoText isTotal>Tổng cộng: {formatMoney(totalMoney, true)}đ</InfoText>
+          <InfoText isTotal>
+            Tổng cộng: {formatMoney(totalMoney, true)}đ
+          </InfoText>
         </ContentRow>
         <ContentRow>
           <NavLink to="/">
-            <Link
-              content="Tiếp tục mua sắm"
-              iconType="fas fa-chevron-left"
-            />
+            <Link content="Tiếp tục mua sắm" iconType="fas fa-chevron-left" />
           </NavLink>
         </ContentRow>
         <ContentRow>
-          <Button onClick={this.checkout} title="Thanh toán" width="250px" />
+          <Button onClick={this.checkout} title="Thanh toán" width="255px" />
         </ContentRow>
       </Wrapper>
     );
