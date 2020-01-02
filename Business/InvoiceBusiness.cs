@@ -21,7 +21,8 @@ namespace Business
             if (invoice != null)
             {
               invoice.Status = i.Status;
-              invoice.ModifiedBy = invoiceModel.employee.Id;
+              invoice.ModifiedDate = DateTime.Now;
+              invoice.ModifiedBy = invoiceModel.employee.UserName;
             }
           }
 

@@ -76,7 +76,7 @@ class RouterConfig extends Component {
             />
           )}
         />
-        <Route path="/san-pham/:lv1?/:lv2?/:lv3?" component={CategoryPage} />
+        <Route path="/san-pham/:lv1?/:lv2?" component={CategoryPage} />
         <Route path="/bo-suu-tap/:collection" component={CollectionPage} />
         <Route path="/tim-kiem/:key?" component={SearchPage} />
         <Route
@@ -107,17 +107,14 @@ class RouterConfig extends Component {
         <Route
           path="/thanh-toan"
           render={props => 
-            strShoppingCart ?
-              <CheckoutPage
-                {...props}
-                user={user}
-                updateShoppingCart={updateShoppingCart}
-                discount={discount}
-                getDiscount={getDiscount}
-                history={history}
-              />
-              :
-              history.push('/')
+            <CheckoutPage
+              {...props}
+              user={user}
+              updateShoppingCart={updateShoppingCart}
+              discount={discount}
+              getDiscount={getDiscount}
+              history={history}
+            />
           }
         />
         <Route

@@ -25,7 +25,7 @@ namespace API.Controllers
       {
         try
         {
-          return db.Category.ToList();
+          return db.Category.Where(p => p.Status == true).ToList();
         }
         catch (Exception e)
         {
@@ -43,7 +43,7 @@ namespace API.Controllers
       {
         try
         {
-          return categoryBusiness.shortCategoryList(db.Category.ToList());
+          return categoryBusiness.shortCategoryList(db.Category.Where(p => p.Status == true).ToList());
         }
         catch (Exception e)
         {

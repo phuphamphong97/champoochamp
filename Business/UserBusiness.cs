@@ -16,8 +16,8 @@ namespace Business
       {
         try
         {
-          string passwordMD5 = PasswordConverter.MD5Hash_Encode(u.Password);
-          User user = db.User.Where(p => String.Compare(p.Email, u.Email, false) == 0 && p.Password == passwordMD5).SingleOrDefault();
+          string passwordMD5 = PasswordConverter.Encrypt(u.Password);
+          User user = db.User.Where(p => String.Compare(p.Email, u.Email, false) == 0 && p.Password == passwordMD5 && p.Status == true).SingleOrDefault();
           if (user != null && !String.IsNullOrEmpty(u.ShoppingCarts))
           {
             if(String.IsNullOrEmpty(user.ShoppingCarts))
@@ -49,13 +49,13 @@ namespace Business
       {
         try
         {
-          User u = db.User.Where(p => String.Compare(p.Email, user.Email, false) == 0).SingleOrDefault();
+          User u = db.User.Where(p => String.Compare(p.Email, user.Email, false) == 0 && p.Status == true).SingleOrDefault();
           if (u != null)
           {
             return 0;
           }          
 
-          user.Password = PasswordConverter.MD5Hash_Encode(user.Password);
+          user.Password = PasswordConverter.Encrypt(user.Password);
           if (String.IsNullOrEmpty(user.Avatar))
           {
             user.Avatar = "default.png";
@@ -79,13 +79,13 @@ namespace Business
       {
         try
         {
-          User user = db.User.Where(p => String.Compare(p.Email, email, false) == 0 && p.VerificationCode == verificationCode).SingleOrDefault();
+          User user = db.User.Where(p => String.Compare(p.Email, email, false) == 0 && p.VerificationCode == verificationCode && p.Status == true).SingleOrDefault();
           if (user == null)
           {
             return null;
           }
 
-          user.Password = PasswordConverter.MD5Hash_Encode(password);
+          user.Password = PasswordConverter.Encrypt(password);
           user.VerificationCode = string.Empty;
 
           db.SaveChanges();
@@ -105,7 +105,7 @@ namespace Business
       {
         try
         {
-          User user = db.User.Where(p => String.Compare(p.Email, email, false) == 0).SingleOrDefault();
+          User user = db.User.Where(p => String.Compare(p.Email, email, false) == 0 && p.Status == true).SingleOrDefault();
           if (user == null)
           {
             return 0;

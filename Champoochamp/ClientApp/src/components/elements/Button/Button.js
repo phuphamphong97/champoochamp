@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 
-import { colors, typography } from '../../../shared/principles';
+import { colors } from '../../../shared/principles';
 
 const Wrapper = styled('button')`
   background: ${props => (props.isSecondary ? colors.white : colors.black)};

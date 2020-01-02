@@ -1,3 +1,4 @@
+import Avatar from './Avatar';
 import AwesomeIcon from './AwesomeIcon';
 import Button from './Button';
 import ColorRow from './ColorRow';
@@ -14,6 +15,7 @@ import TextInput from './TextInput';
 import TopProducts from './TopProducts';
 
 export {
+  Avatar,
   AwesomeIcon,
   Button,
   ColorRow,

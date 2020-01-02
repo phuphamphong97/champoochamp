@@ -7,6 +7,7 @@ import formatCheckbox from './formatCheckbox';
 import formatForm from './formatForm';
 import formatMoney from './formatMoney';
 import formatRadio from './formatRadio';
+import getArrByMap from './getArrByMap';
 import getCartTotalQuantity from './getCartTotalQuantity';
 import getCookie from './getCookie';
 import getIdInMetaTitle from './getIdInMetaTitle';
@@ -31,6 +32,7 @@ export {
   formatForm,
   formatMoney,
   formatRadio,
+  getArrByMap,
   getCartTotalQuantity,
   getCookie,
   getIdInMetaTitle,

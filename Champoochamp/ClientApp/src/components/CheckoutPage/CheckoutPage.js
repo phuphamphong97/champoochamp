@@ -1,4 +1,5 @@
-﻿import React, { Component } from 'react';
+﻿import React, { Component, Fragment } from 'react';
+import { NavLink } from 'react-router-dom';
 import { Row, Col, Form, notification } from 'antd';
 import styled from '@emotion/styled';
 
@@ -11,13 +12,17 @@ import {
 import { localStorageKey, time } from '../../shared/constants';
 import { typography } from '../../shared/principles';
 
-import { PageContainer, Section, Button } from '../elements';
+import { PageContainer, Section, SectionTitle, Link } from '../elements';
 import InvoiceInfo from './components/InvoiceInfo';
 import CartInfo from './components/CartInfo';
 import PaymentMethod from './components/PaymentMethod';
 
 const SmallTitle = styled('h4')`
   ${typography.smTitle};
+`;
+
+const BackButton = styled('div')`
+  margin-top: 10px;
 `;
 
 class CheckoutPage extends Component {
@@ -96,26 +101,40 @@ class CheckoutPage extends Component {
 
     return (
       <PageContainer>
-        <Row gutter={32}>
-          <Form onSubmit={this.onSubmit}>
-            <Col xs={24} sm={12} md={14}>
-              <Section>
-                <SmallTitle>Thông tin giao hàng</SmallTitle>
-                <InvoiceInfo user={user} form={form} getTransportFee={this.getTransportFee} />
-              </Section>
-              <Section>
-                <SmallTitle>Phương thức thanh toán</SmallTitle>
-                <PaymentMethod />
-              </Section>
-            </Col>
-            <Col xs={24} sm={12} md={10}>
-              <Section>
-                <SmallTitle>Chi tiết đơn hàng</SmallTitle>
-                <CartInfo shoppingCartList={shoppingCartList} discount={discount} getDiscount={getDiscount} transportFee={transportFee}/>
-              </Section>
-            </Col>
-          </Form>
-        </Row>
+        {shoppingCartList.length > 0 ? (
+          <Row gutter={32}>
+            <Form onSubmit={this.onSubmit}>
+              <Col xs={24} sm={12} md={14}>
+                <Section>
+                  <SmallTitle>Thông tin giao hàng</SmallTitle>
+                  <InvoiceInfo user={user} form={form} getTransportFee={this.getTransportFee} />
+                </Section>
+                <Section>
+                  <SmallTitle>Phương thức thanh toán</SmallTitle>
+                  <PaymentMethod />
+                </Section>
+              </Col>
+              <Col xs={24} sm={12} md={10}>
+                <Section>
+                  <SmallTitle>Chi tiết đơn hàng</SmallTitle>
+                  <CartInfo shoppingCartList={shoppingCartList} discount={discount} getDiscount={getDiscount} transportFee={transportFee} />
+                </Section>
+              </Col>
+            </Form>
+          </Row>
+        ) : (
+          <Section>
+            <SectionTitle content="Thanh toán" />
+            <Fragment>
+              <span>Không có sản phẩm nào để thanh toán.</span>
+              <NavLink to="/">
+                <BackButton>
+                  <Link content="Về trang chủ" iconType="fas fa-chevron-left" />
+                </BackButton>
+              </NavLink>
+            </Fragment>
+          </Section>
+        )}
       </PageContainer>
     );
   }

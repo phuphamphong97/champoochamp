@@ -12,10 +12,10 @@ namespace Data.Entity
 
         public int Id { get; set; }
         public string ImageUrls { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public short CreatedBy { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public string CreatedBy { get; set; }
         public DateTime? ModifiedDate { get; set; }
-        public short? ModifiedBy { get; set; }
+        public string ModifiedBy { get; set; }
         public bool? Status { get; set; }
 
         public virtual ICollection<ProductVariant> ProductVariant { get; set; }

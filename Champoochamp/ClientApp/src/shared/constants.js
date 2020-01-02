@@ -3,12 +3,15 @@ const prophetPort = 'http://localhost:3000';
 
 const adminPage = {
   invoicePage: 'invoicePage',
-  invoiceDetailPage: 'invoiceDetailPage',
+  discountPage: 'discountPage',
   productPage: 'productPage',
   categoryPage: 'categoryPage',
   collectionPage: 'collectionPage',
   colorPage: 'colorPage',
   sizePage: 'sizePage',
+  brandPage: 'brandPage',
+  unitPage: 'unitPage',  
+  suplierPage: 'suplierPage',
   userPage: 'userPage',
   employeePage: 'employeePage',
   prophetPage: 'prophetPage'
@@ -17,7 +20,9 @@ const adminPage = {
 const localStorageKey = {
   storageShoppingCartKey: 'MyShoppingCart',
   emailKey: 'ChampoochampEmail',
-  passwordKey: 'ChampoochampPassword'
+  passwordKey: 'ChampoochampPassword',
+  userNameAdminKey: 'ChampoochampUserNameAdmin',
+  passwordAdminKey: 'ChampoochampPasswordAdmin'
 }
 
 const champoochampAddress = {
@@ -42,7 +47,8 @@ const filtersGroup = {
 const imagesGroup = {
   products: 'products',
   users: 'users',
-  collections: 'collections'
+  collections: 'collections',
+  logos: 'logos'
 };
 
 const time = {
@@ -90,6 +96,11 @@ const topProductsName = {
   relatedProducts: 'Sản phẩm liên quan'
 };
 
+const typeForm = {
+  create: 'create',
+  update: 'update'
+};
+
 const viewportWidth = {
   sm: 575,
   md: 767,
@@ -112,5 +123,6 @@ export {
   searchGroup,
   sortsGroup,
   topProductsName,
+  typeForm,
   viewportWidth
 };

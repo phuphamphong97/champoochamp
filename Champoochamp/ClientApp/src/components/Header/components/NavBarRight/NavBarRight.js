@@ -1,4 +1,5 @@
 ﻿import React, { Component } from 'react';
+import axios from "axios";
 import { withRouter } from 'react-router-dom';
 import { Icon, Drawer, notification } from 'antd';
 import styled from '@emotion/styled';
@@ -86,19 +87,17 @@ class NavBarRight extends Component {
   }
 
   componentDidMount() {
-    callAPI(`Search/GetSearchData`).then(res =>
-      this.setState({ searchData: res.data })
-    );
-    callAPI(`Category/GetAllCategories`, `?$filter=parent eq null`).then(res =>
+    axios.all([
+      callAPI(`Search/GetSearchData`),
+      callAPI(`Category/GetAllCategories`, `?$filter=parent eq null`),
+      callAPI(`Collection/GetAllCollections`)
+    ]).then(axios.spread((...res) => {
       this.setState({
-        categoryMenu: res.data
-      })
-    );
-    callAPI(`Collection/GetAllCollections`).then(res =>
-      this.setState({
-        collectionMenu: res.data
-      })
-    );
+        searchData: res[0].data,
+        categoryMenu: res[1].data,
+        collectionMenu: res[2].data
+      });
+    }));
   }
 
   onShowDrawer = drawerType => {

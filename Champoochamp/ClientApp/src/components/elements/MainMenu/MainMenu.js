@@ -1,5 +1,5 @@
 ﻿/** @jsx jsx */
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu } from 'antd';
 import { css, jsx } from '@emotion/core';

@@ -22,7 +22,7 @@ namespace API.Controllers
       {
         try
         {
-          return db.Collection.ToList();
+          return db.Collection.Where(p => p.Status == true).ToList();
         }
         catch (Exception e)
         {

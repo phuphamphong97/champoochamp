@@ -14,45 +14,47 @@ using Microsoft.Extensions.Options;
 
 namespace API
 {
-    public class Startup
+  public class Startup
+  {
+    public Startup(IConfiguration configuration)
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddCors();
-            services.AddOData();
-            services.AddMvc()
-                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                    .AddJsonOptions(opt => opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-      
-            app.UseCors(builder => builder.WithOrigins(Configuration.GetSection("main_server").Value).AllowAnyHeader());
-            app.UseHttpsRedirection();
-            app.UseMvc(b =>
-            {
-                b.EnableDependencyInjection();
-                b.Expand().Select().OrderBy().Filter().MaxTop(100).Count();
-            });
-        }
+      Configuration = configuration;
     }
+
+    public IConfiguration Configuration { get; }
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
+    {
+      services.AddCors();
+      services.AddOData();
+      services.AddMvc()
+              .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+              .AddJsonOptions(opt => opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    {
+      if (env.IsDevelopment())
+      {
+        app.UseDeveloperExceptionPage();
+      }
+      else
+      {
+        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+        app.UseHsts();
+      }
+
+      app.UseCors(builder => builder.WithOrigins(Configuration.GetSection("main_server").Value)
+                                                .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                                                .AllowAnyHeader());
+      app.UseHttpsRedirection();
+      app.UseMvc(b =>
+      {
+        b.EnableDependencyInjection();
+        b.Expand().Select().OrderBy().Filter().MaxTop(100).Count();
+      });
+    }
+  }
 }

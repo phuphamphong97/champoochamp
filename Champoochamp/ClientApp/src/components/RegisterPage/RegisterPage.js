@@ -175,7 +175,7 @@ class RegisterPage extends Component {
                 <Form.Item>
                   {getFieldDecorator('email', {
                     rules: [{ required: true, message: 'Vui lòng nhập email!' }]
-                  })(<Input placeholder="Email *" />)}
+                  })(<Input type="email" placeholder="Email *" />)}
                 </Form.Item>
               </Col>
               <Col xs={24} md={12}>

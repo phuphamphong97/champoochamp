@@ -96,7 +96,7 @@ class TopProducts extends Component {
     else if (this.props.sectionTitle === topProductsName.relatedProducts) {
       const { product } = this.props;
       const query = `?$top=10`;
-      const url = `Product/GetRelativeProducts-${product.id}-${product.collectionId ? product.collectionId : 0}-${product.categoryId}`;
+      const url = `Product/GetRelativeProducts-${product.id}-${product.categoryId}`;
       
       callAPI(url, query).then(res =>
         this.setState({

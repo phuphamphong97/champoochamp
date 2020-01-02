@@ -15,6 +15,23 @@ namespace API.Controllers
   {
     UserBusiness userBusiness = new UserBusiness();
 
+    [Route("GetAllUsers")]
+    public IEnumerable<User> GetAllUsers()
+    {
+      using (champoochampContext db = new champoochampContext())
+      {
+        try
+        {
+          return db.User.Where(p => p.Status == true).ToList();
+        }
+        catch (Exception e)
+        {
+          Console.WriteLine(e.Message);
+          return null;
+        }
+      }
+    }
+
     [Route("GetUserByEmail-{userEmail}")]
     public User GetUserByEmail(string userEmail)
     {
@@ -22,7 +39,7 @@ namespace API.Controllers
       {
         try
         {
-          return db.User.Where(p => String.Compare(p.Email, userEmail, false) == 0).SingleOrDefault();
+          return db.User.Where(p => String.Compare(p.Email, userEmail, false) == 0 && p.Status == true).SingleOrDefault();
         }
         catch (Exception e)
         {

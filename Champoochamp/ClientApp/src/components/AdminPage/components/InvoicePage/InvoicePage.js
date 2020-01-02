@@ -1,7 +1,7 @@
 ﻿import React, { Component, Fragment } from 'react';
 import { Table, Input, Button, Select, Icon, notification } from 'antd';
 
-import { callAPI } from '../../../../shared/utils';
+import { callAPI, getArrByMap, formatMoney } from '../../../../shared/utils';
 import { time } from '../../../../shared/constants';
 import { Link } from '../../../elements';
 
@@ -18,9 +18,6 @@ class InvoicePage extends Component {
       invoiceList: [],
       isEdit: false
     };
-  }
-
-  componentWillMount() {
     this.mapCheckInvoice = new Map();
   }
 
@@ -38,19 +35,11 @@ class InvoicePage extends Component {
   }
 
   onSave = () => {
-    const { employee } = this.props;
-    const arr = [];
-    for (let [key, value] of myMap) {
-      const object = {
-        id: key,
-        status: value
-      };
-      arr.push(object);
-    }
+    const { employee } = this.props;    
     const data = {
       employee,
-      invoiceList: arr
-    }
+      invoiceList: getArrByMap(this.mapCheckInvoice)
+    };
 
     callAPI('Invoice/UpdateInvoices', '', 'POST', data).then(res => {      
       this.mapCheckInvoice = new Map();
@@ -93,7 +82,7 @@ class InvoicePage extends Component {
 
   onChangeStatus = (invoice, value) => {
     const { mapCheckInvoice } = this;
-    debugger
+    
     mapCheckInvoice.set(invoice.id, value);
     this.setState({ selectedRowKeys: Array.from(mapCheckInvoice.keys()) })
   }
@@ -170,8 +159,7 @@ class InvoicePage extends Component {
       selectedRowKeys,
       onChange: this.onSelectChange,
     };
-    sortedInfo = sortedInfo || {};
-    
+    sortedInfo = sortedInfo || {};    
 
     const columns = [
       {
@@ -179,7 +167,7 @@ class InvoicePage extends Component {
         dataIndex: 'customerName',
         width: '18%',
         ...this.getColumnSearchProps('customerName'),
-        sorter: (a, b) => a.customerName.length - b.customerName.length,
+        sorter: (a, b) => a.customerName.localeCompare(b.customerName),
         sortOrder: sortedInfo.columnKey === 'customerName' && sortedInfo.order,
         ellipsis: true,
       },
@@ -188,7 +176,7 @@ class InvoicePage extends Component {
         dataIndex: 'customerPhone',
         width: '17%',
         ...this.getColumnSearchProps('customerPhone'),
-        sorter: (a, b) => a.customerPhone - b.customerPhone,
+        sorter: (a, b) => a.customerPhone.localeCompare(b.customerPhone),
         sortOrder: sortedInfo.columnKey === 'customerPhone' && sortedInfo.order,
         ellipsis: true,
       },
@@ -197,8 +185,16 @@ class InvoicePage extends Component {
         dataIndex: 'customerAddress',
         width: '30%',
         ...this.getColumnSearchProps('customerAddress'),
-        sorter: (a, b) => a.customerAddress.length - b.customerAddress.length,
+        sorter: (a, b) => a.customerAddress.localeCompare(b.customerAddress),
         sortOrder: sortedInfo.columnKey === 'customerAddress' && sortedInfo.order,
+        render: (text, record) => (
+          <span>
+            {record.customerAddress ? `${record.customerAddress}, ` : ``}
+            {record.customerWard ? `${record.customerWard}, ` : ``}
+            {record.customerDistrict ? `${record.customerDistrict}, ` : ``}
+            {record.customerProvince ? `${record.customerProvince}` : ``}
+          </span>
+        ),
       },
       {
         title: 'Tổng tiền',
@@ -207,10 +203,15 @@ class InvoicePage extends Component {
         ...this.getColumnSearchProps('total'),
         sorter: (a, b) => a.total - b.total,
         sortOrder: sortedInfo.columnKey === 'total' && sortedInfo.order,
+        render: (text, record) => (<span>{formatMoney(record.total, true)}đ</span>),
       },
       {
         title: 'Trạng thái',
+        dataIndex: 'status',
         width: '20%',
+        ...this.getColumnSearchProps('status'),
+        sorter: (a, b) => a.status.localeCompare(b.status),
+        sortOrder: sortedInfo.columnKey === 'status' && sortedInfo.order,
         render: (text, record) => (
           <Fragment>
             {

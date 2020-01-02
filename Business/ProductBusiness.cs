@@ -64,11 +64,6 @@ namespace Business
     {
       foreach (Product p in productList)
       {
-        if (p.Collection != null)
-        {
-          p.Collection.Product = null;
-        }
-
         foreach (ProductVariant pv in p.ProductVariant)
         {
           if (pv.Color != null)

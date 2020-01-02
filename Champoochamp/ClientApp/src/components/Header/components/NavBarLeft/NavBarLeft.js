@@ -1,8 +1,9 @@
 ﻿import React, { Component } from 'react';
+import axios from "axios";
 import { NavLink } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { callAPI } from '../../../../shared/utils';
+import { callAPI, callMulAPIs } from '../../../../shared/utils';
 import { breakpoint } from '../../../../shared/principles';
 import logo from '../../../../assets/logo.png';
 
@@ -29,16 +30,15 @@ class NavBarLeft extends Component {
   }
 
   componentDidMount() {
-    callAPI(`Category/GetAllCategories`, `?$filter=parent eq null`).then(res =>
+    axios.all([
+      callAPI(`Category/GetAllCategories`, `?$filter=parent eq null`),
+      callAPI(`Collection/GetAllCollections`)
+    ]).then(axios.spread((...res) => {
       this.setState({
-        categoryMenu: res.data
-      })
-    );
-    callAPI(`Collection/GetAllCollections`).then(res =>
-      this.setState({
-        collectionMenu: res.data
-      })
-    );
+        categoryMenu: res[0].data,
+        collectionMenu: res[1].data
+      });
+    }));
   }
 
   render() {
