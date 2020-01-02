@@ -7,6 +7,7 @@ export { default as formatCheckbox } from './formatCheckbox';
 export { default as formatForm } from './formatForm';
 export { default as formatMoney } from './formatMoney';
 export { default as formatRadio } from './formatRadio';
+export { default as getArrByMap } from './getArrByMap';
 export { default as getCartTotalQuantity } from './getCartTotalQuantity';
 export { default as getCookie } from './getCookie';
 export { default as getIdInMetaTitle } from './getIdInMetaTitle';

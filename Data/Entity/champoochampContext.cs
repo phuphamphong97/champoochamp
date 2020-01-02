@@ -18,6 +18,7 @@ namespace Data.Entity
         public virtual DbSet<Brand> Brand { get; set; }
         public virtual DbSet<Category> Category { get; set; }
         public virtual DbSet<Collection> Collection { get; set; }
+        public virtual DbSet<CollectionDetail> CollectionDetail { get; set; }
         public virtual DbSet<Color> Color { get; set; }
         public virtual DbSet<Contact> Contact { get; set; }
         public virtual DbSet<Discount> Discount { get; set; }
@@ -52,29 +53,25 @@ namespace Data.Entity
             {
                 entity.ToTable("brand");
 
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.Country).HasColumnType("varchar(255)");
+                entity.Property(e => e.Country).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.CreatedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.DisplayOrder)
-                    .HasColumnType("smallint(6)")
-                    .HasDefaultValueSql("'1'");
+                entity.Property(e => e.Logo).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.Logo).HasColumnType("varchar(255)");
+                entity.Property(e => e.MetaTitle).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.MetaTitle).HasColumnType("varchar(255)");
-
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Name).HasColumnType("varchar(255)");
+                entity.Property(e => e.Name).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Status)
                     .IsRequired()
@@ -89,34 +86,28 @@ namespace Data.Entity
                 entity.HasIndex(e => e.ParentId)
                     .HasName("fk_category__category");
 
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.CreatedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.DisplayOrder)
-                    .HasColumnType("smallint(6)")
-                    .HasDefaultValueSql("'1'");
+                entity.Property(e => e.MetaTitle).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.MetaTitle).HasColumnType("varchar(255)");
-
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Name).HasColumnType("varchar(255)");
+                entity.Property(e => e.Name).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.ParentId).HasColumnType("smallint(6)");
+                entity.Property(e => e.ParentId).HasColumnType("int(11)");
 
                 entity.Property(e => e.Status)
                     .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("'b\\'1\\''");
-
-                entity.Property(e => e.Thumbnail).HasColumnType("varchar(255)");
 
                 entity.HasOne(d => d.Parent)
                     .WithMany(p => p.InverseParent)
@@ -128,53 +119,93 @@ namespace Data.Entity
             {
                 entity.ToTable("collection");
 
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.CreatedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.DisplayOrder)
-                    .HasColumnType("smallint(6)")
-                    .HasDefaultValueSql("'1'");
+                entity.Property(e => e.MetaTitle).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.MetaTitle).HasColumnType("varchar(255)");
-
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Name).HasColumnType("varchar(255)");
+                entity.Property(e => e.Name).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Status)
                     .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("'b\\'1\\''");
 
-                entity.Property(e => e.Thumbnail).HasColumnType("varchar(255)");
+                entity.Property(e => e.Thumbnail).HasColumnType("varchar(200)");
+            });
+
+            modelBuilder.Entity<CollectionDetail>(entity =>
+            {
+                entity.ToTable("collection_detail");
+
+                entity.HasIndex(e => e.CollectionId)
+                    .HasName("fk_collection_detail__collection");
+
+                entity.HasIndex(e => e.ProductId)
+                    .HasName("fk_collection_detail__product");
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.CollectionId).HasColumnType("int(11)");
+
+                entity.Property(e => e.CreatedBy).HasColumnType("varchar(200)");
+
+                entity.Property(e => e.CreatedDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("'current_timestamp()'");
+
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
+
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.ProductId).HasColumnType("int(11)");
+
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("'b\\'1\\''");
+
+                entity.HasOne(d => d.Collection)
+                    .WithMany(p => p.CollectionDetail)
+                    .HasForeignKey(d => d.CollectionId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_collection_detail__collection");
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.CollectionDetail)
+                    .HasForeignKey(d => d.ProductId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_collection_detail__product");
             });
 
             modelBuilder.Entity<Color>(entity =>
             {
                 entity.ToTable("color");
 
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.Code).HasColumnType("varchar(25)");
+                entity.Property(e => e.Code).HasColumnType("varchar(20)");
 
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.CreatedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Name).HasColumnType("varchar(255)");
+                entity.Property(e => e.Name).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Status)
                     .IsRequired()
@@ -188,60 +219,60 @@ namespace Data.Entity
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.Address).HasColumnType("varchar(255)");
+                entity.Property(e => e.Address).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.CreatedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.District).HasColumnType("varchar(255)");
+                entity.Property(e => e.District).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.Email).HasColumnType("varchar(255)");
+                entity.Property(e => e.Email).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.Logo).HasColumnType("varchar(255)");
+                entity.Property(e => e.Logo).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Name).HasColumnType("varchar(255)");
+                entity.Property(e => e.Name).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.Phone).HasColumnType("varchar(255)");
+                entity.Property(e => e.Phone).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.Province).HasColumnType("varchar(255)");
+                entity.Property(e => e.Province).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Status)
                     .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("'b\\'1\\''");
 
-                entity.Property(e => e.Ward).HasColumnType("varchar(255)");
+                entity.Property(e => e.Ward).HasColumnType("varchar(200)");
             });
 
             modelBuilder.Entity<Discount>(entity =>
             {
                 entity.ToTable("discount");
 
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.Code).HasColumnType("varchar(255)");
+                entity.Property(e => e.Code).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.CreatedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Name).HasColumnType("varchar(2555)");
+                entity.Property(e => e.Name).HasColumnType("varchar(2000)");
 
                 entity.Property(e => e.Rate)
-                    .HasColumnType("smallint(6)")
+                    .HasColumnType("int(11)")
                     .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.Status)
@@ -254,29 +285,29 @@ namespace Data.Entity
             {
                 entity.ToTable("employee");
 
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.Address).HasColumnType("varchar(2555)");
+                entity.Property(e => e.Address).HasColumnType("varchar(2000)");
 
-                entity.Property(e => e.Avatar).HasColumnType("varchar(255)");
+                entity.Property(e => e.Avatar).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.CreatedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Name).HasColumnType("varchar(255)");
+                entity.Property(e => e.Name).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Password)
                     .IsRequired()
-                    .HasColumnType("varchar(2555)");
+                    .HasColumnType("varchar(2000)");
 
-                entity.Property(e => e.Phone).HasColumnType("varchar(255)");
+                entity.Property(e => e.Phone).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Status)
                     .IsRequired()
@@ -285,7 +316,7 @@ namespace Data.Entity
 
                 entity.Property(e => e.UserName)
                     .IsRequired()
-                    .HasColumnType("varchar(255)");
+                    .HasColumnType("varchar(200)");
             });
 
             modelBuilder.Entity<Feedback>(entity =>
@@ -297,15 +328,15 @@ namespace Data.Entity
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.Content).HasColumnType("varchar(2555)");
+                entity.Property(e => e.Content).HasColumnType("varchar(2000)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.Email).HasColumnType("varchar(255)");
+                entity.Property(e => e.Email).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.Name).HasColumnType("varchar(255)");
+                entity.Property(e => e.Name).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Status)
                     .IsRequired()
@@ -327,15 +358,15 @@ namespace Data.Entity
                 entity.HasIndex(e => e.SuplierId)
                     .HasName("fk_goods_receipt__suplier");
 
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.CreatedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
@@ -344,7 +375,7 @@ namespace Data.Entity
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("'b\\'1\\''");
 
-                entity.Property(e => e.SuplierId).HasColumnType("smallint(6)");
+                entity.Property(e => e.SuplierId).HasColumnType("int(11)");
 
                 entity.Property(e => e.Total)
                     .HasColumnType("decimal(10,0)")
@@ -369,15 +400,15 @@ namespace Data.Entity
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.CreatedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.GoodsReceiptId).HasColumnType("smallint(6)");
+                entity.Property(e => e.GoodsReceiptId).HasColumnType("int(11)");
 
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
@@ -387,10 +418,10 @@ namespace Data.Entity
 
                 entity.Property(e => e.ProductVariantId)
                     .IsRequired()
-                    .HasColumnType("varchar(255)");
+                    .HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Quantity)
-                    .HasColumnType("smallint(6)")
+                    .HasColumnType("int(11)")
                     .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.Status)
@@ -431,36 +462,36 @@ namespace Data.Entity
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.CustomerAddress).HasColumnType("varchar(255)");
+                entity.Property(e => e.CustomerAddress).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.CustomerDistrict).HasColumnType("varchar(255)");
+                entity.Property(e => e.CustomerDistrict).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.CustomerEmail).HasColumnType("varchar(255)");
+                entity.Property(e => e.CustomerEmail).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.CustomerName).HasColumnType("varchar(255)");
+                entity.Property(e => e.CustomerName).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.CustomerPhone).HasColumnType("varchar(255)");
+                entity.Property(e => e.CustomerPhone).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.CustomerProvince).HasColumnType("varchar(255)");
+                entity.Property(e => e.CustomerProvince).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.CustomerWard).HasColumnType("varchar(255)");
+                entity.Property(e => e.CustomerWard).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.DiscountId).HasColumnType("smallint(6)");
+                entity.Property(e => e.DiscountId).HasColumnType("int(11)");
 
-                entity.Property(e => e.Message).HasColumnType("varchar(2555)");
+                entity.Property(e => e.Message).HasColumnType("varchar(2000)");
 
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.PaymentMethod).HasColumnType("varchar(255)");
+                entity.Property(e => e.PaymentMethod).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ShipMoney)
                     .HasColumnType("decimal(10,0)")
                     .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.Status)
-                    .HasColumnType("varchar(255)")
+                    .HasColumnType("varchar(200)")
                     .HasDefaultValueSql("'Chưa thanh toán'");
 
                 entity.Property(e => e.Total)
@@ -490,7 +521,7 @@ namespace Data.Entity
                 entity.HasIndex(e => e.ProductVariantId)
                     .HasName("fk_invoice_detail__product_variant");
 
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
@@ -498,7 +529,7 @@ namespace Data.Entity
 
                 entity.Property(e => e.InvoiceId).HasColumnType("int(11)");
 
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
@@ -508,10 +539,10 @@ namespace Data.Entity
 
                 entity.Property(e => e.ProductVariantId)
                     .IsRequired()
-                    .HasColumnType("varchar(255)");
+                    .HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Quantity)
-                    .HasColumnType("smallint(6)")
+                    .HasColumnType("int(11)")
                     .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.Status)
@@ -540,19 +571,19 @@ namespace Data.Entity
             {
                 entity.ToTable("material");
 
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.CreatedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Name).HasColumnType("varchar(255)");
+                entity.Property(e => e.Name).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Status)
                     .IsRequired()
@@ -570,9 +601,6 @@ namespace Data.Entity
                 entity.HasIndex(e => e.CategoryId)
                     .HasName("fk_product__category");
 
-                entity.HasIndex(e => e.CollectionId)
-                    .HasName("fk_product__collection");
-
                 entity.HasIndex(e => e.MaterialId)
                     .HasName("fk_product__material");
 
@@ -582,37 +610,35 @@ namespace Data.Entity
                 entity.HasIndex(e => e.UnitId)
                     .HasName("fk_product__unit");
 
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.BrandId).HasColumnType("smallint(6)");
+                entity.Property(e => e.BrandId).HasColumnType("int(11)");
 
-                entity.Property(e => e.CategoryId).HasColumnType("smallint(6)");
+                entity.Property(e => e.CategoryId).HasColumnType("int(11)");
 
-                entity.Property(e => e.CollectionId).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.CreatedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.Description).HasColumnType("varchar(2555)");
+                entity.Property(e => e.Description).HasColumnType("varchar(2000)");
 
-                entity.Property(e => e.Detail).HasColumnType("varchar(2555)");
+                entity.Property(e => e.Detail).HasColumnType("varchar(2000)");
 
                 entity.Property(e => e.DiscountAmount)
-                    .HasColumnType("smallint(6)")
+                    .HasColumnType("int(11)")
                     .HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.MaterialId).HasColumnType("smallint(6)");
+                entity.Property(e => e.MaterialId).HasColumnType("int(11)");
 
-                entity.Property(e => e.MetaTitle).HasColumnType("varchar(255)");
+                entity.Property(e => e.MetaTitle).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Name).HasColumnType("varchar(255)");
+                entity.Property(e => e.Name).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Price)
                     .HasColumnType("decimal(10,0)")
@@ -627,19 +653,19 @@ namespace Data.Entity
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("'b\\'1\\''");
 
-                entity.Property(e => e.SuplierId).HasColumnType("smallint(6)");
+                entity.Property(e => e.SuplierId).HasColumnType("int(11)");
 
                 entity.Property(e => e.TotalQuantity)
-                    .HasColumnType("smallint(6)")
+                    .HasColumnType("int(11)")
                     .HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.UnitId).HasColumnType("smallint(6)");
+                entity.Property(e => e.UnitId).HasColumnType("int(11)");
 
                 entity.Property(e => e.Views)
                     .HasColumnType("int(11)")
                     .HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.WarrantyPeriod).HasColumnType("varchar(255)");
+                entity.Property(e => e.WarrantyPeriod).HasColumnType("varchar(200)");
 
                 entity.HasOne(d => d.Brand)
                     .WithMany(p => p.Product)
@@ -652,11 +678,6 @@ namespace Data.Entity
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_product__category");
-
-                entity.HasOne(d => d.Collection)
-                    .WithMany(p => p.Product)
-                    .HasForeignKey(d => d.CollectionId)
-                    .HasConstraintName("fk_product__collection");
 
                 entity.HasOne(d => d.Material)
                     .WithMany(p => p.Product)
@@ -683,15 +704,15 @@ namespace Data.Entity
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.CreatedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.ImageUrls).HasColumnType("varchar(2555)");
+                entity.Property(e => e.ImageUrls).HasColumnType("varchar(2000)");
 
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
@@ -717,36 +738,36 @@ namespace Data.Entity
                 entity.HasIndex(e => e.SizeId)
                     .HasName("fk_product_variant__size");
 
-                entity.Property(e => e.Id).HasColumnType("varchar(255)");
+                entity.Property(e => e.Id).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.ColorId).HasColumnType("smallint(6)");
+                entity.Property(e => e.ColorId).HasColumnType("int(11)");
 
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.CreatedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.ProductId).HasColumnType("smallint(6)");
+                entity.Property(e => e.ProductId).HasColumnType("int(11)");
 
                 entity.Property(e => e.ProductImagesId).HasColumnType("int(11)");
 
                 entity.Property(e => e.Quantity)
-                    .HasColumnType("smallint(6)")
+                    .HasColumnType("int(11)")
                     .HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.SizeId).HasColumnType("smallint(6)");
+                entity.Property(e => e.SizeId).HasColumnType("int(11)");
 
                 entity.Property(e => e.Status)
                     .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("'b\\'1\\''");
 
-                entity.Property(e => e.Thumbnail).HasColumnType("varchar(255)");
+                entity.Property(e => e.Thumbnail).HasColumnType("varchar(200)");
 
                 entity.HasOne(d => d.Color)
                     .WithMany(p => p.ProductVariant)
@@ -785,13 +806,13 @@ namespace Data.Entity
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.Content).HasColumnType("varchar(2555)");
+                entity.Property(e => e.Content).HasColumnType("varchar(2000)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.ProductId).HasColumnType("smallint(6)");
+                entity.Property(e => e.ProductId).HasColumnType("int(11)");
 
                 entity.Property(e => e.SatisfactionRate).HasDefaultValueSql("'1'");
 
@@ -819,21 +840,19 @@ namespace Data.Entity
             {
                 entity.ToTable("size");
 
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.CategoryId).HasColumnType("smallint(6)");
-
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.CreatedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Name).HasColumnType("varchar(255)");
+                entity.Property(e => e.Name).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Status)
                     .IsRequired()
@@ -845,27 +864,27 @@ namespace Data.Entity
             {
                 entity.ToTable("slide");
 
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.CreatedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.Discription).HasColumnType("varchar(2555)");
-
                 entity.Property(e => e.DisplayOrder)
-                    .HasColumnType("smallint(6)")
+                    .HasColumnType("int(11)")
                     .HasDefaultValueSql("'1'");
 
-                entity.Property(e => e.Image).HasColumnType("varchar(255)");
+                entity.Property(e => e.Image).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.Link).HasColumnType("varchar(2555)");
+                entity.Property(e => e.Link).HasColumnType("varchar(2000)");
 
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Note).HasColumnType("varchar(2000)");
 
                 entity.Property(e => e.Status)
                     .IsRequired()
@@ -877,29 +896,29 @@ namespace Data.Entity
             {
                 entity.ToTable("suplier");
 
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.Address).HasColumnType("varchar(2555)");
+                entity.Property(e => e.Address).HasColumnType("varchar(2000)");
 
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.CreatedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.Description).HasColumnType("varchar(2555)");
+                entity.Property(e => e.Email).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.Email).HasColumnType("varchar(255)");
+                entity.Property(e => e.Logo).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.Logo).HasColumnType("varchar(255)");
-
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Name).HasColumnType("varchar(255)");
+                entity.Property(e => e.Name).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.Phone).HasColumnType("varchar(255)");
+                entity.Property(e => e.Note).HasColumnType("varchar(2000)");
+
+                entity.Property(e => e.Phone).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Status)
                     .IsRequired()
@@ -911,19 +930,19 @@ namespace Data.Entity
             {
                 entity.ToTable("unit");
 
-                entity.Property(e => e.Id).HasColumnType("smallint(6)");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.CreatedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.CreatedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.ModifiedBy).HasColumnType("smallint(6)");
+                entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Name).HasColumnType("varchar(255)");
+                entity.Property(e => e.Name).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Status)
                     .IsRequired()
@@ -937,44 +956,44 @@ namespace Data.Entity
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.Address).HasColumnType("varchar(255)");
+                entity.Property(e => e.Address).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.Avatar).HasColumnType("varchar(255)");
+                entity.Property(e => e.Avatar).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.District).HasColumnType("varchar(255)");
+                entity.Property(e => e.District).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Email)
                     .IsRequired()
-                    .HasColumnType("varchar(255)");
+                    .HasColumnType("varchar(200)");
 
-                entity.Property(e => e.Favorites).HasColumnType("varchar(2555)");
+                entity.Property(e => e.Favorites).HasColumnType("varchar(2000)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Name).HasColumnType("varchar(255)");
+                entity.Property(e => e.Name).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Password)
                     .IsRequired()
-                    .HasColumnType("varchar(2555)");
+                    .HasColumnType("varchar(2000)");
 
-                entity.Property(e => e.Phone).HasColumnType("varchar(255)");
+                entity.Property(e => e.Phone).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.Province).HasColumnType("varchar(255)");
+                entity.Property(e => e.Province).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.ShoppingCarts).HasColumnType("varchar(2555)");
+                entity.Property(e => e.ShoppingCarts).HasColumnType("varchar(2000)");
 
                 entity.Property(e => e.Status)
                     .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("'b\\'1\\''");
 
-                entity.Property(e => e.VerificationCode).HasColumnType("varchar(255)");
+                entity.Property(e => e.VerificationCode).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.Ward).HasColumnType("varchar(255)");
+                entity.Property(e => e.Ward).HasColumnType("varchar(200)");
             });
         }
     }

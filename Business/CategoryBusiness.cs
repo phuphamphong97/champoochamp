@@ -14,7 +14,7 @@ namespace Business
       {
         try
         {
-          return db.Category.Where(p => p.Id == id).Include(p => p.Parent).ThenInclude(p => p.Parent).SingleOrDefault();
+          return db.Category.Where(p => p.Id == id && p.Status == true).Include(p => p.Parent).ThenInclude(p => p.Parent).SingleOrDefault();
         }
         catch (Exception e)
         {

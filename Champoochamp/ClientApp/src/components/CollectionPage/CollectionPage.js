@@ -46,8 +46,8 @@ class CollectionPage extends Component {
       this.setState({
         isCollectionIdChanged: false,
         isLoading: false,
-        collection: res.data[0].collection,
-        productList: res.data
+        collection: res.data.collection,
+        productList: res.data.productList
       })
     );
   };

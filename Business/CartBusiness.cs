@@ -18,8 +18,9 @@ namespace Business
           ProductVariant productVariant = db.ProductVariant.Where(p => p.ProductId == productId
             && p.ColorId == colorId
             && p.SizeId == sizeId
+            && p.Status == true
           ).SingleOrDefault();
-          User user = db.User.Where(p => String.Compare(p.Email, userEmail, false) == 0).SingleOrDefault();
+          User user = db.User.Where(p => String.Compare(p.Email, userEmail, false) == 0 && p.Status == true).SingleOrDefault();
 
           if (String.IsNullOrEmpty(user.ShoppingCarts))
           {
@@ -46,7 +47,7 @@ namespace Business
       {
         try
         {
-          User user = db.User.Where(p => String.Compare(p.Email, u.Email, false) == 0).SingleOrDefault();
+          User user = db.User.Where(p => String.Compare(p.Email, u.Email, false) == 0 && p.Status == true).SingleOrDefault();
           user.ShoppingCarts = u.ShoppingCarts;
           db.SaveChanges();
 

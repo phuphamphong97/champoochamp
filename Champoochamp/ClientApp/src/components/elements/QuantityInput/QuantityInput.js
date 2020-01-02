@@ -56,7 +56,7 @@ class QuantityInput extends Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.quantityMax !== prevState.quantityMax || prevState.number > prevState.quantityMax ) {
+    if (nextProps.quantityMax !== prevState.quantityMax || prevState.number > prevState.quantityMax) {
       return {
         quantityMax: nextProps.quantityMax > 0 ? nextProps.quantityMax : productQuantity.max,
         number: nextProps.quantityMax > 0 && prevState.number > nextProps.quantityMax ? nextProps.quantityMax : prevState.number

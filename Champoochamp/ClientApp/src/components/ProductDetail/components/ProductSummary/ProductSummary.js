@@ -95,8 +95,9 @@ class ProductSummary extends Component {
   };
 
   onAddCartItem = user => {
-    const { colorId, sizeId, quantity } = this.state;
+    const { colorId, sizeId, quantity, quantityMax } = this.state;
     const { product, updateShoppingCart } = this.props;
+    let iQuantity = quantity;
 
     if (colorId > 0 && sizeId > 0 && product) {
       if (!user && !typeof Storage) {
@@ -109,11 +110,16 @@ class ProductSummary extends Component {
         return;
       }
 
+      if (quantityMax > 0 && quantity > quantityMax) {
+        iQuantity = quantityMax;
+        this.setState({ quantity: 1 });
+      }
+
       addCartItem(
         product.id,
         colorId,
         sizeId,
-        quantity,
+        iQuantity,
         user,
         updateShoppingCart
       ).then(res => {

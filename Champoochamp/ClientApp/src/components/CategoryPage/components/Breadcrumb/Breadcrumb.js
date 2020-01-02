@@ -106,7 +106,8 @@ class Breadcrumb extends Component {
             </ItemLink>
           </Item>
         );
-      } else {
+      }
+      else {
         return (
           <Item key={category.id}>
             <ItemLink to={`${objTemp.url}-${category.id}`}>

@@ -8,12 +8,11 @@ import ProductList from './components/ProductList';
 
 class CategoryPage extends Component {
   getCategoryId = () => {
-    const { lv1, lv2, lv3 } = this.props.match.params;
-    if (lv3) {
-      return getIdInMetaTitle(lv3);
-    } else if (lv2) {
+    const { lv1, lv2 } = this.props.match.params;
+    if (lv2) {
       return getIdInMetaTitle(lv2);
-    } else if (lv1) {
+    }
+    else if (lv1) {
       return getIdInMetaTitle(lv1);
     }
 

@@ -28,8 +28,8 @@ namespace API.Controllers
         try
         {
           List<SearchModel> searchList = new List<SearchModel>();
-          var categories = db.Category.Select(p => new SearchItemModel(p.Id, p.Name, p.MetaTitle)).ToList();
-          var products = db.Product.Select(p => new SearchItemModel(p.Id, p.Name, p.MetaTitle)).ToList();
+          var categories = db.Category.Where(p => p.Status == true).Select(p => new SearchItemModel(p.Id, p.Name, p.MetaTitle)).ToList();
+          var products = db.Product.Where(p => p.Status == true).Select(p => new SearchItemModel(p.Id, p.Name, p.MetaTitle)).ToList();
           searchBusiness.GetSearchData(categories, Common.SearchGroupName.Category, ref searchList);
           searchBusiness.GetSearchData(products, Common.SearchGroupName.Product, ref searchList);
 
@@ -52,7 +52,7 @@ namespace API.Controllers
         try
         {
           List<Product> productList = new List<Product>();
-          List<Category> categoryList = db.Category.Where(p => p.Name == key)
+          List<Category> categoryList = db.Category.Where(p => p.Name == key && p.Status == true)
                                         .Include(p => p.InverseParent)
                                             .ThenInclude(p => p.InverseParent)
                                                 .ThenInclude(p => p.Product)
@@ -74,7 +74,7 @@ namespace API.Controllers
                                         .ToList();
           productBusiness.GetProductsByCategories(categoryList, ref productList);
 
-          List<Product> searchProductList = db.Product.Where(p => p.Name.Contains(key))
+          List<Product> searchProductList = db.Product.Where(p => p.Name.Contains(key) && p.Status == true)
                                             .Include(p => p.ProductVariant)
                                               .ThenInclude(p => p.Color)
                                             .Include(p => p.ProductVariant)

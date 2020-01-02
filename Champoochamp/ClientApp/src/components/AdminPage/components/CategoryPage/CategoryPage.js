@@ -1,10 +1,7 @@
-﻿import React, { Component, Fragment } from 'react';
-import { Table, Input, Button, Checkbox, Icon, notification } from 'antd';
+﻿import React, { Component } from 'react';
+import { Table, Input, Button, Icon } from 'antd';
 
 import { callAPI } from '../../../../shared/utils';
-import { time } from '../../../../shared/constants';
-import { Link } from '../../../elements';
-import CategoryPage from '../../../CategoryPage';
 
 
 class CategoryAdminPage extends Component {
@@ -109,7 +106,7 @@ class CategoryAdminPage extends Component {
         dataIndex: 'name',
         width: '30%',
         ...this.getColumnSearchProps('name'),
-        sorter: (a, b) => a.name.length - b.name.length,
+        sorter: (a, b) => a.name.localeCompare(b.name),
         sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
         ellipsis: true,
       },
@@ -118,7 +115,7 @@ class CategoryAdminPage extends Component {
         dataIndex: 'parent.name',
         width: '70%',
         ...this.getColumnSearchProps('parent.name'),
-        sorter: (a, b) => (a.parent ? a.parent.name.length : 0) - (b.parent ? b.parent.name.length : 0),
+        sorter: (a, b) => (a.parent ? a.parent.name : '').localeCompare(b.parent ? b.parent.name : ''),
         sortOrder: sortedInfo.columnKey === 'parent.name' && sortedInfo.order,
         ellipsis: true,
       },

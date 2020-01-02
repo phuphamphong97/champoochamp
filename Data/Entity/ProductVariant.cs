@@ -12,16 +12,16 @@ namespace Data.Entity
         }
 
         public string Id { get; set; }
-        public short? Quantity { get; set; }
+        public int? Quantity { get; set; }
         public string Thumbnail { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public short CreatedBy { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public string CreatedBy { get; set; }
         public DateTime? ModifiedDate { get; set; }
-        public short? ModifiedBy { get; set; }
+        public string ModifiedBy { get; set; }
         public bool? Status { get; set; }
-        public short ProductId { get; set; }
-        public short ColorId { get; set; }
-        public short SizeId { get; set; }
+        public int ProductId { get; set; }
+        public int ColorId { get; set; }
+        public int SizeId { get; set; }
         public int ProductImagesId { get; set; }
 
         public virtual Color Color { get; set; }

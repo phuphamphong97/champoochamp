@@ -45,7 +45,8 @@ class InvoiceInfo extends Component {
       this.props.form.getFieldsValue().province
     }&district=${value}&weight=1000&transport=road`;
 
-    callghtkAPI(url, query).then(res => {
+    callghtkAPI(url, query, 'GET')
+    .then(res => {
       if (res) {
         getTransportFee(res.fee);
         console.log('success');

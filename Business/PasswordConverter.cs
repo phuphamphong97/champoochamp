@@ -7,28 +7,46 @@ namespace Business
 {
   public static class PasswordConverter
   {
-    public static string MD5Hash_Encode(string input)
-    {
-      StringBuilder hash = new StringBuilder();
-      MD5CryptoServiceProvider md5provider = new MD5CryptoServiceProvider();
-      byte[] bytes = md5provider.ComputeHash(new UTF8Encoding().GetBytes(input));
+    static string key { get; set; } = "A!9HHhi%XjjYY4YP2@Nob009X";
 
-      for (int i = 0; i < bytes.Length; i++)
+    public static string Encrypt(string text)
+    {
+      using (var md5 = new MD5CryptoServiceProvider())
       {
-        hash.Append(bytes[i].ToString("x2"));
+        using (var tdes = new TripleDESCryptoServiceProvider())
+        {
+          tdes.Key = md5.ComputeHash(UTF8Encoding.UTF8.GetBytes(key));
+          tdes.Mode = CipherMode.ECB;
+          tdes.Padding = PaddingMode.PKCS7;
+
+          using (var transform = tdes.CreateEncryptor())
+          {
+            byte[] textBytes = UTF8Encoding.UTF8.GetBytes(text);
+            byte[] bytes = transform.TransformFinalBlock(textBytes, 0, textBytes.Length);
+            return Convert.ToBase64String(bytes, 0, bytes.Length);
+          }
+        }
       }
-      return hash.ToString();
     }
 
-    public static string MD5Hash_Decode(byte[] md5Array, bool isUpper)
+    public static string Decrypt(string cipher)
     {
-      var builder = new StringBuilder(md5Array.Length * 2);
-      for (var i = 0; i < md5Array.Length; i++)
+      using (var md5 = new MD5CryptoServiceProvider())
       {
-        builder.Append(md5Array[i].ToString(isUpper ? "X2" : "x2"));
-      }
+        using (var tdes = new TripleDESCryptoServiceProvider())
+        {
+          tdes.Key = md5.ComputeHash(UTF8Encoding.UTF8.GetBytes(key));
+          tdes.Mode = CipherMode.ECB;
+          tdes.Padding = PaddingMode.PKCS7;
 
-      return builder.ToString();
+          using (var transform = tdes.CreateDecryptor())
+          {
+            byte[] cipherBytes = Convert.FromBase64String(cipher);
+            byte[] bytes = transform.TransformFinalBlock(cipherBytes, 0, cipherBytes.Length);
+            return UTF8Encoding.UTF8.GetString(bytes);
+          }
+        }
+      }
     }
   }
 }

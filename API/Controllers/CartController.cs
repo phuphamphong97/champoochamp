@@ -41,6 +41,7 @@ namespace API.Controllers
           ProductVariant productVariant = db.ProductVariant.Where(p => p.ProductId == productId
             && p.ColorId == colorId
             && p.SizeId == sizeId
+            && p.Status == true
           ).SingleOrDefault();
           CartItemModel cartItemModel = new CartItemModel(productVariant, quantity);
 
@@ -68,7 +69,7 @@ namespace API.Controllers
           string shoppingCarts = String.Empty;
           if (u.Email != null)
           {
-            shoppingCarts = db.User.Where(p => String.Compare(p.Email, u.Email, false) == 0).Select(p => p.ShoppingCarts).SingleOrDefault();
+            shoppingCarts = db.User.Where(p => String.Compare(p.Email, u.Email, false) == 0 && p.Status == true).Select(p => p.ShoppingCarts).SingleOrDefault();
           }
           else if (!string.IsNullOrEmpty(u.ShoppingCarts))
           {
@@ -80,7 +81,7 @@ namespace API.Controllers
             Dictionary<string, int> dictShoppingCarts = cartBusiness.getDictShoppingCarts(shoppingCarts);
             foreach (KeyValuePair<string, int> item in cartBusiness.getDictShoppingCarts(shoppingCarts))
             {
-              ProductVariant pv = db.ProductVariant.Where(p => p.Id == item.Key)
+              ProductVariant pv = db.ProductVariant.Where(p => p.Id == item.Key && p.Status == true)
                                   .Include(p => p.Product)
                                   .Include(p => p.Color)
                                   .Include(p => p.Size)
@@ -136,7 +137,7 @@ namespace API.Controllers
 
           if (u.Email != null)
           {
-            shoppingCarts = db.User.Where(p => String.Compare(p.Email, u.Email, false) == 0).Select(p => p.ShoppingCarts).SingleOrDefault();
+            shoppingCarts = db.User.Where(p => String.Compare(p.Email, u.Email, false) == 0 && p.Status == true).Select(p => p.ShoppingCarts).SingleOrDefault();
           }
           else if (!string.IsNullOrEmpty(u.ShoppingCarts))
           {
@@ -148,7 +149,7 @@ namespace API.Controllers
             Dictionary<string, int> dictShoppingCarts = cartBusiness.getDictShoppingCarts(shoppingCarts);
             foreach (KeyValuePair<string, int> item in cartBusiness.getDictShoppingCarts(shoppingCarts))
             {
-              ProductVariant pv = db.ProductVariant.Where(p => p.Id == item.Key).SingleOrDefault();
+              ProductVariant pv = db.ProductVariant.Where(p => p.Id == item.Key && p.Status == true).SingleOrDefault();
               if (pv.Quantity < item.Value)
               {
                 dictShoppingCarts[item.Key] = (int)pv.Quantity;

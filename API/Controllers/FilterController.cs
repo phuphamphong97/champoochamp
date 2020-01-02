@@ -28,21 +28,21 @@ namespace API.Controllers
         {
           List<FilterGroupModel> filterList = new List<FilterGroupModel>();
 
-          List<Size> sizeList = db.Size
+          List<Size> sizeList = db.Size.Where(p => p.Status == true)
                                 .Include(p => p.ProductVariant)
                                   .ThenInclude(p => p.Product)
                                     .ThenInclude(p => p.Category)
                                       .ThenInclude(p => p.Parent)
                                 .ToList();
 
-          List<Color> colorList = db.Color
+          List<Color> colorList = db.Color.Where(p => p.Status == true)
                                 .Include(p => p.ProductVariant)
                                   .ThenInclude(p => p.Product)
                                     .ThenInclude(p => p.Category)
                                       .ThenInclude(p => p.Parent)
                                 .ToList();
 
-          List<Brand> brandList = db.Brand
+          List<Brand> brandList = db.Brand.Where(p => p.Status == true)
                                 .Include(p => p.Product)
                                   .ThenInclude(p => p.Category)
                                     .ThenInclude(p => p.Parent)
