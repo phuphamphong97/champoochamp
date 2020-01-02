@@ -74,14 +74,16 @@ class CheckoutPage extends Component {
 
         callAPI('Checkout/SaveInVoice', '', 'POST', data).then(res => {
           if (res.data) {
+            this.setState({ shoppingCartList: [] });
             updateShoppingCart('', user, this.props.updateShoppingCart);
             getDiscount(null);
+
             notification.info({
               message: 'Thanh toán thành công!',
               placement: 'topRight',
               onClick: () => notification.destroy(),
               duration: time.durationNotification,
-            });
+            });            
           } else {
             notification.warning({
               message: 'Thanh toán thất bại!',

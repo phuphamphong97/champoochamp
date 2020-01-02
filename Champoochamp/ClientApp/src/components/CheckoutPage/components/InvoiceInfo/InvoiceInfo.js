@@ -8,32 +8,28 @@ import { champoochampAddress, ghtk, time } from '../../../../shared/constants';
 import { cities, districts, wards } from '../../../../shared/address';
 import { Link } from '../../../elements';
 
+const { Option } = Select;
+
 const Wrapper = styled('div')`
   ${formatForm};
   margin-top: 30px;
 `;
 
-const { Option } = Select;
-
 class InvoiceInfo extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      districtsData: props.user ? districts[props.user.province] : [],      
-      wardsData: props.user ? wards[props.user.district] : []     
+      districtsData: props.user ? districts[props.user.province] : [],
+      wardsData: props.user ? wards[props.user.district] : []
     };
   }
-
-  login = () => {
-    // Go to Login page here.
-  };
 
   handleCityChange = value => {
     this.props.form.setFieldsValue({
       district: undefined,
       ward: undefined
     });
-    
+
     this.setState({
       districtsData: districts[value],
       wardsData: []
@@ -43,20 +39,24 @@ class InvoiceInfo extends Component {
   handleDistrictChange = value => {
     const { getTransportFee } = this.props;
     const url = `${ghtk.apiTransportFee}`;
-    const query = `?pick_province=${champoochampAddress.city}&pick_district=${champoochampAddress.district}&province=${this.props.form.getFieldsValue().province}&district=${value}&weight=1000&transport=road`;
+    const query = `?pick_province=${champoochampAddress.city}&pick_district=${
+      champoochampAddress.district
+    }&province=${
+      this.props.form.getFieldsValue().province
+    }&district=${value}&weight=1000&transport=road`;
 
     callghtkAPI(url, query, 'GET')
     .then(res => {
       if (res) {
         getTransportFee(res.fee);
-        console.log("success");
-      }
-      else {
+        console.log('success');
+      } else {
         notification.warning({
-          message: 'Phí vận chuyển tạm thời không khả dụng, vui lòng tải lại trang!',
+          message:
+            'Phí vận chuyển tạm thời không khả dụng, vui lòng tải lại trang!',
           placement: 'topRight',
           onClick: () => notification.destroy(),
-          duration: time.durationNotification,
+          duration: time.durationNotification
         });
       }
     });
@@ -77,11 +77,11 @@ class InvoiceInfo extends Component {
 
     return (
       <Fragment>
-        {!user && 
+        {!user && (
           <NavLink to="/dang-nhap">
-            <Link content="Đăng nhập" onClick={this.login} />
+            <Link content="Đăng nhập" />
           </NavLink>
-        }        
+        )}
 
         <Wrapper>
           <Form.Item>
@@ -168,7 +168,7 @@ class InvoiceInfo extends Component {
                       required: true,
                       message: 'Vui lòng chọn phường / xã!'
                     }
-                  ],
+                  ]
                 })(
                   <Select showSearch placeholder="Phường / xã *">
                     {wardsData.map(ward => (

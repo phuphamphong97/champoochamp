@@ -113,9 +113,9 @@ class EmployeeForm extends Component {
           </Form.Item>
           {
             currentTypeForm === typeForm.update && employee && employee.modifiedBy &&
-            <Form.Item label="Mã nhân viên cập nhật lần cuối">
+            <Form.Item label="Nhân viên cập nhật lần cuối">
               {getFieldDecorator('modifiedBy', { initialValue: employee.modifiedBy })(
-                <Input disabled />
+                <Input readOnly />
               )}
             </Form.Item>
           }

@@ -15,7 +15,7 @@ import HeaderInfo from './components/HeaderInfo';
 import VariantChoice from './components/VariantChoice';
 
 const NotificationButton = styled(Button)`
-  margin-left: 10px;
+  margin: 5px 0 0 5px;
   padding: 0.5rem 1rem;
 `;
 
@@ -79,8 +79,12 @@ class ProductSummary extends Component {
         return -1;
       }
 
-      if (shoppingCartList.size > 0 && shoppingCartList.has(productVariant.id)) {
-        const quantity = productVariant.quantity - shoppingCartList.get(productVariant.id);
+      if (
+        shoppingCartList.size > 0 &&
+        shoppingCartList.has(productVariant.id)
+      ) {
+        const quantity =
+          productVariant.quantity - shoppingCartList.get(productVariant.id);
         return quantity > 0 ? quantity : -1;
       }
 

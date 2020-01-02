@@ -50,9 +50,9 @@ class SuplierForm extends Component {
           </Form.Item>
           {
             currentTypeForm === typeForm.update && suplier && suplier.modifiedBy &&
-            <Form.Item label="Mã nhân viên cập nhật lần cuối">
+            <Form.Item label="Nhân viên cập nhật lần cuối">
               {getFieldDecorator('modifiedBy', { initialValue: suplier.modifiedBy })(
-                <Input disabled />
+                <Input readOnly />
               )}
             </Form.Item>
           }

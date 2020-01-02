@@ -41,35 +41,35 @@ class InvoicePage extends Component {
       invoiceList: getArrByMap(this.mapCheckInvoice)
     };
 
-    callAPI('Invoice/UpdateInvoices', '', 'POST', data).then(res => {      
-      this.mapCheckInvoice = new Map();
+     callAPI('Invoice/UpdateInvoices', '', 'POST', data).then(res => {      
+       this.mapCheckInvoice = new Map();
 
-      if (res.data) {
-        this.setState({
-          selectedRowKeys: [],
-          invoiceList: res.data,
-          isEdit: false
-        });
-        notification.info({
-          message: 'Sửa hóa đơn thành công!',
-          placement: 'topRight',
-          onClick: () => notification.destroy(),
-          duration: time.durationNotification,
-        });
-      }
-      else {
-        this.setState({
-          selectedRowKeys: [],
-          isEdit: false
-        });
-        notification.warning({
-          message: 'Sửa hóa đơn thất bại!',
-          placement: 'topRight',
-          onClick: () => notification.destroy(),
-          duration: time.durationNotification,
-        });
-      }  
-    });    
+       if (res.data) {
+         this.setState({
+           selectedRowKeys: [],
+           invoiceList: res.data,
+           isEdit: false
+         });
+         notification.info({
+           message: 'Sửa hóa đơn thành công!',
+           placement: 'topRight',
+           onClick: () => notification.destroy(),
+           duration: time.durationNotification,
+         });
+       }
+       else {
+         this.setState({
+           selectedRowKeys: [],
+           isEdit: false
+         });
+         notification.warning({
+           message: 'Sửa hóa đơn thất bại!',
+           placement: 'topRight',
+           onClick: () => notification.destroy(),
+           duration: time.durationNotification,
+         });
+       }  
+     });    
   }
 
   onRollBack = () => {

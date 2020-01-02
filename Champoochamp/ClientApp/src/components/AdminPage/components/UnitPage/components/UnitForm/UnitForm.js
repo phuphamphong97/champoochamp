@@ -30,7 +30,7 @@ class UnitForm extends Component {
           </Form.Item>
           {
             currentTypeForm === typeForm.update && unit && unit.modifiedBy &&
-            <Form.Item label="Mã nhân viên cập nhật lần cuối">
+            <Form.Item label="Nhân viên cập nhật lần cuối">
               {getFieldDecorator('modifiedBy', { initialValue: unit.modifiedBy })(
                 <Input readOnly />
               )}

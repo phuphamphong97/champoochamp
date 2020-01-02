@@ -1,4 +1,3 @@
-/** @jsx jsx */
 import { css } from '@emotion/core';
 import { colors } from '../principles';
 
@@ -7,7 +6,8 @@ const formatForm = css`
     margin-bottom: 15px;
   }
 
-  .ant-input {
+  .ant-input,
+  .ant-select-selection {
     border-color: ${colors.gray};
     border-radius: 0;
     color: ${colors.black};
@@ -20,6 +20,10 @@ const formatForm = css`
       border-color: ${colors.black};
       box-shadow: none;
     }
+  }
+
+  .ant-select-selection__rendered {
+    line-height: 40px;
   }
 
   .ant-form-explain {

@@ -41,9 +41,9 @@ class SizeForm extends Component {
           </Form.Item>
           {
             currentTypeForm === typeForm.update && discount && discount.modifiedBy &&
-            <Form.Item label="Mã nhân viên cập nhật lần cuối">
+            <Form.Item label="Nhân viên cập nhật lần cuối">
               {getFieldDecorator('modifiedBy', { initialValue: discount.modifiedBy })(
-                <Input disabled />
+                <Input readOnly />
               )}
             </Form.Item>
           }
