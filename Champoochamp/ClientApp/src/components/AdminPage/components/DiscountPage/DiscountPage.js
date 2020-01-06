@@ -3,6 +3,7 @@ import { Table, Input, Button, Icon, notification } from 'antd';
 
 import { callAPI } from '../../../../shared/utils';
 import { time, typeForm } from '../../../../shared/constants';
+import { ButtonsWrapper, ActionButton, LinkButton } from '../../styledUtils';
 
 import DiscountForm from './components/DiscountForm';
 
@@ -27,9 +28,10 @@ class DiscountPage extends Component {
   }
 
   getAllDiscounts = () => {
-    callAPI('Discount/GetAllDiscounts')
-      .then(res => this.setState({ discountList: res.data }));
-  }
+    callAPI('Discount/GetAllDiscounts').then(res =>
+      this.setState({ discountList: res.data })
+    );
+  };
 
   onShowModal = (typeForm, title, discount) => {
     this.setState({
@@ -51,95 +53,90 @@ class DiscountPage extends Component {
       }
 
       if (currentTypeForm === typeForm.create) {
-        callAPI('Discount/CreateDiscount', '', 'POST', values)
-          .then(res => {
-            if (res.data) {
-              if (res.data.id > 0) {
-                discountList.push(res.data);
+        callAPI('Discount/CreateDiscount', '', 'POST', values).then(res => {
+          if (res.data) {
+            if (res.data.id > 0) {
+              discountList.push(res.data);
 
-                this.setState({
-                  isShowModal: false,
-                  discountList
-                });
-                form.resetFields();
-
-                notification.info({
-                  message: 'Tạo mới mã giảm giá thành công!',
-                  placement: 'topRight',
-                  onClick: () => notification.destroy(),
-                  duration: time.durationNotification
-                });
-              }
-              else {
-                notification.warning({
-                  message: 'Mã giảm giá đã tồn tại!',
-                  placement: 'topRight',
-                  onClick: () => notification.destroy(),
-                  duration: time.durationNotification
-                });
-              }
-            }
-            else {
-              this.setState({ isShowModal: false });
+              this.setState({
+                isShowModal: false,
+                discountList
+              });
               form.resetFields();
 
+              notification.info({
+                message: 'Tạo mới mã giảm giá thành công!',
+                placement: 'topRight',
+                onClick: () => notification.destroy(),
+                duration: time.durationNotification
+              });
+            } else {
               notification.warning({
-                message: 'Tạo mới mã giảm giá thất bại!',
+                message: 'Mã giảm giá đã tồn tại!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
               });
             }
-          });
-      }
-      else if (currentTypeForm === typeForm.update) {
+          } else {
+            this.setState({ isShowModal: false });
+            form.resetFields();
+
+            notification.warning({
+              message: 'Tạo mới mã giảm giá thất bại!',
+              placement: 'topRight',
+              onClick: () => notification.destroy(),
+              duration: time.durationNotification
+            });
+          }
+        });
+      } else if (currentTypeForm === typeForm.update) {
         const data = {
           employee,
           discount: values,
           discountList: []
-        }
-        callAPI('Discount/PutDiscount', '', 'PUT', data)
-          .then(res => {
-            if (res.data) {
-              if (res.data.id > 0) {
-                let lst = discountList;
-                lst = discountList.filter(discount => discount.id !== res.data.id)
-                lst.unshift(res.data);
+        };
+        callAPI('Discount/PutDiscount', '', 'PUT', data).then(res => {
+          if (res.data) {
+            if (res.data.id > 0) {
+              let lst = discountList;
+              lst = discountList.filter(
+                discount => discount.id !== res.data.id
+              );
+              lst.unshift(res.data);
 
-                this.setState({
-                  isShowModal: false,
-                  discountList: lst
-                });
-                form.resetFields();
-
-                notification.info({
-                  message: 'Cập nhật mã giảm giá thành công!',
-                  placement: 'topRight',
-                  onClick: () => notification.destroy(),
-                  duration: time.durationNotification
-                });
-              }
-              else {
-                notification.warning({
-                  message: 'Mã giảm giá đã tồn tại!',
-                  placement: 'topRight',
-                  onClick: () => notification.destroy(),
-                  duration: time.durationNotification
-                });
-              }
-            }
-            else {
-              this.setState({ isShowModal: false });
+              this.setState({
+                isShowModal: false,
+                discountList: lst
+              });
               form.resetFields();
 
+              notification.info({
+                message: 'Cập nhật mã giảm giá thành công!',
+                placement: 'topRight',
+                onClick: () => notification.destroy(),
+                duration: time.durationNotification
+              });
+            } else {
               notification.warning({
-                message: 'Cập nhật mã giảm giá thất bại!',
+                message: 'Mã giảm giá đã tồn tại!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
               });
             }
-          });
+          } else {
+            this.setState({ isShowModal: false });
+            form.resetFields();
+
+            notification.warning({
+              message: 'Cập nhật mã giảm giá thất bại!',
+              placement: 'topRight',
+              onClick: () => notification.destroy(),
+              duration: time.durationNotification
+            });
+          }
+        });
       }
     });
   };
@@ -157,60 +154,62 @@ class DiscountPage extends Component {
       discount: null,
       discountList
     };
-    
-    callAPI('Discount/DeleteDiscountByIds', '', 'DELETE', data)
-      .then(res => {
-        if (res.data) {
-          this.setState({
-            selectedRowKeys: this.state.selectedRowKeys.filter(key => !ids.includes(key)),
-            discountList: this.state.discountList.filter(discount => !ids.includes(discount.id))
-          });
 
-          notification.info({
-            message: 'Xóa mã giảm giá thành công!',
-            placement: 'topRight',
-            onClick: () => notification.destroy(),
-            duration: time.durationNotification
-          });
-        }
-        else {
-          notification.warning({
-            message: 'Xóa mã giảm giá thất bại!',
-            placement: 'topRight',
-            onClick: () => notification.destroy(),
-            duration: time.durationNotification
-          });
-        }
-      });
+    callAPI('Discount/DeleteDiscountByIds', '', 'DELETE', data).then(res => {
+      if (res.data) {
+        this.setState({
+          selectedRowKeys: this.state.selectedRowKeys.filter(
+            key => !ids.includes(key)
+          ),
+          discountList: this.state.discountList.filter(
+            discount => !ids.includes(discount.id)
+          )
+        });
+
+        notification.info({
+          message: 'Xóa mã giảm giá thành công!',
+          placement: 'topRight',
+          onClick: () => notification.destroy(),
+          duration: time.durationNotification
+        });
+      } else {
+        notification.warning({
+          message: 'Xóa mã giảm giá thất bại!',
+          placement: 'topRight',
+          onClick: () => notification.destroy(),
+          duration: time.durationNotification
+        });
+      }
+    });
   };
 
   onDelete = id => {
     const data = { id };
 
-    callAPI('Discount/DeleteDiscountById', '', 'DELETE', data)
-      .then(res => {
-        if (res.data) {
-          this.setState({
-            selectedRowKeys: this.state.selectedRowKeys.filter(key => key !== id),
-            discountList: this.state.discountList.filter(discount => discount.id !== id)
-          });
+    callAPI('Discount/DeleteDiscountById', '', 'DELETE', data).then(res => {
+      if (res.data) {
+        this.setState({
+          selectedRowKeys: this.state.selectedRowKeys.filter(key => key !== id),
+          discountList: this.state.discountList.filter(
+            discount => discount.id !== id
+          )
+        });
 
-          notification.info({
-            message: 'Xóa mã giảm giá thành công!',
-            placement: 'topRight',
-            onClick: () => notification.destroy(),
-            duration: time.durationNotification
-          });
-        }
-        else {
-          notification.warning({
-            message: 'Xóa mã giảm giá thất bại!',
-            placement: 'topRight',
-            onClick: () => notification.destroy(),
-            duration: time.durationNotification
-          });
-        }
-      });
+        notification.info({
+          message: 'Xóa mã giảm giá thành công!',
+          placement: 'topRight',
+          onClick: () => notification.destroy(),
+          duration: time.durationNotification
+        });
+      } else {
+        notification.warning({
+          message: 'Xóa mã giảm giá thất bại!',
+          placement: 'topRight',
+          onClick: () => notification.destroy(),
+          duration: time.durationNotification
+        });
+      }
+    });
   };
 
   wrappedComponentRef = formRef => {
@@ -228,7 +227,12 @@ class DiscountPage extends Component {
   };
 
   getColumnSearchProps = dataIndex => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters
+    }) => (
       <div style={{ padding: 8 }}>
         <Input
           ref={node => {
@@ -236,8 +240,12 @@ class DiscountPage extends Component {
           }}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          onChange={e =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            this.handleSearch(selectedKeys, confirm, dataIndex)
+          }
           style={{ width: 188, marginBottom: 8, display: 'block' }}
         />
         <Button
@@ -249,7 +257,11 @@ class DiscountPage extends Component {
         >
           Search
         </Button>
-        <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+        <Button
+          onClick={() => this.handleReset(clearFilters)}
+          size="small"
+          style={{ width: 90 }}
+        >
           Reset
         </Button>
       </div>
@@ -274,7 +286,7 @@ class DiscountPage extends Component {
     confirm();
     this.setState({
       searchText: selectedKeys[0],
-      searchedColumn: dataIndex,
+      searchedColumn: dataIndex
     });
   };
 
@@ -284,66 +296,125 @@ class DiscountPage extends Component {
   };
 
   render() {
-    let { selectedRowKeys, sortedInfo, discountList, isShowModal, currentTypeForm, title, discount } = this.state;
-    const { handleChange, onSelectChange, wrappedComponentRef, onShowModal, onSave, onCancel, onSelectedDelete, onDelete } = this;
-    const resource = { wrappedComponentRef, isShowModal, currentTypeForm, title, discount, onSave, onCancel };
+    let {
+      selectedRowKeys,
+      sortedInfo,
+      discountList,
+      isShowModal,
+      currentTypeForm,
+      title,
+      discount
+    } = this.state;
+    const {
+      handleChange,
+      onSelectChange,
+      wrappedComponentRef,
+      onShowModal,
+      onSave,
+      onCancel,
+      onSelectedDelete,
+      onDelete
+    } = this;
+    const resource = {
+      wrappedComponentRef,
+      isShowModal,
+      currentTypeForm,
+      title,
+      discount,
+      onSave,
+      onCancel
+    };
     const rowSelection = {
       selectedRowKeys,
-      onChange: onSelectChange,
+      onChange: onSelectChange
     };
     sortedInfo = sortedInfo || {};
 
     const columns = [
       {
+        title: 'ID',
+        dataIndex: 'id',
+        width: '10%',
+        ...this.getColumnSearchProps('id'),
+        sorter: (a, b) => a.id.localeCompare(b.id),
+        sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order,
+        render: (text, record) => (
+          <LinkButton
+            type="link"
+            onClick={() =>
+              onShowModal(typeForm.update, `Cập nhật mã giảm giá`, record)
+            }
+          >
+            {record.id}
+          </LinkButton>
+        )
+      },
+      {
         title: 'Tên mã',
         dataIndex: 'name',
-        width: '30%',
+        width: '35%',
         ...this.getColumnSearchProps('name'),
         sorter: (a, b) => a.name.localeCompare(b.name),
-        sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
+        sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order
       },
       {
         title: 'Mã',
         dataIndex: 'code',
-        width: '15%',
+        width: '30%',
         ...this.getColumnSearchProps('code'),
         sorter: (a, b) => a.code.localeCompare(b.code),
-        sortOrder: sortedInfo.columnKey === 'code' && sortedInfo.order,
+        sortOrder: sortedInfo.columnKey === 'code' && sortedInfo.order
       },
       {
         title: 'Mức giảm',
         dataIndex: 'rate',
-        width: '45%',
+        width: '20%',
         ...this.getColumnSearchProps('rate'),
         sorter: (a, b) => a.rate - b.rate,
         sortOrder: sortedInfo.columnKey === 'rate' && sortedInfo.order,
-        render: (text, record) => (<span>{record.rate}%</span>),
+        render: (text, record) => <span>{record.rate}%</span>
       },
       {
-        title: 'Action',
-        width: '10%',
+        title: '',
+        width: '5%',
         render: (text, record) => (
-          <Fragment>
-            <Icon type="edit" onClick={() => onShowModal(typeForm.update, `Cập nhật mã giảm giá`, record)} />
-            <Icon type="delete" onClick={() => onDelete(record.id)} />
-          </Fragment>
-        ),
-      },
+          <LinkButton type="link" onClick={() => onDelete(record.id)}>
+            Xoá
+          </LinkButton>
+        )
+      }
     ];
 
     return (
-      <div>
-        <Button type="primary" onClick={() => onShowModal(typeForm.create, `Tạo mới mã giảm giá`, null)}>Tạo mới</Button>
-        <Button type="primary" onClick={() => onSelectedDelete(selectedRowKeys)}>Xóa</Button>
+      <Fragment>
+        <ButtonsWrapper>
+          <ActionButton
+            type="primary"
+            onClick={() =>
+              onShowModal(typeForm.create, `Tạo mới mã giảm giá`, null)
+            }
+          >
+            Tạo mới
+          </ActionButton>
+          {selectedRowKeys.length > 0 && (
+            <ActionButton
+              type="danger"
+              onClick={() => onSelectedDelete(selectedRowKeys)}
+            >
+              Xóa
+            </ActionButton>
+          )}
+        </ButtonsWrapper>
+
         <Table
-          rowKey='id'
+          rowKey="id"
           rowSelection={rowSelection}
           columns={columns}
           dataSource={discountList}
           onChange={handleChange}
         />
         <DiscountForm {...resource} />
-      </div>
+      </Fragment>
     );
   }
 }
