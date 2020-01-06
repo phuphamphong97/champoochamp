@@ -131,12 +131,12 @@ class BrandPage extends Component {
       },
       {
         title: 'Ngày tạo',
-        dataIndex: 'createDate',
+        dataIndex: 'createdDate',
         width: '30%',
-        ...this.getColumnSearchProps('createDate'),
-        sorter: (a, b) => moment(a.createDate).unix() - moment(b.createDate).unix(),
-        sortOrder: sortedInfo.columnKey === 'createDate' && sortedInfo.order,
-        render: (text, record) => (<span>{moment(record.createDate).format('DD/MM/YYYY')}</span>),
+        ...this.getColumnSearchProps('createdDate'),
+        sorter: (a, b) => moment(a.createdDate).unix() - moment(b.createdDate).unix(),
+        sortOrder: sortedInfo.columnKey === 'createdDate' && sortedInfo.order,
+        render: (text, record) => (<span>{moment(record.createdDate).format('DD/MM/YYYY')}</span>),
       },
     ];
 

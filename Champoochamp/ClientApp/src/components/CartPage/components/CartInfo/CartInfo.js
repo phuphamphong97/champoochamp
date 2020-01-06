@@ -86,7 +86,7 @@ class CartInfo extends Component {
         </ContentRow>
         {discountAmount > 0 && (
           <ContentRow>
-            <InfoText>Giảm giá: -{formatMoney(discountMoney, true)}đ</InfoText>
+            <InfoText>Giảm giá: - {formatMoney(discountMoney, true)}đ</InfoText>
           </ContentRow>
         )}
         <ContentRow>
