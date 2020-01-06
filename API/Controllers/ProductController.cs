@@ -160,7 +160,7 @@ namespace API.Controllers
             .Select(p => p.Product).Include(p => p.ProductVariant).ThenInclude(p => p.Color)
             .ToList();
 
-          return new CollectionModel(null, collection, new List<Collection>(), productBusiness.ShortProductList(productList));
+          return new CollectionModel(null, collection, null, new List<Collection>(), productBusiness.ShortProductList(productList));
         }
         catch (Exception e)
         {

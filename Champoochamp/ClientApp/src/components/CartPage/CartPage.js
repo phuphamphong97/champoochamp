@@ -22,6 +22,7 @@ class CartPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isInitedFrom: false,
       isShoppingCartChanged: false,
       strShoppingCart: props.strShoppingCart,
       shoppingCartList: []
@@ -42,10 +43,7 @@ class CartPage extends Component {
   componentDidUpdate() {
     const { isShoppingCartChanged } = this.state;
     const { user } = this.props;
-
-    if (isShoppingCartChanged) {
-      this.getShoppingCart(user);
-    }
+    isShoppingCartChanged && this.getShoppingCart(user);
   }
 
   componentDidMount() {
@@ -53,17 +51,17 @@ class CartPage extends Component {
   }
 
   getShoppingCart = user => {
-    const url = 'Cart/GetShoppingCart';
     const data = {
       email: user && user.email,
       shoppingCarts: `${localStorage.getItem(localStorageKey.storageShoppingCartKey)}`
     };
 
-    callAPI(url, '', 'POST', data).then(res => this.setState({
+    callAPI('Cart/GetShoppingCart', '', 'POST', data).then(res => this.setState({
+      isInitedFrom: true,
       isShoppingCartChanged: false,
       shoppingCartList: res.data
     }), () =>
-        !user && localStorage.setItem(localStorageKey.storageShoppingCartKey, getStrShoppingCart(this.state.shoppingCartList))
+        !user && localStorage.setItem(localStorageKey.storageShoppingCartKey, getStrShoppingCart(this.state.shoppingCartList))      
     );
   };
 
@@ -108,28 +106,31 @@ class CartPage extends Component {
   };
 
   render() {
-    const { shoppingCartList } = this.state;
-    const { discount, getDiscount } = this.props;
+    const { isInitedFrom, shoppingCartList } = this.state;
+    const { user, discount, getDiscount } = this.props;
 
     return (
       <PageContainer>
         <Section>
           <SectionTitle content="Giỏ hàng" />
-          {shoppingCartList.length > 0 ? (
-            <Fragment>
-              <CartItemList shoppingCartList={shoppingCartList} onUpdateQuantity={this.onUpdateQuantity} onDeleteProduct={this.onDeleteProduct} />
-              <CartInfo shoppingCartList={shoppingCartList} discount={discount} getDiscount={getDiscount} />
-            </Fragment>
-          ) : (
-            <Fragment>
-              <span>Không có sản phẩm nào trong giỏ hàng.</span>
-              <NavLink to="/">
-                <BackButton>
-                  <Link content="Về trang chủ" iconType="fas fa-chevron-left" />
-                </BackButton>
-              </NavLink>
-            </Fragment>
-          )}
+          {
+            !isInitedFrom ? null :
+            shoppingCartList.length > 0 ? (
+              <Fragment>
+                <CartItemList shoppingCartList={shoppingCartList} onUpdateQuantity={this.onUpdateQuantity} onDeleteProduct={this.onDeleteProduct} />
+                <CartInfo shoppingCartList={shoppingCartList} discount={discount} getDiscount={getDiscount} />
+              </Fragment>
+            ) : (
+              <Fragment>
+                <span>Không có sản phẩm nào trong giỏ hàng.</span>
+                <NavLink to="/">
+                  <BackButton>
+                    <Link content="Về trang chủ" iconType="fas fa-chevron-left" />
+                  </BackButton>
+                </NavLink>
+              </Fragment>
+            )
+          }
         </Section>
       </PageContainer>
     );

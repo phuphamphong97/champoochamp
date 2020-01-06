@@ -34,17 +34,24 @@ class LoginAdminPage extends Component {
   }
 
   componentDidMount() {
-    const url = `Employee/CheckLogin`;
-    const data = {
-      userName: getCookie(localStorageKey.userNameAdminKey),
-      password: getCookie(localStorageKey.passwordAdminKey)
+    const { onLoginAdmin } = this.props;
+    const timeEmployeeSession = localStorage.getItem(localStorageKey.timeEmployeeSessionKey);
+    if (timeEmployeeSession && new Date().getTime() - timeEmployeeSession < time.expiresDayOfSession * 24 * 60 * 60 * 1000) {
+      onLoginAdmin(JSON.parse(localStorage.getItem(localStorageKey.employeeKey)));
     }
-
-    callAPI(url, '', 'POST', data).then(res => {
-      if (res.data) {
-        this.props.onLoginAdmin(res.data);
+    else {
+      const data = {
+        userName: getCookie(localStorageKey.userNameAdminKey),
+        password: getCookie(localStorageKey.passwordAdminKey)
       }
-    });
+
+      callAPI('Employee/CheckLogin', '', 'POST', data).then(res => {
+        if (res.data) {
+          onLoginAdmin(res.data);
+        }
+      });
+    }
+    
   }
 
   onSubmit = e => {
@@ -57,6 +64,8 @@ class LoginAdminPage extends Component {
           if (res.data) {
             this.props.onLoginAdmin(res.data);
 
+            localStorage.setItem(localStorageKey.employeeKey, JSON.stringify(res.data));
+            localStorage.setItem(localStorageKey.timeEmployeeSessionKey, new Date().getTime());
             if (isRemember) {
               setCookie(localStorageKey.userNameAdminKey, values.userName, 1);
               setCookie(localStorageKey.passwordAdminKey, values.password, 1);

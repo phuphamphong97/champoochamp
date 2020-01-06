@@ -1,5 +1,8 @@
-﻿const apiPort = 'http://localhost:4000';
-const prophetPort = 'http://localhost:3000';
+﻿const port = {
+  apiPort: 'http://localhost:4000',
+  prophetPort: 'http://localhost:3000',
+  ghtkPort: 'http://localhost:2000',
+}
 
 const adminPage = {
   invoicePage: 'invoicePage',
@@ -19,21 +22,29 @@ const adminPage = {
 
 const localStorageKey = {
   storageShoppingCartKey: 'MyShoppingCart',
+  timeUserSessionKey: 'ChampoochampTimeUserSession',
+  timeEmployeeSessionKey: 'ChampoochampTimeEmployeeSession',
+  userKey: 'ChampoochampUser',
+  employeeKey: 'ChampoochampEmployee',
   emailKey: 'ChampoochampEmail',
   passwordKey: 'ChampoochampPassword',
   userNameAdminKey: 'ChampoochampUserNameAdmin',
   passwordAdminKey: 'ChampoochampPasswordAdmin'
 }
 
-const champoochampAddress = {
-  city: 'Thành phố Hồ Chí Minh',
+const champoochampInfo = {
+  name: 'Champoochamp',
+  email: 'champoochamp@gmail.com',
+  province: 'Thành phố Hồ Chí Minh',
   district: 'Quận 1',
+  address: 'Hẻm 19, số 74',
+  phone: '0937777999',
 }
 
 const ghtk = {
   token: '1eaf5cdc13036460fe42259b4C58eBDcF3855A38',
-  apiDev: 'https://dev.ghtk.vn',
-  apiTransportFee: '/services/shipment/fee'
+  apiTransportFee: '/Champoochamp_ghtk/getShipmentFee.php',
+  apiOrder: '/Champoochamp_ghtk/order.php',
 }
 
 
@@ -53,7 +64,9 @@ const imagesGroup = {
 
 const time = {
   newProductPeriod: 30,
-  durationNotification: 3
+  durationNotification: 3,
+  expiresDayOfSession: 0.5,
+  expiresDayOfCookie: 1,
 }
 
 const paymentMethod = {
@@ -110,16 +123,15 @@ const viewportWidth = {
 
 export {
   adminPage,
-  apiPort,
   localStorageKey,
-  champoochampAddress,
+  champoochampInfo,
   ghtk,
   filtersGroup,
   imagesGroup,
   time,
   paymentMethod,
-  prophetPort,
   productQuantity,
+  port,
   searchGroup,
   sortsGroup,
   topProductsName,

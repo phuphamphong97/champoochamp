@@ -91,7 +91,7 @@ class CartInfo extends Component {
     const discountAmount = discount ? discount.rate : 0;
     const tempMoney = formatMoney(getTotalMoney(shoppingCartList), false);
     const discountMoney = formatMoney(tempMoney * discountAmount / 100, false);
-    const totalMoney = tempMoney - discountMoney - transportFee;
+    const totalMoney = tempMoney - discountMoney + transportFee;
 
     return (
       <Fragment>

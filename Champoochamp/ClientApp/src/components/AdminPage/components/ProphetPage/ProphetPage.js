@@ -1,10 +1,10 @@
 ﻿import React, { Component } from 'react';
-import { prophetPort } from "../../../../shared/constants";
+import { port } from "../../../../shared/constants";
 
 class ProphetPage extends Component {
   getIframelyHtml = () => {
     return {
-      __html: `<iframe src=${prophetPort} width=100% height="900px"></iframe>`
+      __html: `<iframe src=${port.prophetPort} width=100% height="900px"></iframe>`
     }
   }
 

@@ -15,6 +15,8 @@ namespace API.Controllers
   [ApiController]
   public class CollectionController : ControllerBase
   {
+    CollectionBusiness collectionBusiness = new CollectionBusiness();
+
     [Route("GetAllCollections")]
     public IEnumerable<Collection> GetAllCollections()
     {
@@ -30,6 +32,34 @@ namespace API.Controllers
           return null;
         }
       }
-    }    
+    }
+
+    [Route("CreateCollection")]
+    [HttpPost]
+    public Collection CreateCollection(CollectionModel collectionModel)
+    {
+      return collectionBusiness.createCollection(collectionModel);
+    }
+
+    [Route("PutCollection")]
+    [HttpPut]
+    public Collection PutCollection(CollectionModel collectionModel)
+    {
+      return collectionBusiness.putCollection(collectionModel);
+    }
+
+    [Route("DeleteCollectionById")]
+    [HttpDelete]
+    public bool DeleteCollectionById(Collection collection)
+    {
+      return collectionBusiness.deleteCollectionById(collection);
+    }
+
+    [Route("DeleteCollectionByIds")]
+    [HttpDelete]
+    public bool DeleteCollectionByIds(CollectionModel collectionModel)
+    {
+      return collectionBusiness.deleteCollectionByIds(collectionModel);
+    }
   }
 }

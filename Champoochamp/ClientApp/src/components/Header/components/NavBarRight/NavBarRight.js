@@ -116,6 +116,8 @@ class NavBarRight extends Component {
   };
 
   onLogout = () => {
+    localStorage.setItem(localStorageKey.userKey, '');
+    localStorage.setItem(localStorageKey.timeUserSessionKey, 0);
     setCookie(localStorageKey.emailKey, '', -1);
     setCookie(localStorageKey.passwordKey, '', -1);
     this.props.getLoginUser(null);
@@ -191,6 +193,8 @@ class NavBarRight extends Component {
           <CollapseMenu
             categoryMenu={categoryMenu}
             collectionMenu={collectionMenu}
+            suggestions={searchData}
+            history={history}
             onCloseMenu={() => this.onCloseDrawer('isMenuDrawerVisible')}
           />
         </StyledDrawer>

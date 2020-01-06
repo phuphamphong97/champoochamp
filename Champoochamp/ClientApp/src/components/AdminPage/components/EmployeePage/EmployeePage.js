@@ -18,7 +18,9 @@ class EmployeePage extends Component {
       isShowModal: false,
       title: '',
       employee: null,
-      currentTypeForm: ''
+      currentTypeForm: '',
+      fileName: '',
+      imageUrl: ''
     };
   }
 
@@ -31,6 +33,13 @@ class EmployeePage extends Component {
       .then(res => this.setState({ employeeList: res.data }));
   }
 
+  getAvatarInfo = (fileName, imageUrl) => {
+    this.setState({
+      fileName,
+      imageUrl
+    });
+  }
+
   onShowModal = (typeForm, title, employee) => {
     this.setState({
       isShowModal: true,
@@ -41,17 +50,27 @@ class EmployeePage extends Component {
   };
 
   onSave = () => {
+    const { currentTypeForm, employeeList, fileName, imageUrl } = this.state;
+    const { employeeLogin } = this.props;
     const { form } = this.formRef.props;
-    form.validateFields((err, values) => {
-      const { currentTypeForm, employeeList } = this.state;
-      const { employeeLogin } = this.props;
+    form.setFieldsValue({
+      avatar: fileName
+    });
+    
+    form.validateFields((err, values) => {  
+      const data = {
+        employeeLogin,
+        employee: values,
+        imageUrl,
+        employeeList: []        
+      }
 
       if (err) {
         return;
-      }
+      }      
 
       if (currentTypeForm === typeForm.create) {
-        callAPI('Employee/CreateEmployee', '', 'POST', values)
+        callAPI('Employee/CreateEmployee', '', 'POST', data)
           .then(res => {
             if (res.data) {
               if (res.data.id > 0) {
@@ -92,12 +111,7 @@ class EmployeePage extends Component {
             }
           });
       }
-      else if (currentTypeForm === typeForm.update) {
-        const data = {
-          employeeLogin,
-          employee: values,
-          employeeList: []
-        }
+      else if (currentTypeForm === typeForm.update) {        
         callAPI('Employee/PutEmployee', '', 'PUT', data)
           .then(res => {
             if (res.data) {
@@ -286,8 +300,8 @@ class EmployeePage extends Component {
   render() {
     let { selectedRowKeys, sortedInfo, employeeList, isShowModal, currentTypeForm, title, employee } = this.state;
     const { employeeLogin } = this.props;
-    const { handleChange, onSelectChange, wrappedComponentRef, onShowModal, onSave, onCancel, onSelectedDelete, onDelete } = this;
-    const resource = { wrappedComponentRef, isShowModal, currentTypeForm, title, employee, onSave, onCancel, employeeLogin };
+    const { handleChange, onSelectChange, wrappedComponentRef, getAvatarInfo, onShowModal, onSave, onCancel, onSelectedDelete, onDelete } = this;
+    const resource = { wrappedComponentRef, getAvatarInfo, isShowModal, currentTypeForm, title, employee, onSave, onCancel, employeeLogin };
     const rowSelection = {
       selectedRowKeys,
       onChange: onSelectChange,
@@ -301,7 +315,7 @@ class EmployeePage extends Component {
         width: '10%',
         render: (text, record) => (
           <img
-            src={getImageUrl(record.avatar, imagesGroup.users)}
+            src={getImageUrl(record.avatar ? record.avatar : 'default.png', imagesGroup.users)}
             alt=""
             style={{ width: "50px" }}
           />

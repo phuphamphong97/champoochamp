@@ -25,7 +25,7 @@ const MenuItemTitle = styled('span')`
 `;
 
 class MainMenu extends Component {
-  renderCategoryMenu = (categories, url) =>
+  renderCategoryMenu = (categories, url, onCloseMenu) =>
     categories.map(category => {
       if (!category.parentId) {
         return (
@@ -35,7 +35,8 @@ class MainMenu extends Component {
           >
             {this.renderCategoryMenu(
               category.inverseParent,
-              `${url}/${category.metaTitle}`
+              `${url}/${category.metaTitle}`,
+              onCloseMenu
             )}
           </Menu.SubMenu>
         );
@@ -44,14 +45,15 @@ class MainMenu extends Component {
           <Menu.ItemGroup key={category.id} title={category.name}>
             {this.renderCategoryMenu(
               category.inverseParent,
-              `${url}/${category.metaTitle}`
+              `${url}/${category.metaTitle}`,
+              onCloseMenu
             )}
           </Menu.ItemGroup>
         );
       } else if (category.inverseParent.length === 0) {
         return (
           <StyledMenuItem key={category.id}>
-            <NavLink to={`${url}/${category.metaTitle}-${category.id}`}>
+            <NavLink to={`${url}/${category.metaTitle}-${category.id}`} onClick={onCloseMenu}>
               {category.name}
             </NavLink>
           </StyledMenuItem>
@@ -61,11 +63,11 @@ class MainMenu extends Component {
       return true;
     });
 
-  renderCollectionMenu = collectionMenu =>
+  renderCollectionMenu = (collectionMenu, onCloseMenu) =>
     collectionMenu.map(collection => {
       return (
         <StyledMenuItem key={collection.id}>
-          <NavLink to={`/bo-suu-tap/${collection.metaTitle}-${collection.id}`}>
+          <NavLink to={`/bo-suu-tap/${collection.metaTitle}-${collection.id}`} onClick={onCloseMenu}>
             {collection.name}
           </NavLink>
         </StyledMenuItem>
@@ -73,13 +75,13 @@ class MainMenu extends Component {
     });
 
   render() {
-    const { mode, categoryMenu, collectionMenu } = this.props;
+    const { mode, categoryMenu, collectionMenu, onCloseMenu } = this.props;
 
     return (
       <StyledMenu mode={mode}>
-        {this.renderCategoryMenu(categoryMenu, '/san-pham')}
+        {this.renderCategoryMenu(categoryMenu, '/san-pham', onCloseMenu)}
         <Menu.SubMenu title={<MenuItemTitle>Bộ sưu tập</MenuItemTitle>}>
-          {this.renderCollectionMenu(collectionMenu)}
+          {this.renderCollectionMenu(collectionMenu, onCloseMenu)}
         </Menu.SubMenu>
       </StyledMenu>
     );
@@ -89,7 +91,8 @@ class MainMenu extends Component {
 MainMenu.propsTypes = {
   mode: PropTypes.string.isRequired,
   categoryMenu: PropTypes.array,
-  collectionMenu: PropTypes.array
+  collectionMenu: PropTypes.array,
+  onCloseMenu: PropTypes.function
 };
 
 export default MainMenu;
