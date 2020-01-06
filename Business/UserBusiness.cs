@@ -1,4 +1,5 @@
 ﻿using Data.Entity;
+using Data.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -172,6 +173,148 @@ namespace Business
         return false;
       }
 
+    }
+
+    public User createUser(UserModel userModel)
+    {
+      using (champoochampContext db = new champoochampContext())
+      {
+        try
+        {
+          string folderPath = "http://localhost:5000/assets/images/users";
+          //Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+          User d = db.User.Where(p => String.Compare(p.Email, userModel.user.Email, false) == 0 && p.Status == true).SingleOrDefault();
+          if (d != null)
+          {
+            return new User();
+          }
+
+          userModel.user.Password = PasswordConverter.Encrypt(userModel.user.Password);
+          if (String.IsNullOrEmpty(userModel.user.Avatar))
+          {
+            userModel.user.Avatar = "default.png";
+          }
+          else
+          {
+            Services.SaveImage(folderPath, userModel.user.Avatar, userModel.imageUrl);
+          }
+          db.Add(userModel.user);
+
+          db.SaveChanges();
+          return userModel.user;
+        }
+        catch (Exception e)
+        {
+          Console.WriteLine(e.Message);
+          return null;
+        }
+      }
+    }
+
+    public User putUser(UserModel userModel)
+    {
+      using (champoochampContext db = new champoochampContext())
+      {
+        try
+        {
+          User d = db.User.Where(p => p.Id != userModel.user.Id && String.Compare(p.Email, userModel.user.Email, false) == 0 && p.Status == true).SingleOrDefault();
+          if (d != null)
+          {
+            return new User();
+          }
+
+          User user = db.User.Find(userModel.user.Id);
+          user.Name = userModel.user.Name;
+          user.Email = userModel.user.Email;
+          user.Password = PasswordConverter.Encrypt(userModel.user.Password);
+          user.Phone = userModel.user.Phone;
+          user.Address = userModel.user.Address;
+          user.ModifiedDate = DateTime.Now;
+          //user.ModifiedBy = userModel.employee.UserName;
+          if (String.IsNullOrEmpty(userModel.user.Avatar))
+          {
+            user.Avatar = "default.png";
+          }
+          else
+          {
+            user.Avatar = userModel.user.Avatar;
+          }
+
+          db.SaveChanges();
+          return user;
+        }
+        catch (Exception e)
+        {
+          Console.WriteLine(e.Message);
+          return null;
+        }
+      }
+    }
+
+    public bool deleteUserById(User d)
+    {
+      using (champoochampContext db = new champoochampContext())
+      {
+        try
+        {
+          User user = db.User.Find(d.Id);
+          if (user == null)
+          {
+            return false;
+          }
+          user.Status = false;
+          db.SaveChanges();
+          return true;
+        }
+        catch (Exception e)
+        {
+          Console.WriteLine(e.Message);
+          return false;
+        }
+      }
+    }
+
+    public bool deleteUserByIds(UserModel userModel)
+    {
+      using (champoochampContext db = new champoochampContext())
+      {
+        try
+        {
+          foreach (User d in userModel.userList)
+          {
+            User user = db.User.Find(d.Id);
+            if (user == null)
+            {
+              return false;
+            }
+
+            user.Status = false;
+          }
+
+          db.SaveChanges();
+          return true;
+        }
+        catch (Exception e)
+        {
+          Console.WriteLine(e.Message);
+          return false;
+        }
+      }
+    }
+
+    public List<User> decryptPassword(List<User> userList)
+    {
+      if (userList.Count() == 0)
+      {
+        return null;
+      }
+
+      foreach (User e in userList)
+      {
+        e.Password = PasswordConverter.Decrypt(e.Password);
+      }
+
+      return userList;
     }
   }
 }

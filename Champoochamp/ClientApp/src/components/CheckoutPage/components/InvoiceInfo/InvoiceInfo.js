@@ -4,7 +4,7 @@ import { Row, Col, Form, Input, Select, notification } from 'antd';
 import styled from '@emotion/styled';
 
 import { callghtkAPI, formatForm } from '../../../../shared/utils';
-import { champoochampAddress, ghtk, time } from '../../../../shared/constants';
+import { champoochampInfo, ghtk, time } from '../../../../shared/constants';
 import { cities, districts, wards } from '../../../../shared/address';
 import { Link } from '../../../elements';
 
@@ -24,6 +24,13 @@ class InvoiceInfo extends Component {
     };
   }
 
+  componentDidMount() {
+    const { form, user } = this.props;
+    if (user) {
+      this.handleDistrictChange(form.getFieldsValue().district)
+    }
+  }
+
   handleCityChange = value => {
     this.props.form.setFieldsValue({
       district: undefined,
@@ -39,27 +46,31 @@ class InvoiceInfo extends Component {
   handleDistrictChange = value => {
     const { getTransportFee } = this.props;
     const url = `${ghtk.apiTransportFee}`;
-    const query = `?pick_province=${champoochampAddress.city}&pick_district=${
-      champoochampAddress.district
-    }&province=${
-      this.props.form.getFieldsValue().province
-    }&district=${value}&weight=1000&transport=road`;
+    const data = {
+      token: `${ghtk.token}`,
+      pick_province: `${champoochampInfo.province}`,
+      pick_district: `${champoochampInfo.district}`,
+      province: `${this.props.form.getFieldsValue().province}`,
+      district: `${value}`,
+      weight: 1000,
+    };
 
-    callghtkAPI(url, query, 'GET')
-    .then(res => {
-      if (res) {
-        getTransportFee(res.fee);
-        console.log('success');
-      } else {
-        notification.warning({
-          message:
-            'Phí vận chuyển tạm thời không khả dụng, vui lòng tải lại trang!',
-          placement: 'topRight',
-          onClick: () => notification.destroy(),
-          duration: time.durationNotification
-        });
-      }
-    });
+    callghtkAPI(url, 'POST', data)
+      .then(res => {
+        if (res && res.data.success) {
+          getTransportFee(res.data.fee.fee);
+          console.log('success');
+        }
+        else {
+          notification.warning({
+            message:
+              'Phí vận chuyển tạm thời không khả dụng, vui lòng tải lại trang!',
+            placement: 'topRight',
+            onClick: () => notification.destroy(),
+            duration: time.durationNotification
+          });
+        }
+      });
 
     this.props.form.setFieldsValue({
       ward: undefined

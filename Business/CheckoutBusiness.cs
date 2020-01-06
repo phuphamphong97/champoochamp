@@ -11,7 +11,7 @@ namespace Business
 {
   public class CheckoutBusiness
   {
-    public bool SaveInVoice(CheckoutModel checkoutModel)
+    public Invoice SaveInVoice(CheckoutModel checkoutModel)
     {
       using (champoochampContext db = new champoochampContext())
       {
@@ -19,11 +19,11 @@ namespace Business
         {
           try
           {
-            bool result = false;
             Invoice invoice = getInvoice(checkoutModel);
             //Lưu hóa đơn
             db.Add(invoice);
             db.SaveChanges();
+
             //Lưu chi tiết hóa đơn
             List<InvoiceDetail> invoiceDetailList = getInvoiceDetail(checkoutModel.shoppingCartList, invoice.Id);
             foreach (InvoiceDetail item in invoiceDetailList)
@@ -42,7 +42,7 @@ namespace Business
               }
               else
               {
-                return false;
+                return null;
               }
             }
 
@@ -54,21 +54,24 @@ namespace Business
             }
             else if(checkoutModel.user.Id > 0)
             {
-              return false;
+              return null;
             }
 
 
             db.SaveChanges();
 
-            result = SendEmail(checkoutModel);
+            if (!SendEmail(checkoutModel))
+            {
+              return null;
+            }
 
             transaction.Commit();
-            return result;
+            return invoice;
           }
           catch (Exception e)
           {
             transaction.Rollback();
-            return false;
+            return null;
           }
         }          
       }
@@ -89,6 +92,7 @@ namespace Business
         CustomerAddress = user.Address,
         Message = checkoutModel.message,
         Total = checkoutModel.total,
+        ShipMoney = checkoutModel.shipMoney,
         CreatedDate = DateTime.Now
       };
 

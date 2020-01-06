@@ -2,7 +2,9 @@
 using Data.Model;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Business
@@ -27,27 +29,33 @@ namespace Business
       }
     }
 
-    public Employee createEmployee(Employee employee)
+    public Employee createEmployee(EmployeeModel employeeModel)
     {
       using (champoochampContext db = new champoochampContext())
       {
         try
         {
-          Employee d = db.Employee.Where(p => String.Compare(p.UserName, employee.UserName, false) == 0 && p.Status == true).SingleOrDefault();
+          string folderPath = "http://localhost:5000/assets/images/users";
+          //Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+          Employee d = db.Employee.Where(p => String.Compare(p.UserName, employeeModel.employee.UserName, false) == 0 && p.Status == true).SingleOrDefault();
           if (d != null)
           {
             return new Employee();
           }
 
-          employee.Password = PasswordConverter.Encrypt(employee.Password);
-          if (String.IsNullOrEmpty(employee.Avatar))
+          employeeModel.employee.Password = PasswordConverter.Encrypt(employeeModel.employee.Password);
+          if (String.IsNullOrEmpty(employeeModel.employee.Avatar))
           {
-            employee.Avatar = "default.png";
+            employeeModel.employee.Avatar = "default.png";
           }
-          db.Add(employee);
+          else
+          {
+            Services.SaveImage(folderPath, employeeModel.employee.Avatar, employeeModel.imageUrl);
+          }
+          db.Add(employeeModel.employee);
 
           db.SaveChanges();
-          return employee;
+          return employeeModel.employee;
         }
         catch (Exception e)
         {

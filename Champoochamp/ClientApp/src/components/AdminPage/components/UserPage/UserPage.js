@@ -1,8 +1,10 @@
-﻿import React, { Component } from 'react';
-import { Table, Input, Button, Icon } from 'antd';
+﻿import React, { Component, Fragment } from 'react';
+import { Table, Input, Button, Icon, notification } from 'antd';
 
 import { callAPI, getImageUrl } from '../../../../shared/utils';
-import { imagesGroup } from '../../../../shared/constants';
+import { imagesGroup, time, typeForm } from '../../../../shared/constants';
+
+import UserForm from './components/UserForm';
 
 class UserPage extends Component {
   constructor(props) {
@@ -12,7 +14,13 @@ class UserPage extends Component {
       searchText: '',
       searchedColumn: '',
       sortedInfo: null,
-      userList: []
+      userList: [],
+      isShowModal: false,
+      title: '',
+      user: null,
+      currentTypeForm: '',
+      fileName: '',
+      imageUrl: ''
     };
   }
 
@@ -24,6 +32,204 @@ class UserPage extends Component {
     callAPI('User/GetAllUsers')
       .then(res => this.setState({ userList: res.data }));
   }
+
+  getAvatarInfo = (fileName, imageUrl) => {
+    this.setState({
+      fileName,
+      imageUrl
+    });
+  }
+
+  onShowModal = (typeForm, title, user) => {
+    this.setState({
+      isShowModal: true,
+      currentTypeForm: typeForm,
+      title,
+      user
+    });
+  };
+
+  onSave = () => {
+    const { currentTypeForm, userList, fileName, imageUrl } = this.state;
+    const { employee } = this.props;
+    const { form } = this.formRef.props;
+    form.setFieldsValue({
+      avatar: fileName
+    });
+
+    form.validateFields((err, values) => {
+      const data = {
+        employee,
+        user: values,
+        imageUrl,
+        userList: []
+      }
+
+      if (err) {
+        return;
+      }
+
+      if (currentTypeForm === typeForm.create) {
+        callAPI('User/CreateUser', '', 'POST', data)
+          .then(res => {
+            if (res.data) {
+              if (res.data.id > 0) {
+                userList.push(res.data);
+
+                this.setState({
+                  isShowModal: false,
+                  userList
+                });
+                form.resetFields();
+
+                notification.info({
+                  message: 'Tạo mới khách hàng thành công!',
+                  placement: 'topRight',
+                  onClick: () => notification.destroy(),
+                  duration: time.durationNotification
+                });
+              }
+              else {
+                notification.warning({
+                  message: 'Tài khoản đã tồn tại!',
+                  placement: 'topRight',
+                  onClick: () => notification.destroy(),
+                  duration: time.durationNotification
+                });
+              }
+            }
+            else {
+              this.setState({ isShowModal: false });
+              form.resetFields();
+
+              notification.warning({
+                message: 'Tạo mới khách hàng thất bại!',
+                placement: 'topRight',
+                onClick: () => notification.destroy(),
+                duration: time.durationNotification
+              });
+            }
+          });
+      }
+      else if (currentTypeForm === typeForm.update) {
+        callAPI('User/PutUser', '', 'PUT', data)
+          .then(res => {
+            if (res.data) {
+              if (res.data.id > 0) {
+                let lst = userList;
+                lst = userList.filter(user => user.id !== res.data.id)
+                lst.unshift(res.data);
+
+                this.setState({
+                  isShowModal: false,
+                  userList: lst
+                });
+                form.resetFields();
+
+                notification.info({
+                  message: 'Cập nhật khách hàng thành công!',
+                  placement: 'topRight',
+                  onClick: () => notification.destroy(),
+                  duration: time.durationNotification
+                });
+              }
+              else {
+                notification.warning({
+                  message: 'Tài khoản đã tồn tại!',
+                  placement: 'topRight',
+                  onClick: () => notification.destroy(),
+                  duration: time.durationNotification
+                });
+              }
+            }
+            else {
+              this.setState({ isShowModal: false });
+              form.resetFields();
+
+              notification.warning({
+                message: 'Cập nhật khách hàng thất bại!',
+                placement: 'topRight',
+                onClick: () => notification.destroy(),
+                duration: time.durationNotification
+              });
+            }
+          });
+      }
+    });
+  };
+
+  onCancel = () => {
+    this.setState({ isShowModal: false });
+    this.formRef.props.form.resetFields();
+  };
+
+  onSelectedDelete = ids => {
+    let userList = [];
+    ids.map(id => userList.push({ id }));
+    const data = {
+      employee: null,
+      user: null,
+      userList
+    };
+
+    callAPI('User/DeleteUserByIds', '', 'DELETE', data)
+      .then(res => {
+        if (res.data) {
+          this.setState({
+            selectedRowKeys: this.state.selectedRowKeys.filter(key => !ids.includes(key)),
+            userList: this.state.userList.filter(user => !ids.includes(user.id))
+          });
+
+          notification.info({
+            message: 'Xóa khách hàng thành công!',
+            placement: 'topRight',
+            onClick: () => notification.destroy(),
+            duration: time.durationNotification
+          });
+        }
+        else {
+          notification.warning({
+            message: 'Xóa khách hàng thất bại!',
+            placement: 'topRight',
+            onClick: () => notification.destroy(),
+            duration: time.durationNotification
+          });
+        }
+      });
+  };
+
+  onDelete = id => {
+    const data = { id };
+
+    callAPI('User/DeleteUserById', '', 'DELETE', data)
+      .then(res => {
+        if (res.data) {
+          this.setState({
+            selectedRowKeys: this.state.selectedRowKeys.filter(key => key !== id),
+            userList: this.state.userList.filter(user => user.id !== id)
+          });
+
+          notification.info({
+            message: 'Xóa khách hàng thành công!',
+            placement: 'topRight',
+            onClick: () => notification.destroy(),
+            duration: time.durationNotification
+          });
+        }
+        else {
+          notification.warning({
+            message: 'Xóa khách hàng thất bại!',
+            placement: 'topRight',
+            onClick: () => notification.destroy(),
+            duration: time.durationNotification
+          });
+        }
+      });
+  };
+
+  wrappedComponentRef = formRef => {
+    this.formRef = formRef;
+  };
 
   onSelectChange = selectedRowKeys => {
     this.setState({ selectedRowKeys });
@@ -92,10 +298,12 @@ class UserPage extends Component {
   };
 
   render() {
-    let { selectedRowKeys, sortedInfo, userList } = this.state;
+    let { selectedRowKeys, sortedInfo, userList, isShowModal, currentTypeForm, title, user } = this.state;
+    const { handleChange, onSelectChange, wrappedComponentRef, getAvatarInfo, onShowModal, onSave, onCancel, onSelectedDelete, onDelete } = this;
+    const resource = { wrappedComponentRef, getAvatarInfo, isShowModal, currentTypeForm, title, user, onSave, onCancel };
     const rowSelection = {
       selectedRowKeys,
-      onChange: this.onSelectChange,
+      onChange: onSelectChange,
     };
     sortedInfo = sortedInfo || {};
 
@@ -103,7 +311,7 @@ class UserPage extends Component {
     const columns = [
       {
         title: 'Avatar',
-        width: '20%',
+        width: '10%',
         render: (text, record) => (
           <img
             src={getImageUrl(record.avatar, imagesGroup.users)}
@@ -113,7 +321,7 @@ class UserPage extends Component {
         ),
       },
       {
-        title: 'Tên nhân viên',
+        title: 'Tên khách hàng',
         dataIndex: 'name',
         width: '18%',
         ...this.getColumnSearchProps('name'),
@@ -152,17 +360,30 @@ class UserPage extends Component {
           </span>
         ),
       },
+      {
+        title: 'Action',
+        width: '10%',
+        render: (text, record) => (
+          <Fragment>
+            <Icon type="edit" onClick={() => onShowModal(typeForm.update, `Cập nhật khách hàng`, record)} />
+            <Icon type="delete" onClick={() => onDelete(record.id)} />
+          </Fragment>
+        ),
+      },
     ];
 
     return (
       <div>
+        <Button type="primary" onClick={() => onShowModal(typeForm.create, `Tạo mới khách hàng`, null)}>Tạo mới</Button>
+        <Button type="primary" onClick={() => onSelectedDelete(selectedRowKeys)}>Xóa</Button>
         <Table
           rowKey='id'
           rowSelection={rowSelection}
           columns={columns}
           dataSource={userList}
-          onChange={this.handleChange}
+          onChange={handleChange}
         />
+        <UserForm {...resource} />
       </div>
     );
   }

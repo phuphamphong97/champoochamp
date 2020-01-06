@@ -23,8 +23,6 @@ class Avatar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      imageUrl: '',
-      fileName: '',
       loading: false,
     };
   }
@@ -39,9 +37,8 @@ class Avatar extends Component {
       getBase64(info.file.originFileObj, imageUrl =>
         this.setState({
           imageUrl,
-          fileName: info.file.name,
           loading: false,
-        }),
+        }, () => this.props.getAvatarInfo(info.file.name, imageUrl)),
       );
     }
   };
@@ -56,9 +53,7 @@ class Avatar extends Component {
   }
 
   render() {
-    const { imageUrl, fileName } = this.state;
-    console.log(imageUrl);
-    console.log(fileName);
+    const { imageUrl } = this.state;
 
     return (
       <Upload

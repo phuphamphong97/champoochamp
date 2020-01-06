@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Business;
 using Data.Entity;
 using Data.Model;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -44,9 +45,9 @@ namespace API.Controllers
 
     [Route("CreateEmployee")]
     [HttpPost]
-    public Employee CreateEmployee(Employee employee)
+    public Employee CreateEmployee(EmployeeModel employeeModel)
     {
-      return employeeBusiness.createEmployee(employee);
+      return employeeBusiness.createEmployee(employeeModel);
     }
 
     [Route("PutEmployee")]

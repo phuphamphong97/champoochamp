@@ -20,7 +20,7 @@ namespace API.Controllers
 
     [HttpPost]
     [Route("SaveInVoice")]
-    public bool SaveInVoice(CheckoutModel checkoutModel)
+    public Invoice SaveInVoice(CheckoutModel checkoutModel)
     {
       return checkoutBusiness.SaveInVoice(checkoutModel);
     }

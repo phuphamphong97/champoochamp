@@ -110,6 +110,7 @@ class RouterConfig extends Component {
             <CheckoutPage
               {...props}
               user={user}
+              strShoppingCart={strShoppingCart}
               updateShoppingCart={updateShoppingCart}
               discount={discount}
               getDiscount={getDiscount}

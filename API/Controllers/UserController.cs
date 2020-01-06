@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Business;
 using Data.Entity;
+using Data.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +23,8 @@ namespace API.Controllers
       {
         try
         {
-          return db.User.Where(p => p.Status == true).ToList();
+          List<User> userList = db.User.Where(p => p.Status == true).ToList();
+          return userBusiness.decryptPassword(userList);
         }
         catch (Exception e)
         {
@@ -75,6 +77,34 @@ namespace API.Controllers
     public int SendVerificationCode(string email)
     {
       return userBusiness.sendVerificationCode(email);
+    }
+
+    [Route("CreateUser")]
+    [HttpPost]
+    public User CreateUser(UserModel userModel)
+    {
+      return userBusiness.createUser(userModel);
+    }
+
+    [Route("PutUser")]
+    [HttpPut]
+    public User PutUser(UserModel userModel)
+    {
+      return userBusiness.putUser(userModel);
+    }
+
+    [Route("DeleteUserById")]
+    [HttpDelete]
+    public bool DeleteUserById(User user)
+    {
+      return userBusiness.deleteUserById(user);
+    }
+
+    [Route("DeleteUserByIds")]
+    [HttpDelete]
+    public bool DeleteUserByIds(UserModel userModel)
+    {
+      return userBusiness.deleteUserByIds(userModel);
     }
   }
 }

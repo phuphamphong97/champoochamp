@@ -93,6 +93,8 @@ class SearchBar extends Component {
   };
 
   onHideSuggestions = () => {
+    const { onCloseMenu } = this.props;
+    onCloseMenu && onCloseMenu();
     this.setState({
       showSuggestions: false
     });

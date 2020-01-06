@@ -7,7 +7,7 @@ import Footer from '../Footer';
 import RouterConfig from '../../router/RouterConfig';
 
 import { callAPI, setCookie, getCookie } from '../../shared/utils';
-import { localStorageKey } from '../../shared/constants';
+import { localStorageKey, time } from '../../shared/constants';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -32,20 +32,29 @@ class App extends Component {
 
   checkLoginUserByCookie = () => {
     return new Promise((resolve, reject) => {
-      const data = {
-        email: getCookie(localStorageKey.emailKey),
-        password: getCookie(localStorageKey.passwordKey)
-      };
-      callAPI('User/CheckLogin', '', 'POST', data).then(res => {
-        if (res.data) {
-          setCookie(localStorageKey.emailKey, data.email, 1);
-          setCookie(localStorageKey.passwordKey, data.password, 1);
-          this.getLoginUser(res.data);
-          return resolve(true);
-        } else {
-          return resolve(false);
-        }
-      });
+      const timeUserSession = localStorage.getItem(localStorageKey.timeUserSessionKey);
+      if (timeUserSession && new Date().getTime() - timeUserSession < time.expiresDayOfSession*24*60*60*1000) {
+        this.getLoginUser(JSON.parse(localStorage.getItem(localStorageKey.userKey)));
+        return resolve(true);
+      }
+      else {
+        const data = {
+          email: getCookie(localStorageKey.emailKey),
+          password: getCookie(localStorageKey.passwordKey)
+        };
+        callAPI('User/CheckLogin', '', 'POST', data).then(res => {
+          if (res.data) {
+            localStorage.setItem(localStorageKey.userKey, JSON.stringify(res.data));
+            localStorage.setItem(localStorageKey.timeUserSessionKey, new Date().getTime());
+            setCookie(localStorageKey.emailKey, data.email, 1);
+            setCookie(localStorageKey.passwordKey, data.password, 1);
+            this.getLoginUser(res.data);
+            return resolve(true);
+          } else {
+            return resolve(false);
+          }
+        });
+      }      
     });
   };
 

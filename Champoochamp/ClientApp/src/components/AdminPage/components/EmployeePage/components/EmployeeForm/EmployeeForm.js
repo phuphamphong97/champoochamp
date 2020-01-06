@@ -8,7 +8,9 @@ class EmployeeForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      confirmDirty: false
+      confirmDirty: false,
+      imageUrl: '',
+      fileName: ''
     };
   }
 
@@ -35,7 +37,7 @@ class EmployeeForm extends Component {
   };
 
   render() {
-    const { isShowModal, currentTypeForm, title, form, employee, onSave, onCancel, employeeLogin } = this.props;
+    const { getAvatarInfo, isShowModal, currentTypeForm, title, form, employee, onSave, onCancel, employeeLogin } = this.props;
     const { getFieldDecorator } = form;
 
     return (
@@ -109,7 +111,7 @@ class EmployeeForm extends Component {
             )}
           </Form.Item>
           <Form.Item label="Ảnh đại diện">
-            {getFieldDecorator('avatar')(<Avatar />)}
+            {getFieldDecorator('avatar')(<Avatar getAvatarInfo={getAvatarInfo} />)}
           </Form.Item>
           {
             currentTypeForm === typeForm.update && employee && employee.modifiedBy &&

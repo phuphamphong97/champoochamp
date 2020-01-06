@@ -78,6 +78,7 @@ class CartSummary extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isInitedFrom: false,
       isUserChanged: false,
       user: props.user,
       isShoppingCartChanged: false,
@@ -92,7 +93,8 @@ class CartSummary extends Component {
         strShoppingCart: nextProps.strShoppingCart,
         isShoppingCartChanged: true
       };
-    } else if (nextProps.user !== prevState.user) {
+    }
+    else if (nextProps.user !== prevState.user) {
       return {
         user: nextProps.user,
         isUserChanged: true
@@ -126,6 +128,7 @@ class CartSummary extends Component {
     callAPI(url, '', 'POST', data).then(res =>
       this.setState(
         {
+          isInitedFrom: true,
           isShoppingCartChanged: false,
           shoppingCartList: res ? res.data : []
         },
@@ -198,45 +201,58 @@ class CartSummary extends Component {
     });
 
   render() {
-    const { shoppingCartList } = this.state;
+    const { isInitedFrom, shoppingCartList } = this.state;
     const { onCloseDrawer } = this.props;
 
     return (
       <Wrapper>
         <SectionTitle content="Giỏ hàng" />
-        {shoppingCartList.length > 0 ? (
-          <Fragment>
-            <CartItemList>{this.renderCartItem(shoppingCartList)}</CartItemList>
-            <TotalWrapper>
-              <Row gutter={8}>
-                <Col span={12}>
-                  <TotalTitle>Tổng cộng</TotalTitle>
-                </Col>
-                <Col span={12}>
-                  <TotalPrice>
-                    {formatMoney(getTotalMoney(shoppingCartList), true)}đ
-                  </TotalPrice>
-                </Col>
-              </Row>
-            </TotalWrapper>
-            <NavLink to={`/gio-hang`}>
-              <Button
-                title="Xem giỏ hàng"
-                isBlockButton
-                onClick={onCloseDrawer}
-              />
-            </NavLink>
-          </Fragment>
-        ) : (
-          <span>Không có sản phẩm trong giỏ hàng</span>
-        )}
-        <BackButton>
-          <Link
-            content="Quay lại"
-            iconType="fas fa-chevron-left"
-            onClick={onCloseDrawer}
-          />
-        </BackButton>
+        {
+          !isInitedFrom ? null :
+          shoppingCartList.length > 0 ? 
+          (
+            <Fragment>
+              <CartItemList>{this.renderCartItem(shoppingCartList)}</CartItemList>
+              <TotalWrapper>
+                <Row gutter={8}>
+                  <Col span={12}>
+                    <TotalTitle>Tổng cộng</TotalTitle>
+                  </Col>
+                  <Col span={12}>
+                    <TotalPrice>
+                      {formatMoney(getTotalMoney(shoppingCartList), true)}đ
+                    </TotalPrice>
+                  </Col>
+                </Row>
+              </TotalWrapper>
+              <NavLink to={`/gio-hang`}>
+                <Button
+                  title="Xem giỏ hàng"
+                  isBlockButton
+                  onClick={onCloseDrawer}
+                />
+              </NavLink>
+              <BackButton>
+                <Link
+                  content="Quay lại"
+                  iconType="fas fa-chevron-left"
+                  onClick={onCloseDrawer}
+                />
+              </BackButton>
+            </Fragment>
+          ) : (
+            <Fragment>
+              <span>Không có sản phẩm trong giỏ hàng</span>
+              <BackButton>
+                <Link
+                  content="Quay lại"
+                  iconType="fas fa-chevron-left"
+                  onClick={onCloseDrawer}
+                />
+              </BackButton>
+            </Fragment>
+          )
+        }
       </Wrapper>
     );
   }

@@ -23,17 +23,18 @@ const BackButton = styled('div')`
 
 class CollapseMenu extends Component {
   render() {
-    const { categoryMenu, collectionMenu, onCloseMenu } = this.props;
+    const { categoryMenu, collectionMenu, onCloseMenu, suggestions, history } = this.props;
 
     return (
       <Wrapper>
         <SmallSearchBar>
-          <SearchBar />
+          <SearchBar suggestions={suggestions} history={history} onCloseMenu={onCloseMenu} />
         </SmallSearchBar>
         <MainMenu
           mode="inline"
           categoryMenu={categoryMenu}
           collectionMenu={collectionMenu}
+          onCloseMenu={onCloseMenu}
         />
         <BackButton>
           <Link

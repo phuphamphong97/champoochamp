@@ -9,6 +9,7 @@ namespace Data.Model
   {
     public Employee employee { get; set; }
     public Collection collection { get; set; }
+    public string imageUrl { get; set; }
     public List<Collection> collectionList { get; set; }
     public List<Product> productList { get; set; }
 
@@ -18,10 +19,11 @@ namespace Data.Model
       productList = new List<Product>();
     }
 
-    public CollectionModel(Employee employee, Collection collection, List<Collection> collectionList, List<Product> productList)
+    public CollectionModel(Employee employee, Collection collection, string imageUrl, List<Collection> collectionList, List<Product> productList)
     {
       this.employee = employee;
       this.collection = collection;
+      this.imageUrl = imageUrl;
       this.collectionList = collectionList;
       this.productList = productList;
     }

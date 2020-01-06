@@ -63,9 +63,12 @@ class LoginPage extends Component {
           if (res.data) {
             getLoginUser(res.data);
 
+            localStorage.setItem(localStorageKey.userKey, JSON.stringify(res.data));
+            localStorage.setItem(localStorageKey.timeUserSessionKey, new Date().getTime());
+            localStorage.setItem(localStorageKey.storageShoppingCartKey, '')
             if (isRemember) {
-              setCookie(localStorageKey.emailKey, values.email, 1);
-              setCookie(localStorageKey.passwordKey, values.password, 1);
+              setCookie(localStorageKey.emailKey, values.email, time.expiresDayOfCookie);
+              setCookie(localStorageKey.passwordKey, values.password, time.expiresDayOfCookie);
             }
 
             notification.info({
@@ -74,7 +77,7 @@ class LoginPage extends Component {
               onClick: () => notification.destroy(),
               duration: time.durationNotification
             });
-            localStorage.setItem(localStorageKey.storageShoppingCartKey, '')
+            
             history.push(`/`);
           } else {
             notification.warning({
