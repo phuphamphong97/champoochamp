@@ -21,4 +21,5 @@ export { default as getTotalMoney } from './getTotalMoney';
 export { default as groupBy } from './groupBy';
 export { default as setCookie } from './setCookie';
 export { default as updateShoppingCart } from './updateShoppingCart';
+export { formatDate, formatDateTime } from './formatDateTime';
 export { menuStyle, menuItemStyle } from './formatMenu';
