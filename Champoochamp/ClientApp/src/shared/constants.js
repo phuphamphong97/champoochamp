@@ -56,6 +56,7 @@ const filtersGroup = {
 };
 
 const imagesGroup = {
+  banners: 'banners',
   products: 'products',
   users: 'users',
   collections: 'collections',

@@ -9,24 +9,20 @@ namespace Data.Model
   {
     public User user { get; set; }
     public List<CartItemModel> shoppingCartList { get; set; }
-    public string message { get; set; }
+    public Invoice invoice { get; set; }
     public Discount discount { get; set; }
-    public decimal? shipMoney { get; set; }
-    public decimal? total { get; set; }
 
     public CheckoutModel()
     {
       shoppingCartList = new List<CartItemModel>();
     }
 
-    public CheckoutModel(User user, List<CartItemModel> shoppingCartList, string message, Discount discount, decimal? shipMoney, decimal? total)
+    public CheckoutModel(User user, List<CartItemModel> shoppingCartList, Invoice invoice, Discount discount)
     {
       this.user = user;
       this.shoppingCartList = shoppingCartList;
-      this.message = message;
+      this.invoice = invoice;
       this.discount = discount;
-      this.shipMoney = shipMoney;
-      this.total = total;
     }
   }
 }

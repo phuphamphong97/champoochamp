@@ -20,16 +20,16 @@ namespace Data.Entity
         public string CustomerAddress { get; set; }
         public string Message { get; set; }
         public decimal? ShipMoney { get; set; }
+        public string DiscountCode { get; set; }
+        public int? DiscountAmount { get; set; }
         public decimal? Total { get; set; }
         public string PaymentMethod { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
         public string Status { get; set; }
-        public int? DiscountId { get; set; }
         public int? UserId { get; set; }
 
-        public virtual Discount Discount { get; set; }
         public virtual User User { get; set; }
         public virtual ICollection<InvoiceDetail> InvoiceDetail { get; set; }
     }

@@ -44,7 +44,7 @@ class PaymentMethod extends Component {
 
     this.setState({
       value: e.target.value
-    });
+    }, () => this.props.getPaymentMethod(this.state.value));
   };
 
   render() {
