@@ -2,7 +2,7 @@
 import moment from 'moment';
 import { Table, Input, Button, Icon } from 'antd';
 
-import { callAPI } from '../../../../shared/utils';
+import { callAPI } from '../../../../shared/util';
 
 class SizePage extends Component {
   constructor(props) {

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from '@emotion/styled';
 
 import { typography } from '../../../../../../shared/principles';
-import { groupBy } from '../../../../../../shared/utils';
+import { groupBy } from '../../../../../../shared/util';
 
 import { DropDown, ColorRow, QuantityInput } from '../../../../../elements';
 import SizeReference from './components/SizeReference';

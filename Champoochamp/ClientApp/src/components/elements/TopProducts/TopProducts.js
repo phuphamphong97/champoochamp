@@ -10,7 +10,7 @@ import {
   imagesGroup,
   viewportWidth
 } from '../../../shared/constants';
-import { callAPI } from '../../../shared/utils';
+import { callAPI } from '../../../shared/util';
 import { colors } from '../../../shared/principles';
 
 import { ProductCard, SectionTitle } from '../index';

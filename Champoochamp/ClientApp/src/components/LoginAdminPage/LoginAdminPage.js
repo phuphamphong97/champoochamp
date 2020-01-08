@@ -2,7 +2,7 @@
 import { Form, Input, Checkbox, notification } from 'antd';
 import styled from '@emotion/styled';
 
-import { callAPI, formatForm, formatCheckbox, setCookie, getCookie } from '../../shared/utils';
+import { callAPI, formatForm, formatCheckbox, setCookie, getCookie } from '../../shared/util';
 import { time, viewportWidth, localStorageKey } from '../../shared/constants';
 
 import { PageContainer, Button, SectionTitle } from '../elements';

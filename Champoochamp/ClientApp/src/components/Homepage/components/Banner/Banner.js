@@ -4,7 +4,7 @@ import Slider from 'react-slick';
 import styled from '@emotion/styled';
 
 import { breakpoint, colors } from '../../../../shared/principles';
-import { callAPI, getImageUrl } from '../../../../shared/utils';
+import { callAPI, getImageUrl } from '../../../../shared/util';
 import { imagesGroup } from '../../../../shared/constants';
 
 const Wrapper = styled('div')`

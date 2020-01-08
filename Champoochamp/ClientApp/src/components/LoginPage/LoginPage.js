@@ -8,7 +8,7 @@ import {
   setCookie,
   formatForm,
   formatCheckbox
-} from '../../shared/utils';
+} from '../../shared/util';
 import { localStorageKey, time, viewportWidth } from '../../shared/constants';
 import { colors } from '../../shared/principles';
 

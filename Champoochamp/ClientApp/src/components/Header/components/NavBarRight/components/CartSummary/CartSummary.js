@@ -15,7 +15,7 @@ import {
   getTotalMoney,
   getStrShoppingCart,
   updateShoppingCart
-} from '../../../../../../shared/utils';
+} from '../../../../../../shared/util';
 import {
   localStorageKey,
   imagesGroup,

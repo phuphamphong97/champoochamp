@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { colors, typography, breakpoint } from '../../../../shared/principles';
-import { getImageUrl, formatMoney } from '../../../../shared/utils';
+import { getImageUrl, formatMoney } from '../../../../shared/util';
 import { imagesGroup } from '../../../../shared/constants';
 
 import { Image, QuantityInput, Link } from '../../../elements';

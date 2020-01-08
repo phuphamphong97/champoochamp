@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { Spin } from 'antd';
 import styled from '@emotion/styled';
 
-import { callAPI } from '../../../../shared/utils';
+import { callAPI } from '../../../../shared/util';
 import { colors, typography } from '../../../../shared/principles';
 
 const Wrapper = styled('ul')`
