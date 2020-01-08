@@ -1,12 +1,40 @@
 ﻿import React, { Component, Fragment } from 'react';
 import moment from 'moment';
-import { Table, Input, Button, Select, Icon, notification } from 'antd';
+import { Table, Input, Button, Select, Tag, Icon, notification } from 'antd';
 
-import { callAPI, getArrByMap, formatMoney } from '../../../../shared/utils';
+import {
+  callAPI,
+  getArrByMap,
+  formatMoney,
+  formatDateTime
+} from '../../../../shared/utils';
 import { time } from '../../../../shared/constants';
 import { ButtonsWrapper, ActionButton, LinkButton } from '../../styledUtils';
 
 const { Option } = Select;
+
+const invoiceStatus = [
+  {
+    name: 'Chưa thanh toán',
+    color: 'cyan'
+  },
+  {
+    name: 'Đang giao hàng',
+    color: 'blue'
+  },
+  {
+    name: 'Đã thanh toán',
+    color: 'green'
+  },
+  {
+    name: 'Đã hủy',
+    color: 'magenta'
+  },
+  {
+    name: 'Lỗi đặt hàng',
+    color: 'red'
+  }
+];
 
 class InvoicePage extends Component {
   constructor(props) {
@@ -51,7 +79,7 @@ class InvoicePage extends Component {
           isEdit: false
         });
         notification.info({
-          message: 'Sửa hóa đơn thành công!',
+          message: 'Cập nhật thành công!',
           placement: 'topRight',
           onClick: () => notification.destroy(),
           duration: time.durationNotification
@@ -60,8 +88,8 @@ class InvoicePage extends Component {
         this.setState({
           isEdit: false
         });
-        notification.warning({
-          message: 'Sửa hóa đơn thất bại!',
+        notification.error({
+          message: 'Đã xảy ra lỗi, vui lòng thử lại!',
           placement: 'topRight',
           onClick: () => notification.destroy(),
           duration: time.durationNotification
@@ -169,10 +197,7 @@ class InvoicePage extends Component {
         ...this.getColumnSearchProps('id'),
         sorter: (a, b) => a.id.localeCompare(b.id),
         sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order,
-        ellipsis: true,
-        render: (text, record) => (
-          <LinkButton type="link">{record.id}</LinkButton>
-        )
+        ellipsis: true
       },
       {
         title: 'Họ tên KH',
@@ -195,15 +220,13 @@ class InvoicePage extends Component {
       {
         title: 'Thời gian đặt hàng',
         dataIndex: 'createdDate',
-        width: '25%',
+        width: '20%',
         ...this.getColumnSearchProps('createdDate'),
         sorter: (a, b) =>
           moment(a.createdDate).unix() - moment(b.createdDate).unix(),
         sortOrder: sortedInfo.columnKey === 'createdDate' && sortedInfo.order,
         render: (text, record) => (
-          <span>
-            {moment(record.createdDate).format('DD/MM/YYYY HH:mm:ss')}
-          </span>
+          <span>{formatDateTime(record.createdDate)}</span>
         )
       },
       {
@@ -232,17 +255,24 @@ class InvoicePage extends Component {
                 defaultValue={record.status}
                 onChange={val => this.onChangeStatus(record, val)}
               >
-                <Option value="Đã thanh toán">Đã thanh toán</Option>
-                <Option value="Đang giao hàng">Đang giao hàng</Option>
-                <Option value="Chưa thanh toán">Chưa thanh toán</Option>
-                <Option value="Đã hủy">Đã hủy</Option>
-                <Option value="Lỗi đặt hàng">Lỗi đặt hàng</Option>
+                {invoiceStatus.map(status => {
+                  return <Option value={status.name}>{status.name}</Option>;
+                })}
               </Select>
             ) : (
-              <span>{record.status}</span>
+              <Tag
+                color={invoiceStatus.find(p => p.name === record.status).color}
+              >
+                {record.status}
+              </Tag>
             )}
           </Fragment>
         )
+      },
+      {
+        title: '',
+        width: '5%',
+        render: (text, record) => <LinkButton type="link">Xem</LinkButton>
       }
     ];
 

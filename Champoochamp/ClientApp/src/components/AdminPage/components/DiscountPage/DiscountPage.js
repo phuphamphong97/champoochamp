@@ -1,5 +1,5 @@
 ﻿import React, { Component, Fragment } from 'react';
-import { Table, Input, Button, Icon, notification } from 'antd';
+import { Table, Input, Button, Icon, Divider, notification } from 'antd';
 
 import { callAPI } from '../../../../shared/utils';
 import { time, typeForm } from '../../../../shared/constants';
@@ -65,14 +65,14 @@ class DiscountPage extends Component {
               form.resetFields();
 
               notification.info({
-                message: 'Tạo mới mã giảm giá thành công!',
+                message: 'Tạo mới thành công!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
               });
             } else {
               notification.warning({
-                message: 'Mã giảm giá đã tồn tại!',
+                message: 'Mã giảm giá đã tồn tại, vui lòng nhập mã khác!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
@@ -83,7 +83,7 @@ class DiscountPage extends Component {
             form.resetFields();
 
             notification.warning({
-              message: 'Tạo mới mã giảm giá thất bại!',
+              message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
               placement: 'topRight',
               onClick: () => notification.destroy(),
               duration: time.durationNotification
@@ -112,14 +112,14 @@ class DiscountPage extends Component {
               form.resetFields();
 
               notification.info({
-                message: 'Cập nhật mã giảm giá thành công!',
+                message: 'Cập nhật thành công!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
               });
             } else {
               notification.warning({
-                message: 'Mã giảm giá đã tồn tại!',
+                message: 'Mã giảm giá đã tồn tại, vui lòng nhập mã khác!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
@@ -130,7 +130,7 @@ class DiscountPage extends Component {
             form.resetFields();
 
             notification.warning({
-              message: 'Cập nhật mã giảm giá thất bại!',
+              message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
               placement: 'topRight',
               onClick: () => notification.destroy(),
               duration: time.durationNotification
@@ -167,14 +167,14 @@ class DiscountPage extends Component {
         });
 
         notification.info({
-          message: 'Xóa mã giảm giá thành công!',
+          message: 'Xóa thành công!',
           placement: 'topRight',
           onClick: () => notification.destroy(),
           duration: time.durationNotification
         });
       } else {
-        notification.warning({
-          message: 'Xóa mã giảm giá thất bại!',
+        notification.error({
+          message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
           placement: 'topRight',
           onClick: () => notification.destroy(),
           duration: time.durationNotification
@@ -196,14 +196,14 @@ class DiscountPage extends Component {
         });
 
         notification.info({
-          message: 'Xóa mã giảm giá thành công!',
+          message: 'Xóa thành công!',
           placement: 'topRight',
           onClick: () => notification.destroy(),
           duration: time.durationNotification
         });
       } else {
-        notification.warning({
-          message: 'Xóa mã giảm giá thất bại!',
+        notification.error({
+          message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
           placement: 'topRight',
           onClick: () => notification.destroy(),
           duration: time.durationNotification
@@ -337,20 +337,10 @@ class DiscountPage extends Component {
         width: '10%',
         ...this.getColumnSearchProps('id'),
         sorter: (a, b) => a.id.localeCompare(b.id),
-        sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order,
-        render: (text, record) => (
-          <LinkButton
-            type="link"
-            onClick={() =>
-              onShowModal(typeForm.update, `Cập nhật mã giảm giá`, record)
-            }
-          >
-            {record.id}
-          </LinkButton>
-        )
+        sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order
       },
       {
-        title: 'Tên mã',
+        title: 'Tên',
         dataIndex: 'name',
         width: '35%',
         ...this.getColumnSearchProps('name'),
@@ -358,9 +348,9 @@ class DiscountPage extends Component {
         sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order
       },
       {
-        title: 'Mã',
+        title: 'Mã code',
         dataIndex: 'code',
-        width: '30%',
+        width: '20%',
         ...this.getColumnSearchProps('code'),
         sorter: (a, b) => a.code.localeCompare(b.code),
         sortOrder: sortedInfo.columnKey === 'code' && sortedInfo.order
@@ -376,11 +366,22 @@ class DiscountPage extends Component {
       },
       {
         title: '',
-        width: '5%',
+        width: '15%',
         render: (text, record) => (
-          <LinkButton type="link" onClick={() => onDelete(record.id)}>
-            Xoá
-          </LinkButton>
+          <Fragment>
+            <LinkButton
+              type="link"
+              onClick={() =>
+                onShowModal(typeForm.update, `Cập nhật mã giảm giá`, record)
+              }
+            >
+              Sửa
+            </LinkButton>
+            <Divider type="vertical" />
+            <LinkButton type="link" onClick={() => onDelete(record.id)}>
+              Xoá
+            </LinkButton>
+          </Fragment>
         )
       }
     ];

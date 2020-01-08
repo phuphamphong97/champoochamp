@@ -1,11 +1,27 @@
 ﻿import React, { Component } from 'react';
 import { Modal, Form, Input, InputNumber } from 'antd';
+import styled from '@emotion/styled';
 
 import { typeForm } from '../../../../../../shared/constants';
+import { colors } from '../../../../../../shared/principles';
+import { formatDateTime } from '../../../../../../shared/utils';
+
+const ModifyText = styled('span')`
+  color: ${colors.darkGray};
+  font-size: 12px;
+`;
 
 class DiscountForm extends Component {
   render() {
-    const { isShowModal, currentTypeForm, title, form, discount, onSave, onCancel } = this.props;
+    const {
+      isShowModal,
+      currentTypeForm,
+      title,
+      form,
+      discount,
+      onSave,
+      onCancel
+    } = this.props;
     const { getFieldDecorator } = form;
 
     return (
@@ -16,39 +32,48 @@ class DiscountForm extends Component {
         onCancel={onCancel}
       >
         <Form>
-          {
-            currentTypeForm === typeForm.update &&
+          {currentTypeForm === typeForm.update && (
             <Form.Item style={{ display: 'none' }}>
-              {getFieldDecorator('id', { initialValue: discount && discount.id })(
-                <Input placeholder="Id" />
-              )}
+              {getFieldDecorator('id', {
+                initialValue: discount && discount.id
+              })(<Input placeholder="Id" />)}
             </Form.Item>
-          }
-          <Form.Item label="Tên mã giảm giá">
-            {getFieldDecorator('name', { initialValue: discount && discount.name })(
-              <Input placeholder="Tên mã giảm giá" />
-            )}
+          )}
+          <Form.Item label="Tên">
+            {getFieldDecorator('name', {
+              initialValue: discount && discount.name
+            })(<Input placeholder="Tên" />)}
           </Form.Item>
-          <Form.Item label="Mã giảm giá">
+          <Form.Item label="Mã code">
             {getFieldDecorator('code', {
               initialValue: discount && discount.code,
               rules: [{ required: true, message: 'Vui lòng nhập mã giảm giá!' }]
-            })(<Input placeholder="Mã giảm giá *" />)}
+            })(<Input placeholder="Mã code *" />)}
           </Form.Item>
-          <Form.Item label="Mức giảm giá (%)">
+          <Form.Item label="Mức giảm (%)">
             {getFieldDecorator('rate', {
-              initialValue: discount && discount.rate,
-              rules: [{ required: true, message: 'Vui lòng nhập mức giảm giá!' }]
-            })(<InputNumber placeholder="Mức giảm giá *" min={0} max={100} />)}
+              initialValue: (discount && discount.rate) || 10,
+              rules: [
+                { required: true, message: 'Vui lòng nhập mức giảm giá!' }
+              ]
+            })(
+              <InputNumber
+                placeholder="Mức giảm *"
+                min={0}
+                max={100}
+                formatter={value => `${value}%`}
+                parser={value => value.replace('%', '')}
+              />
+            )}
           </Form.Item>
-          {
-            currentTypeForm === typeForm.update && discount && discount.modifiedBy &&
-            <Form.Item label="Nhân viên cập nhật lần cuối">
-              {getFieldDecorator('modifiedBy', { initialValue: discount.modifiedBy })(
-                <Input readOnly />
-              )}
-            </Form.Item>
-          }
+          {currentTypeForm === typeForm.update &&
+            discount &&
+            discount.modifiedBy && (
+              <ModifyText>
+                Cập nhật lần cuối bởi {discount.modifiedBy} lúc{' '}
+                {formatDateTime(discount.modifiedDate)}.
+              </ModifyText>
+            )}
         </Form>
       </Modal>
     );
