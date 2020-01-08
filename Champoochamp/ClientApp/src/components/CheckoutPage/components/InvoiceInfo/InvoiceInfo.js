@@ -19,6 +19,7 @@ class InvoiceInfo extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isInitedFrom: false,
       districtsData: props.user ? districts[props.user.province] : [],
       wardsData: props.user ? wards[props.user.district] : []
     };
@@ -28,6 +29,7 @@ class InvoiceInfo extends Component {
     const { form, user } = this.props;
     if (user) {
       this.handleDistrictChange(form.getFieldsValue().district)
+      this.setState({ isInitedFrom: true });
     }
   }
 
@@ -44,7 +46,8 @@ class InvoiceInfo extends Component {
   };
 
   handleDistrictChange = value => {
-    const { getTransportFee } = this.props;
+    const { isInitedFrom } = this.state;
+    const { getTransportFee, form } = this.props;
     const url = `${ghtk.apiTransportFee}`;
     const data = {
       token: `${ghtk.token}`,
@@ -59,7 +62,6 @@ class InvoiceInfo extends Component {
       .then(res => {
         if (res && res.data.success) {
           getTransportFee(res.data.fee.fee);
-          console.log('success');
         }
         else {
           notification.warning({
@@ -72,7 +74,7 @@ class InvoiceInfo extends Component {
         }
       });
 
-    this.props.form.setFieldsValue({
+    isInitedFrom && form.setFieldsValue({
       ward: undefined
     });
 

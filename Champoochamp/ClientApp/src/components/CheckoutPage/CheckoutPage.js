@@ -1,15 +1,16 @@
 ﻿import React, { Component, Fragment } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Row, Col, Form, notification } from 'antd';
+import { Modal, Spin, Row, Col, Form, notification } from 'antd';
 import styled from '@emotion/styled';
 
 import {
   callAPI,
+  callghtkAPI,
   formatMoney,
   getTotalMoney,
   updateShoppingCart
 } from '../../shared/utils';
-import { localStorageKey, time, ghtk, champoochampInfo } from '../../shared/constants';
+import { localStorageKey, time, ghtk, champoochampInfo, paymentMethod } from '../../shared/constants';
 import { typography } from '../../shared/principles';
 
 import { PageContainer, Section, SectionTitle, Link } from '../elements';
@@ -30,10 +31,14 @@ class CheckoutPage extends Component {
     super(props);
     this.state = {
       isInitedFrom: false,
+      isOrdering: false,
+      visible: false,
       isShoppingCartChanged: false,
       strShoppingCart: props.strShoppingCart,
       shoppingCartList: [],
-      transportFee: 0
+      paymentMethods: paymentMethod.cod,
+      transportFee: 0,
+      ghtkResponse: null
     };
   }
 
@@ -73,6 +78,10 @@ class CheckoutPage extends Component {
     );
   };
 
+  getPaymentMethod = method => {
+    this.setState({ paymentMethods: method });
+  }
+
   getTransportFee = transportFee => {
     this.setState({ transportFee })
   }
@@ -81,38 +90,38 @@ class CheckoutPage extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        const { shoppingCartList, transportFee } = this.state;
+        const { shoppingCartList, paymentMethods, transportFee } = this.state;
         const { user, discount, getDiscount } = this.props;
         const data = {
           user: values,
           shoppingCartList,
-          message: values.message,
-          discount,
-          total: formatMoney(
-            getTotalMoney(shoppingCartList, discount && discount.rate), true
-          ),
-          shipMoney: formatMoney(transportFee, true)
+          invoice: {
+            message: values.message,
+            total: formatMoney(
+              getTotalMoney(shoppingCartList, discount && discount.rate), true
+            ),
+            shipMoney: formatMoney(transportFee, true),
+            paymentMethod: paymentMethods
+          },          
+          discount    
         };
 
+        this.setState({ isOrdering: true });
         callAPI('Checkout/SaveInVoice', '', 'POST', data).then(res => {
           if (res.data) {
-            this.setState({ shoppingCartList: [] });
+            this.setState({
+              isOrdering: false,
+              shoppingCartList: []
+            });
             updateShoppingCart('', user, this.props.updateShoppingCart);
             getDiscount(null);
-
-            notification.info({
-              message: 'Thanh toán thành công!',
-              placement: 'topRight',
-              onClick: () => notification.destroy(),
-              duration: time.durationNotification,
-            });
 
             const ghtkData = {
               token: ghtk.token,
               order: {
                 id: res.data.id,
                 pick_name: champoochampInfo.name,
-                pick_money: data.total,
+                pick_money: paymentMethods === paymentMethod.cod ? res.data.total : 0,
                 pick_address: champoochampInfo.address,
                 pick_province: champoochampInfo.province,
                 pick_district: champoochampInfo.district,
@@ -127,22 +136,45 @@ class CheckoutPage extends Component {
                 return_address: champoochampInfo.address,
                 return_province: champoochampInfo.province,
                 return_district: champoochampInfo.district,
-                return_tel: champoochampInfo.tel,
+                return_tel: champoochampInfo.phone,
                 return_email: champoochampInfo.email,
+                is_freeship: paymentMethods === paymentMethod.cod ? 0 : 1
               }
             };
+            const ghtkResponse = {
+              res: null,
+              invoice: {
+                id: res.data.id,
+                total: res.data.total,
+                status: "Lỗi đặt hàng"
+              }              
+            };
 
-            callAPI(`${apiOrder.apiOrder}`, 'POST', ghtkData).then(res => {
-              if (res.data) {
-
+            callghtkAPI(`${ghtk.apiOrder}`, 'POST', ghtkData).then(res => {
+              if (res && res.data) {
+                ghtkResponse.res = res.data;
+                this.setState({ ghtkResponse }, () => this.showModal());                
               }
               else {
-
+                callAPI('Checkout/UpdateErrorInVoice', '', 'POST', ghtkResponse.invoice).then(res => {
+                  if (res.data) {
+                    this.setState({ ghtkResponse }, () => this.showModal());
+                  }
+                  else {
+                    notification.warning({
+                      message: 'Đặt hàng thất bại!',
+                      placement: 'topRight',
+                      onClick: () => notification.destroy(),
+                      duration: time.durationNotification,
+                    });
+                  }
+                });
               }
             });
-          } else {
+          }
+          else {
             notification.warning({
-              message: 'Thanh toán thất bại!',
+              message: 'Đặt hàng thất bại!',
               placement: 'topRight',
               onClick: () => notification.destroy(),
               duration: time.durationNotification,
@@ -153,14 +185,32 @@ class CheckoutPage extends Component {
     });
   };
 
+  showModal = () => {
+    this.setState({
+      visible: true,
+    });
+  };
+
+  handleOk = e => {
+    this.setState({
+      visible: false,
+    }, () => this.props.history.push('/'));
+  };
+
+  handleCancel = e => {
+    this.setState({
+      visible: false,
+    });
+  };
+
   render() {
-    const { isInitedFrom, shoppingCartList, transportFee } = this.state;
+    const { isInitedFrom, isOrdering, visible, ghtkResponse, shoppingCartList, transportFee } = this.state;
     const { user, form, discount, getDiscount } = this.props;
 
     return (
       <PageContainer>
         {
-          !isInitedFrom ? null :
+          !isInitedFrom || isOrdering ? <Spin /> :
           shoppingCartList.length > 0 ? (
             <Row gutter={32}>
               <Form onSubmit={this.onSubmit}>
@@ -171,7 +221,7 @@ class CheckoutPage extends Component {
                   </Section>
                   <Section>
                     <SmallTitle>Phương thức thanh toán</SmallTitle>
-                    <PaymentMethod />
+                    <PaymentMethod getPaymentMethod={this.getPaymentMethod}/>
                   </Section>
                 </Col>
                 <Col xs={24} sm={12} md={10}>
@@ -195,7 +245,23 @@ class CheckoutPage extends Component {
               </Fragment>
             </Section>
           )
-        }        
+        }
+        <Modal
+          title="Đặt hàng thành công"
+          visible={visible}
+          onOk={this.handleOk}
+          okText="Về trang chủ"
+          onCancel={this.handleCancel}
+          cancelText="Hủy"
+        >
+          <p>Mã hóa đơn: {ghtkResponse && ghtkResponse.invoice.id}</p>
+          <p>Tổng tiền: {ghtkResponse && formatMoney(ghtkResponse.invoice.total, true)}đ</p>
+          {
+            ghtkResponse && ghtkResponse.res && (
+              <p>Thời gian dự kiến giao hàng: {ghtkResponse.res.order.estimated_deliver_time}</p>
+            )
+          }
+        </Modal>
       </PageContainer>
     );
   }

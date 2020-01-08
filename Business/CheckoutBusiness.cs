@@ -77,6 +77,28 @@ namespace Business
       }
     }
 
+    public bool UpdateErrorInVoice(Invoice i)
+    {
+      using (champoochampContext db = new champoochampContext())
+      {
+        try
+        {
+          Invoice invoice = db.Invoice.Find(i.Id);
+          {
+            invoice.Status = i.Status;
+          }
+
+          db.SaveChanges();
+          return true;
+        }
+        catch (Exception e)
+        {
+          Console.WriteLine(e.Message);
+          return false;
+        }
+      }
+    }
+
     public Invoice getInvoice(CheckoutModel checkoutModel)
     {
       User user = checkoutModel.user;
@@ -90,9 +112,10 @@ namespace Business
         CustomerDistrict = user.District,
         CustomerWard = user.Ward,
         CustomerAddress = user.Address,
-        Message = checkoutModel.message,
-        Total = checkoutModel.total,
-        ShipMoney = checkoutModel.shipMoney,
+        Message = checkoutModel.invoice.Message,
+        Total = checkoutModel.invoice.Total,
+        ShipMoney = checkoutModel.invoice.ShipMoney,
+        PaymentMethod = checkoutModel.invoice.PaymentMethod,
         CreatedDate = DateTime.Now
       };
 
@@ -103,7 +126,8 @@ namespace Business
 
       if (checkoutModel.discount != null)
       {
-        invoice.DiscountId = checkoutModel.discount.Id;
+        invoice.DiscountCode = checkoutModel.discount.Code;
+        invoice.DiscountAmount = checkoutModel.discount.Rate;
       }
 
       return invoice;

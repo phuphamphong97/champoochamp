@@ -5,11 +5,6 @@ namespace Data.Entity
 {
     public partial class Discount
     {
-        public Discount()
-        {
-            Invoice = new HashSet<Invoice>();
-        }
-
         public int Id { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
@@ -19,7 +14,5 @@ namespace Data.Entity
         public DateTime? ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
         public bool? Status { get; set; }
-
-        public virtual ICollection<Invoice> Invoice { get; set; }
     }
 }

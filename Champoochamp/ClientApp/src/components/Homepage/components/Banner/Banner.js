@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
+import { NavLink } from 'react-router-dom';
 import Slider from 'react-slick';
 import styled from '@emotion/styled';
 
 import { breakpoint, colors } from '../../../../shared/principles';
-
-import img1 from '../../../../assets/banners/banner1.jpg';
-import img2 from '../../../../assets/banners/banner2.jpg';
-import img3 from '../../../../assets/banners/banner3.jpg';
-import img4 from '../../../../assets/banners/banner4.jpg';
+import { callAPI, getImageUrl } from '../../../../shared/utils';
+import { imagesGroup } from '../../../../shared/constants';
 
 const Wrapper = styled('div')`
   overflow-x: hidden;
@@ -39,7 +37,34 @@ const SingleSlide = styled('div')`
 `;
 
 class Banner extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      slideList: []
+    };
+  }
+
+  componentDidMount() {
+    this.getAllSlides();
+  }
+
+  getAllSlides = () => {
+    callAPI('Slide/GetAllSlides')
+      .then(res => this.setState({ slideList: res.data }));
+  }
+
+
+  renderSlide = slideList => slideList.map(slide => {
+    return (
+      <NavLink to={slide.link} onClick={this.handleOnClick}>
+        <SingleSlide imageUrl={getImageUrl(slide.image, imagesGroup.banners)} />
+      </NavLink>
+    );
+  })
+
   render() {
+    const { slideList } = this.state;
+
     return (
       <Wrapper>
         <Slider
@@ -51,10 +76,7 @@ class Banner extends Component {
           slidesToShow={1}
           slidesToScroll={1}
         >
-          <SingleSlide imageUrl={img3} />
-          <SingleSlide imageUrl={img4} />
-          <SingleSlide imageUrl={img1} />
-          <SingleSlide imageUrl={img2} />
+          { this.renderSlide(slideList) }
         </Slider>
       </Wrapper>
     );

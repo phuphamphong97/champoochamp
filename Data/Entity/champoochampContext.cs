@@ -450,9 +450,6 @@ namespace Data.Entity
             {
                 entity.ToTable("invoice");
 
-                entity.HasIndex(e => e.DiscountId)
-                    .HasName("fk_invoice__discount");
-
                 entity.HasIndex(e => e.UserId)
                     .HasName("fk_invoice__user");
 
@@ -476,7 +473,11 @@ namespace Data.Entity
 
                 entity.Property(e => e.CustomerWard).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.DiscountId).HasColumnType("int(11)");
+                entity.Property(e => e.DiscountAmount)
+                    .HasColumnType("int(11)")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.DiscountCode).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Message).HasColumnType("varchar(2000)");
 
@@ -499,11 +500,6 @@ namespace Data.Entity
                     .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
-
-                entity.HasOne(d => d.Discount)
-                    .WithMany(p => p.Invoice)
-                    .HasForeignKey(d => d.DiscountId)
-                    .HasConstraintName("fk_invoice__discount");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Invoice)

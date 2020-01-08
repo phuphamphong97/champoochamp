@@ -24,5 +24,12 @@ namespace API.Controllers
     {
       return checkoutBusiness.SaveInVoice(checkoutModel);
     }
+
+    [HttpPost]
+    [Route("UpdateErrorInVoice")]
+    public bool UpdateErrorInVoice(Invoice i)
+    {
+      return checkoutBusiness.UpdateErrorInVoice(i);
+    }
   }  
 }
