@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import getIdInMetaTitle from '../../shared/utils/getIdInMetaTitle';
+import getIdInMetaTitle from '../../shared/util/getIdInMetaTitle';
 
 import { PageContainer, Section } from '../elements';
 import Breadcrumb from './components/Breadcrumb';

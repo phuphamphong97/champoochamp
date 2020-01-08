@@ -43,8 +43,8 @@ const champoochampInfo = {
 
 const ghtk = {
   token: '1eaf5cdc13036460fe42259b4C58eBDcF3855A38',
-  apiTransportFee: '/Champoochamp_ghtk/getShipmentFee.php',
-  apiOrder: '/Champoochamp_ghtk/order.php',
+  apiTransportFee: '/ghtk/getShipmentFee.php',
+  apiOrder: '/ghtk/order.php',
 }
 
 
@@ -124,17 +124,17 @@ const viewportWidth = {
 
 export {
   adminPage,
-  localStorageKey,
   champoochampInfo,
-  ghtk,
   filtersGroup,
+  ghtk,
   imagesGroup,
-  time,
+  localStorageKey,
   paymentMethod,
-  productQuantity,
   port,
+  productQuantity,
   searchGroup,
   sortsGroup,
+  time,
   topProductsName,
   typeForm,
   viewportWidth

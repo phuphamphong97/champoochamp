@@ -3,7 +3,7 @@ import { NavLink, withRouter } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { typography, colors } from '../../../../shared/principles';
-import { formatMoney, getTotalMoney } from '../../../../shared/utils';
+import { formatMoney, getTotalMoney } from '../../../../shared/util';
 
 import { Link, Button } from '../../../elements';
 

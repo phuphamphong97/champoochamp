@@ -4,7 +4,7 @@ import listensToClickOutside from 'react-onclickoutside';
 import { Icon } from 'antd';
 import styled from '@emotion/styled';
 
-import { getImageUrl } from '../../../../../../shared/utils';
+import { getImageUrl } from '../../../../../../shared/util';
 import { imagesGroup } from '../../../../../../shared/constants';
 import { colors, breakpoint } from '../../../../../../shared/principles';
 

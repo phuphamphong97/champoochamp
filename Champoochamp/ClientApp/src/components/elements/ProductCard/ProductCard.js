@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 
 import { breakpoint, colors, typography } from '../../../shared/principles';
-import { getImageUrl, groupBy, formatMoney } from '../../../shared/utils';
+import { getImageUrl, groupBy, formatMoney } from '../../../shared/util';
 
 import ColorRow from '../ColorRow';
 import Image from '../Image';

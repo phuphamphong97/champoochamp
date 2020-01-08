@@ -1,7 +1,7 @@
 ﻿import React, { Component } from 'react';
 import { Table, Input, Button, Icon } from 'antd';
 
-import { callAPI, formatMoney, getImageUrl } from '../../../../shared/utils';
+import { callAPI, formatMoney, getImageUrl } from '../../../../shared/util';
 import { imagesGroup } from '../../../../shared/constants';
 
 class ProductPage extends Component {

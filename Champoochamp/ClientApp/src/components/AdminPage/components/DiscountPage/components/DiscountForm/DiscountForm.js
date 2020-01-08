@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 
 import { typeForm } from '../../../../../../shared/constants';
 import { colors } from '../../../../../../shared/principles';
-import { formatDateTime } from '../../../../../../shared/utils';
+import { formatDateTime } from '../../../../../../shared/util';
 
 const ModifyText = styled('span')`
   color: ${colors.darkGray};

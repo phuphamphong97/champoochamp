@@ -15,7 +15,7 @@ import {
   getMoneyFilterGroup,
   checkCurrentFilter,
   formatMoney
-} from '../../../../../../shared/utils';
+} from '../../../../../../shared/util';
 
 import { Link } from '../../../../../elements';
 import SingleFilter from './conponents/SingleFilter';

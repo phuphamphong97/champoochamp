@@ -1,7 +1,7 @@
 ﻿import React, { Component, Fragment } from 'react';
 import { Table, Input, Button, Icon, Divider, notification } from 'antd';
 
-import { callAPI } from '../../../../shared/utils';
+import { callAPI } from '../../../../shared/util';
 import { time, typeForm } from '../../../../shared/constants';
 import { ButtonsWrapper, ActionButton, LinkButton } from '../../styledUtils';
 

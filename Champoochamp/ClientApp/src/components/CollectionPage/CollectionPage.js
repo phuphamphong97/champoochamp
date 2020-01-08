@@ -1,7 +1,7 @@
 ﻿import React, { Component } from 'react';
 import { Row, Col, Spin } from 'antd';
 
-import { callAPI, getIdInMetaTitle, getImageUrl } from '../../shared/utils';
+import { callAPI, getIdInMetaTitle, getImageUrl } from '../../shared/util';
 import { imagesGroup } from '../../shared/constants';
 import { ProductCard, PageContainer, Section, Image } from '../elements';
 

@@ -3,7 +3,7 @@ import { Radio } from 'antd';
 import styled from '@emotion/styled';
 
 import { paymentMethod } from '../../../../shared/constants';
-import { formatRadio } from '../../../../shared/utils';
+import { formatRadio } from '../../../../shared/util';
 import { colors } from '../../../../shared/principles';
 
 const Wrapper = styled('div')`

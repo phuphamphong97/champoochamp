@@ -3,7 +3,7 @@ import axios from "axios";
 import { NavLink } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { callAPI } from '../../../../shared/utils';
+import { callAPI } from '../../../../shared/util';
 import { breakpoint } from '../../../../shared/principles';
 import logo from '../../../../assets/logo.png';
 

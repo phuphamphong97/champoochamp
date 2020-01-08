@@ -4,7 +4,7 @@ import { withRouter, NavLink } from 'react-router-dom';
 import { notification } from 'antd';
 
 import { typography } from '../../../../shared/principles';
-import { callAPI, formatMoney, getTotalMoney } from '../../../../shared/utils';
+import { callAPI, formatMoney, getTotalMoney } from '../../../../shared/util';
 import { time } from '../../../../shared/constants';
 
 import { TextInput, Button, Link } from '../../../elements';

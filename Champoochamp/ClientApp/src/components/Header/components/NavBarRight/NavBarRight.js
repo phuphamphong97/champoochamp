@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { Icon, Drawer, notification } from 'antd';
 import styled from '@emotion/styled';
 
-import { callAPI, setCookie } from '../../../../shared/utils';
+import { callAPI, setCookie } from '../../../../shared/util';
 import { breakpoint } from '../../../../shared/principles';
 import { localStorageKey, time } from '../../../../shared/constants';
 

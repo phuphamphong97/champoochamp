@@ -6,7 +6,7 @@ import Header from '../Header';
 import Footer from '../Footer';
 import RouterConfig from '../../router/RouterConfig';
 
-import { callAPI, setCookie, getCookie } from '../../shared/utils';
+import { callAPI, setCookie, getCookie } from '../../shared/util';
 import { localStorageKey, time } from '../../shared/constants';
 
 import 'slick-carousel/slick/slick.css';

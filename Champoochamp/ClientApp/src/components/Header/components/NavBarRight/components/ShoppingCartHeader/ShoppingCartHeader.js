@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Icon } from 'antd';
 import styled from '@emotion/styled';
 
-import { getCartTotalQuantity } from '../../../../../../shared/utils';
+import { getCartTotalQuantity } from '../../../../../../shared/util';
 import { colors } from '../../../../../../shared/principles';
 
 const Wrapper = styled('div')`

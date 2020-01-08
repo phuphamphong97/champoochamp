@@ -7,7 +7,7 @@ import {
   getArrByMap,
   formatMoney,
   formatDateTime
-} from '../../../../shared/utils';
+} from '../../../../shared/util';
 import { time } from '../../../../shared/constants';
 import { ButtonsWrapper, ActionButton, LinkButton } from '../../styledUtils';
 

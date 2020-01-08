@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from '@emotion/styled';
 
 import { colors, typography } from '../../../../../../shared/principles';
-import { checkNewProduct, formatMoney } from '../../../../../../shared/utils';
+import { checkNewProduct, formatMoney } from '../../../../../../shared/util';
 
 import { SectionTitle } from '../../../../../elements';
 
