@@ -25,7 +25,12 @@ const MenuItemTitle = styled('span')`
 `;
 
 class MainMenu extends Component {
-  renderCategoryMenu = (categories, url, onCloseMenu) =>
+  handleClick = () => {
+    const { onCloseMenu } = this.props;
+    onCloseMenu && onCloseMenu();
+  }
+
+  renderCategoryMenu = (categories, url) =>
     categories.map(category => {
       if (!category.parentId) {
         return (
@@ -35,25 +40,25 @@ class MainMenu extends Component {
           >
             {this.renderCategoryMenu(
               category.inverseParent,
-              `${url}/${category.metaTitle}`,
-              onCloseMenu
+              `${url}/${category.metaTitle}`
             )}
           </Menu.SubMenu>
         );
-      } else if (category.inverseParent.length > 0) {
+      }
+      else if (category.inverseParent.length > 0) {
         return (
           <Menu.ItemGroup key={category.id} title={category.name}>
             {this.renderCategoryMenu(
               category.inverseParent,
-              `${url}/${category.metaTitle}`,
-              onCloseMenu
+              `${url}/${category.metaTitle}`
             )}
           </Menu.ItemGroup>
         );
-      } else if (category.inverseParent.length === 0) {
+      }
+      else if (category.inverseParent.length === 0) {
         return (
           <StyledMenuItem key={category.id}>
-            <NavLink to={`${url}/${category.metaTitle}-${category.id}`} onClick={onCloseMenu}>
+            <NavLink to={`${url}/${category.metaTitle}-${category.id}`} onClick={this.handleClick}>
               {category.name}
             </NavLink>
           </StyledMenuItem>
@@ -63,11 +68,11 @@ class MainMenu extends Component {
       return true;
     });
 
-  renderCollectionMenu = (collectionMenu, onCloseMenu) =>
+  renderCollectionMenu = collectionMenu =>
     collectionMenu.map(collection => {
       return (
         <StyledMenuItem key={collection.id}>
-          <NavLink to={`/bo-suu-tap/${collection.metaTitle}-${collection.id}`} onClick={onCloseMenu}>
+          <NavLink to={`/bo-suu-tap/${collection.metaTitle}-${collection.id}`} onClick={this.handleClick}>
             {collection.name}
           </NavLink>
         </StyledMenuItem>
@@ -75,13 +80,13 @@ class MainMenu extends Component {
     });
 
   render() {
-    const { mode, categoryMenu, collectionMenu, onCloseMenu } = this.props;
+    const { mode, categoryMenu, collectionMenu } = this.props;
 
     return (
       <StyledMenu mode={mode}>
-        {this.renderCategoryMenu(categoryMenu, '/san-pham', onCloseMenu)}
+        {this.renderCategoryMenu(categoryMenu, '/san-pham')}
         <Menu.SubMenu title={<MenuItemTitle>Bộ sưu tập</MenuItemTitle>}>
-          {this.renderCollectionMenu(collectionMenu, onCloseMenu)}
+          {this.renderCollectionMenu(collectionMenu)}
         </Menu.SubMenu>
       </StyledMenu>
     );
