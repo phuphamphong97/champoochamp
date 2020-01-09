@@ -115,6 +115,10 @@ class NavBarRight extends Component {
     });
   };
 
+  onCloseMenu = () => {
+    this.onCloseDrawer('isMenuDrawerVisible');
+  };
+
   onLogout = () => {
     localStorage.setItem(localStorageKey.userKey, '');
     localStorage.setItem(localStorageKey.timeUserSessionKey, 0);
@@ -195,7 +199,7 @@ class NavBarRight extends Component {
             collectionMenu={collectionMenu}
             suggestions={searchData}
             history={history}
-            onCloseMenu={() => this.onCloseDrawer('isMenuDrawerVisible')}
+            onCloseMenu={this.onCloseMenu}
           />
         </StyledDrawer>
       </Wrapper>

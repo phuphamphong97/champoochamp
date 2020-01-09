@@ -56,7 +56,7 @@ class Banner extends Component {
 
   renderSlide = slideList => slideList.map(slide => {
     return (
-      <NavLink to={slide.link} onClick={this.handleOnClick}>
+      <NavLink key={slide.id} to={slide.link} onClick={this.handleOnClick}>
         <SingleSlide imageUrl={getImageUrl(slide.image, imagesGroup.banners)} />
       </NavLink>
     );
