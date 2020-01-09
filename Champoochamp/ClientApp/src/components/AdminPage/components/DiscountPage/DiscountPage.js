@@ -72,7 +72,7 @@ class DiscountPage extends Component {
               });
             } else {
               notification.warning({
-                message: 'Mã giảm giá đã tồn tại, vui lòng nhập mã khác!',
+                message: 'Mã giảm giá đã tồn tại!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
@@ -119,7 +119,7 @@ class DiscountPage extends Component {
               });
             } else {
               notification.warning({
-                message: 'Mã giảm giá đã tồn tại, vui lòng nhập mã khác!',
+                message: 'Mã giảm giá đã tồn tại!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
@@ -336,7 +336,7 @@ class DiscountPage extends Component {
         dataIndex: 'id',
         width: '10%',
         ...this.getColumnSearchProps('id'),
-        sorter: (a, b) => a.id.localeCompare(b.id),
+        sorter: (a, b) => a.id.toString().localeCompare(b.id),
         sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order
       },
       {

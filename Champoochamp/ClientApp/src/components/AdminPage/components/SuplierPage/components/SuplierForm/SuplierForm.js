@@ -2,10 +2,20 @@
 import { Modal, Form, Input } from 'antd';
 
 import { typeForm } from '../../../../../../shared/constants';
+import { formatDateTime } from '../../../../../../shared/util';
+import { ModifyText } from '../../../../styledUtils';
 
 class SuplierForm extends Component {
   render() {
-    const { isShowModal, currentTypeForm, title, form, suplier, onSave, onCancel } = this.props;
+    const {
+      isShowModal,
+      currentTypeForm,
+      title,
+      form,
+      suplier,
+      onSave,
+      onCancel
+    } = this.props;
     const { getFieldDecorator } = form;
 
     return (
@@ -16,46 +26,47 @@ class SuplierForm extends Component {
         onCancel={onCancel}
       >
         <Form>
-          {
-            currentTypeForm === typeForm.update &&
+          {currentTypeForm === typeForm.update && (
             <Form.Item style={{ display: 'none' }}>
               {getFieldDecorator('id', { initialValue: suplier && suplier.id })}
             </Form.Item>
-          }
-          <Form.Item label="Tên nhà cung cấp">
+          )}
+          <Form.Item label="Tên">
             {getFieldDecorator('name', {
               initialValue: suplier && suplier.name,
-              rules: [{ required: true, message: 'Vui lòng nhập tên nhà cung cấp!' }]
-            })(<Input placeholder="Tên nhà cung cấp *" />)}
+              rules: [
+                { required: true, message: 'Vui lòng nhập tên nhà cung cấp!' }
+              ]
+            })(<Input placeholder="Tên *" />)}
           </Form.Item>
           <Form.Item label="Email">
-            {getFieldDecorator('email', { initialValue: suplier && suplier.email })(
-              <Input type="email" placeholder="Email" />
-            )}
+            {getFieldDecorator('email', {
+              initialValue: suplier && suplier.email
+            })(<Input type="email" placeholder="Email" />)}
           </Form.Item>
           <Form.Item label="Số điện thoại">
-            {getFieldDecorator('phone', { initialValue: suplier && suplier.phone })(
-              <Input placeholder="Số điện thoại" />
-            )}
+            {getFieldDecorator('phone', {
+              initialValue: suplier && suplier.phone
+            })(<Input placeholder="Số điện thoại" />)}
           </Form.Item>
           <Form.Item label="Địa chỉ">
-            {getFieldDecorator('address', { initialValue: suplier && suplier.address })(
-              <Input placeholder="Địa chỉ" />
-            )}
+            {getFieldDecorator('address', {
+              initialValue: suplier && suplier.address
+            })(<Input placeholder="Địa chỉ" />)}
           </Form.Item>
           <Form.Item label="Ghi chú">
-            {getFieldDecorator('description', { initialValue: suplier && suplier.description })(
-              <Input placeholder="Ghi chú" />
-            )}
+            {getFieldDecorator('description', {
+              initialValue: suplier && suplier.description
+            })(<Input placeholder="Ghi chú" />)}
           </Form.Item>
-          {
-            currentTypeForm === typeForm.update && suplier && suplier.modifiedBy &&
-            <Form.Item label="Nhân viên cập nhật lần cuối">
-              {getFieldDecorator('modifiedBy', { initialValue: suplier.modifiedBy })(
-                <Input readOnly />
-              )}
-            </Form.Item>
-          }
+          {currentTypeForm === typeForm.update &&
+            suplier &&
+            suplier.modifiedBy && (
+              <ModifyText>
+                Cập nhật lần cuối bởi {suplier.modifiedBy} lúc{' '}
+                {formatDateTime(suplier.modifiedDate)}.
+              </ModifyText>
+            )}
         </Form>
       </Modal>
     );
