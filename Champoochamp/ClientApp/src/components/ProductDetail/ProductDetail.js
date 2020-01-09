@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col, Spin } from 'antd';
 
 import { topProductsName } from '../../shared/constants';
-import { callAPI, getIdInMetaTitle } from '../../shared/utils';
+import { callAPI, getIdInMetaTitle } from '../../shared/util';
 
 import { PageContainer, Section, TopProducts } from '../elements';
 import ImageThumbnails from './components/ImageThumbnails';

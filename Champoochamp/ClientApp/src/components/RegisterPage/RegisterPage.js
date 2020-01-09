@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { Row, Col, Form, Input, Select, notification } from 'antd';
 import styled from '@emotion/styled';
 
-import { callAPI, formatForm, formatCheckbox } from '../../shared/utils';
+import { callAPI, formatForm, formatCheckbox } from '../../shared/util';
 import { time, viewportWidth } from '../../shared/constants';
 import { colors, breakpoint } from '../../shared/principles';
 import { cities, districts, wards } from '../../shared/address';

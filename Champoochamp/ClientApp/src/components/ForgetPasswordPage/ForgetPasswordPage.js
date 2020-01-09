@@ -2,7 +2,7 @@
 import { Form, Input, notification } from 'antd';
 import styled from '@emotion/styled';
 
-import { callAPI, formatForm } from '../../shared/utils';
+import { callAPI, formatForm } from '../../shared/util';
 import { time, viewportWidth } from '../../shared/constants';
 
 import { PageContainer, Button, SectionTitle } from '../elements';

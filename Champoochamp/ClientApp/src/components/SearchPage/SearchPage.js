@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import styled from '@emotion/styled';
 
-import { callAPI } from '../../shared/utils';
+import { callAPI } from '../../shared/util';
 import { imagesGroup } from '../../shared/constants';
 import { typography, breakpoint, colors } from '../../shared/principles';
 import {

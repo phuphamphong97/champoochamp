@@ -1,7 +1,7 @@
 ﻿import React, { Component, Fragment } from 'react';
 import { Table, Input, Button, Icon, notification } from 'antd';
 
-import { callAPI, getImageUrl } from '../../../../shared/utils';
+import { callAPI, getImageUrl } from '../../../../shared/util';
 import { imagesGroup, time, typeForm } from '../../../../shared/constants';
 
 import EmployeeForm from './components/EmployeeForm';

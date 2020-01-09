@@ -9,7 +9,7 @@ import {
   formatMoney,
   getTotalMoney,
   updateShoppingCart
-} from '../../shared/utils';
+} from '../../shared/util';
 import { localStorageKey, time, ghtk, champoochampInfo, paymentMethod } from '../../shared/constants';
 import { typography } from '../../shared/principles';
 

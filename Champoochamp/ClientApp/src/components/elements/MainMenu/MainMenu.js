@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 
 import { typography, breakpoint } from '../../../shared/principles';
-import { menuStyle, menuItemStyle } from '../../../shared/utils';
+import { menuStyle, menuItemStyle } from '../../../shared/util';
 
 const StyledMenu = styled(Menu)`
   ${props => menuStyle(props.mode)};

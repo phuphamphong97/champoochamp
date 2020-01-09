@@ -8,7 +8,7 @@ import {
   callAPI,
   getQueryFilter,
   getTotalFilter
-} from '../../../../../../shared/utils';
+} from '../../../../../../shared/util';
 import { ProductCard, DropDown } from '../../../../../elements';
 
 const Wrapper = styled('div')`

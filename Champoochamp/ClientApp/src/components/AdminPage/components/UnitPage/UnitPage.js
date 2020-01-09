@@ -2,7 +2,7 @@
 import moment from 'moment';
 import { Table, Input, Button, Icon, notification } from 'antd';
 
-import { callAPI } from '../../../../shared/utils';
+import { callAPI } from '../../../../shared/util';
 import { time, typeForm } from '../../../../shared/constants';
 
 import UnitForm from './components/UnitForm';

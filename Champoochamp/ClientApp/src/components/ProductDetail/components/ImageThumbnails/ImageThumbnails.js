@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import Slider from 'react-slick';
 
 import { breakpoint, colors } from '../../../../shared/principles';
-import { getImageUrl } from '../../../../shared/utils';
+import { getImageUrl } from '../../../../shared/util';
 import { imagesGroup } from '../../../../shared/constants';
 
 import { Image } from '../../../elements';

@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { Row, Col, Form, Input, Select, notification } from 'antd';
 import styled from '@emotion/styled';
 
-import { callghtkAPI, formatForm } from '../../../../shared/utils';
+import { callghtkAPI, formatForm } from '../../../../shared/util';
 import { champoochampInfo, ghtk, time } from '../../../../shared/constants';
 import { cities, districts, wards } from '../../../../shared/address';
 import { Link } from '../../../elements';

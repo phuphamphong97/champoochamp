@@ -1,7 +1,7 @@
 ﻿import React, { Component } from 'react';
 import { Table, Input, Button, Icon } from 'antd';
 
-import { callAPI } from '../../../../shared/utils';
+import { callAPI } from '../../../../shared/util';
 
 
 class CategoryAdminPage extends Component {

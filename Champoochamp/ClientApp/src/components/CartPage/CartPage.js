@@ -7,7 +7,7 @@ import {
   callAPI,
   updateShoppingCart,
   getStrShoppingCart
-} from '../../shared/utils';
+} from '../../shared/util';
 import { localStorageKey, time } from '../../shared/constants';
 
 import { PageContainer, Section, SectionTitle, Link } from '../elements';

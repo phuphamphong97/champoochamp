@@ -2,7 +2,7 @@
 import moment from 'moment';
 import { Table, Input, Button, Icon } from 'antd';
 
-import { callAPI, getImageUrl } from '../../../../shared/utils';
+import { callAPI, getImageUrl } from '../../../../shared/util';
 import { imagesGroup } from '../../../../shared/constants';
 
 class BrandPage extends Component {

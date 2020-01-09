@@ -8,7 +8,7 @@ import {
   groupBy,
   addCartItem,
   getShoppingCartList
-} from '../../../../shared/utils';
+} from '../../../../shared/util';
 
 import { Button } from '../../../elements';
 import HeaderInfo from './components/HeaderInfo';
