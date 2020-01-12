@@ -1,9 +1,10 @@
 ﻿import React, { Component, Fragment } from 'react';
 import moment from 'moment';
-import { Table, Input, Button, Icon, notification } from 'antd';
+import { Table, Input, Button, Icon, Divider, notification } from 'antd';
 
-import { callAPI } from '../../../../shared/util';
+import { callAPI, formatDateTime } from '../../../../shared/util';
 import { time, typeForm } from '../../../../shared/constants';
+import { ButtonsWrapper, ActionButton, LinkButton } from '../../styledUtils';
 
 import UnitForm from './components/UnitForm';
 
@@ -28,9 +29,10 @@ class UnitPage extends Component {
   }
 
   getAllUnits = () => {
-    callAPI('Unit/GetAllUnits')
-      .then(res => this.setState({ unitList: res.data }));
-  }
+    callAPI('Unit/GetAllUnits').then(res =>
+      this.setState({ unitList: res.data ? res.data : [] })
+    );
+  };
 
   onShowModal = (typeForm, title, unit) => {
     this.setState({
@@ -52,95 +54,88 @@ class UnitPage extends Component {
       }
 
       if (currentTypeForm === typeForm.create) {
-        callAPI('Unit/CreateUnit', '', 'POST', values)
-          .then(res => {
-            if (res.data) {
-              if (res.data.id > 0) {
-                unitList.push(res.data);
+        callAPI('Unit/CreateUnit', '', 'POST', values).then(res => {
+          if (res.data) {
+            if (res.data.id > 0) {
+              unitList.push(res.data);
 
-                this.setState({
-                  isShowModal: false,
-                  unitList
-                });
-                form.resetFields();
-
-                notification.info({
-                  message: 'Tạo mới đơn vị tính thành công!',
-                  placement: 'topRight',
-                  onClick: () => notification.destroy(),
-                  duration: time.durationNotification
-                });
-              }
-              else {
-                notification.warning({
-                  message: 'Đơn vị tính đã tồn tại!',
-                  placement: 'topRight',
-                  onClick: () => notification.destroy(),
-                  duration: time.durationNotification
-                });
-              }
-            }
-            else {
-              this.setState({ isShowModal: false });
+              this.setState({
+                isShowModal: false,
+                unitList
+              });
               form.resetFields();
 
+              notification.info({
+                message: 'Tạo mới thành công!',
+                placement: 'topRight',
+                onClick: () => notification.destroy(),
+                duration: time.durationNotification
+              });
+            } else {
               notification.warning({
-                message: 'Tạo mới đơn vị tính thất bại!',
+                message: 'Đơn vị tính đã tồn tại, vui lòng nhập mã khác!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
               });
             }
-          });
-      }
-      else if (currentTypeForm === typeForm.update) {
+          } else {
+            this.setState({ isShowModal: false });
+            form.resetFields();
+
+            notification.warning({
+              message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
+              placement: 'topRight',
+              onClick: () => notification.destroy(),
+              duration: time.durationNotification
+            });
+          }
+        });
+      } else if (currentTypeForm === typeForm.update) {
         const data = {
           employee,
           unit: values,
           unitList: []
-        }
-        callAPI('Unit/PutUnit', '', 'PUT', data)
-          .then(res => {
-            if (res.data) {
-              if (res.data.id > 0) {
-                let lst = unitList;
-                lst = unitList.filter(unit => unit.id !== res.data.id)
-                lst.unshift(res.data);
+        };
+        callAPI('Unit/PutUnit', '', 'PUT', data).then(res => {
+          if (res.data) {
+            if (res.data.id > 0) {
+              let lst = unitList;
+              lst = unitList.filter(unit => unit.id !== res.data.id);
+              lst.unshift(res.data);
 
-                this.setState({
-                  isShowModal: false,
-                  unitList: lst
-                });
-                form.resetFields();
-
-                notification.info({
-                  message: 'Cập nhật đơn vị tính thành công!',
-                  placement: 'topRight',
-                  onClick: () => notification.destroy(),
-                  duration: time.durationNotification
-                });
-              }
-              else {
-                notification.warning({
-                  message: 'Đơn vị tính đã tồn tại!',
-                  placement: 'topRight',
-                  onClick: () => notification.destroy(),
-                  duration: time.durationNotification
-                });
-              }
-            }
-            else {
-              this.setState({ isShowModal: false });
+              this.setState({
+                isShowModal: false,
+                unitList: lst
+              });
               form.resetFields();
 
+              notification.info({
+                message: 'Cập nhật thành công!',
+                placement: 'topRight',
+                onClick: () => notification.destroy(),
+                duration: time.durationNotification
+              });
+            } else {
               notification.warning({
-                message: 'Cập nhật đơn vị tính thất bại!',
+                message: 'Đơn vị tính đã tồn tại!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
               });
             }
-          });
+          } else {
+            this.setState({ isShowModal: false });
+            form.resetFields();
+
+            notification.warning({
+              message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
+              placement: 'topRight',
+              onClick: () => notification.destroy(),
+              duration: time.durationNotification
+            });
+          }
+        });
       }
     });
   };
@@ -159,59 +154,57 @@ class UnitPage extends Component {
       unitList
     };
 
-    callAPI('Unit/DeleteUnitByIds', '', 'DELETE', data)
-      .then(res => {
-        if (res.data) {
-          this.setState({
-            selectedRowKeys: this.state.selectedRowKeys.filter(key => !ids.includes(key)),
-            unitList: this.state.unitList.filter(unit => !ids.includes(unit.id))
-          });
+    callAPI('Unit/DeleteUnitByIds', '', 'DELETE', data).then(res => {
+      if (res.data) {
+        this.setState({
+          selectedRowKeys: this.state.selectedRowKeys.filter(
+            key => !ids.includes(key)
+          ),
+          unitList: this.state.unitList.filter(unit => !ids.includes(unit.id))
+        });
 
-          notification.info({
-            message: 'Xóa đơn vị tính thành công!',
-            placement: 'topRight',
-            onClick: () => notification.destroy(),
-            duration: time.durationNotification
-          });
-        }
-        else {
-          notification.warning({
-            message: 'Xóa đơn vị tính thất bại!',
-            placement: 'topRight',
-            onClick: () => notification.destroy(),
-            duration: time.durationNotification
-          });
-        }
-      });
+        notification.info({
+          message: 'Xóa thành công!',
+          placement: 'topRight',
+          onClick: () => notification.destroy(),
+          duration: time.durationNotification
+        });
+      } else {
+        notification.warning({
+          message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
+          placement: 'topRight',
+          onClick: () => notification.destroy(),
+          duration: time.durationNotification
+        });
+      }
+    });
   };
 
   onDelete = id => {
     const data = { id };
 
-    callAPI('Unit/DeleteUnitById', '', 'DELETE', data)
-      .then(res => {
-        if (res.data) {
-          this.setState({
-            selectedRowKeys: this.state.selectedRowKeys.filter(key => key !== id),
-            unitList: this.state.unitList.filter(unit => unit.id !== id)
-          });
+    callAPI('Unit/DeleteUnitById', '', 'DELETE', data).then(res => {
+      if (res.data) {
+        this.setState({
+          selectedRowKeys: this.state.selectedRowKeys.filter(key => key !== id),
+          unitList: this.state.unitList.filter(unit => unit.id !== id)
+        });
 
-          notification.info({
-            message: 'Xóa đơn vị tính thành công!',
-            placement: 'topRight',
-            onClick: () => notification.destroy(),
-            duration: time.durationNotification
-          });
-        }
-        else {
-          notification.warning({
-            message: 'Xóa đơn vị tính thất bại!',
-            placement: 'topRight',
-            onClick: () => notification.destroy(),
-            duration: time.durationNotification
-          });
-        }
-      });
+        notification.info({
+          message: 'Xóa thành công!',
+          placement: 'topRight',
+          onClick: () => notification.destroy(),
+          duration: time.durationNotification
+        });
+      } else {
+        notification.warning({
+          message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
+          placement: 'topRight',
+          onClick: () => notification.destroy(),
+          duration: time.durationNotification
+        });
+      }
+    });
   };
 
   wrappedComponentRef = formRef => {
@@ -229,7 +222,12 @@ class UnitPage extends Component {
   };
 
   getColumnSearchProps = dataIndex => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters
+    }) => (
       <div style={{ padding: 8 }}>
         <Input
           ref={node => {
@@ -237,8 +235,12 @@ class UnitPage extends Component {
           }}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          onChange={e =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            this.handleSearch(selectedKeys, confirm, dataIndex)
+          }
           style={{ width: 188, marginBottom: 8, display: 'block' }}
         />
         <Button
@@ -250,7 +252,11 @@ class UnitPage extends Component {
         >
           Search
         </Button>
-        <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+        <Button
+          onClick={() => this.handleReset(clearFilters)}
+          size="small"
+          style={{ width: 90 }}
+        >
           Reset
         </Button>
       </div>
@@ -275,7 +281,7 @@ class UnitPage extends Component {
     confirm();
     this.setState({
       searchText: selectedKeys[0],
-      searchedColumn: dataIndex,
+      searchedColumn: dataIndex
     });
   };
 
@@ -285,59 +291,121 @@ class UnitPage extends Component {
   };
 
   render() {
-    let { selectedRowKeys, sortedInfo, unitList, isShowModal, currentTypeForm, title, unit } = this.state;
-    const { handleChange, onSelectChange, wrappedComponentRef, onShowModal, onSave, onCancel, onSelectedDelete, onDelete } = this;
-    const resource = { wrappedComponentRef, isShowModal, currentTypeForm, title, unit, onSave, onCancel };
+    let {
+      selectedRowKeys,
+      sortedInfo,
+      unitList,
+      isShowModal,
+      currentTypeForm,
+      title,
+      unit
+    } = this.state;
+    const {
+      handleChange,
+      onSelectChange,
+      wrappedComponentRef,
+      onShowModal,
+      onSave,
+      onCancel,
+      onSelectedDelete,
+      onDelete
+    } = this;
+    const resource = {
+      wrappedComponentRef,
+      isShowModal,
+      currentTypeForm,
+      title,
+      unit,
+      onSave,
+      onCancel
+    };
     const rowSelection = {
       selectedRowKeys,
-      onChange: onSelectChange,
+      onChange: onSelectChange
     };
     sortedInfo = sortedInfo || {};
 
-
     const columns = [
       {
-        title: 'Đơn vị tính',
+        title: 'ID',
+        dataIndex: 'id',
+        width: '10%',
+        ...this.getColumnSearchProps('id'),
+        sorter: (a, b) => a.id.toString().localeCompare(b.id),
+        sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order
+      },
+      {
+        title: 'Tên',
         dataIndex: 'name',
-        width: '20%',
+        width: '40%',
         ...this.getColumnSearchProps('name'),
         sorter: (a, b) => a.name.localeCompare(b.name),
-        sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
+        sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order
       },
       {
-        title: 'Ngày tạo',
+        title: 'Thời gian tạo',
         dataIndex: 'createdDate',
-        width: '70%',
+        width: '35%',
         ...this.getColumnSearchProps('createdDate'),
-        sorter: (a, b) => moment(a.createdDate).unix() - moment(b.createdDate).unix(),
+        sorter: (a, b) =>
+          moment(a.createdDate).unix() - moment(b.createdDate).unix(),
         sortOrder: sortedInfo.columnKey === 'createdDate' && sortedInfo.order,
-        render: (text, record) => (<span>{moment(record.createdDate).format('DD/MM/YYYY')}</span>),
+        render: (text, record) => (
+          <span>{formatDateTime(record.createdDate)}</span>
+        )
       },
       {
-        title: 'Action',
-        width: '10%',
+        title: '',
+        width: '15%',
         render: (text, record) => (
           <Fragment>
-            <Icon type="edit" onClick={() => onShowModal(typeForm.update, `Cập nhật đơn vị tính`, record)} />
-            <Icon type="delete" onClick={() => onDelete(record.id)} />
+            <LinkButton
+              type="link"
+              onClick={() =>
+                onShowModal(typeForm.update, `Cập nhật mã giảm giá`, record)
+              }
+            >
+              Sửa
+            </LinkButton>
+            <Divider type="vertical" />
+            <LinkButton type="link" onClick={() => onDelete(record.id)}>
+              Xoá
+            </LinkButton>
           </Fragment>
-        ),
-      },
+        )
+      }
     ];
 
     return (
-      <div>
-        <Button type="primary" onClick={() => onShowModal(typeForm.create, `Tạo mới đơn vị tính`, null)}>Tạo mới</Button>
-        <Button type="primary" onClick={() => onSelectedDelete(selectedRowKeys)}>Xóa</Button>
+      <Fragment>
+        <ButtonsWrapper>
+          <ActionButton
+            type="primary"
+            onClick={() =>
+              onShowModal(typeForm.create, `Tạo mới đơn vị tính`, null)
+            }
+          >
+            Tạo mới
+          </ActionButton>
+          {selectedRowKeys.length > 0 && (
+            <ActionButton
+              type="danger"
+              onClick={() => onSelectedDelete(selectedRowKeys)}
+            >
+              Xóa
+            </ActionButton>
+          )}
+        </ButtonsWrapper>
+
         <Table
-          rowKey='id'
+          rowKey="id"
           rowSelection={rowSelection}
           columns={columns}
           dataSource={unitList}
           onChange={handleChange}
         />
         <UnitForm {...resource} />
-      </div>
+      </Fragment>
     );
   }
 }

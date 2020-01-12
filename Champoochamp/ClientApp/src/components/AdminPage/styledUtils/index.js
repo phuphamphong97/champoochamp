@@ -18,4 +18,8 @@ const LinkButton = styled(Button)`
   }
 `;
 
-export { ButtonsWrapper, ActionButton, LinkButton };
+const ModifyText = styled('span')`
+  font-size: 12px;
+`;
+
+export { ButtonsWrapper, ActionButton, LinkButton, ModifyText };

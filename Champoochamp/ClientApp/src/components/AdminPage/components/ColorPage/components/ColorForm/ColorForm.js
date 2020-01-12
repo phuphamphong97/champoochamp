@@ -5,14 +5,14 @@ import { typeForm } from '../../../../../../shared/constants';
 import { formatDateTime } from '../../../../../../shared/util';
 import { ModifyText } from '../../../../styledUtils';
 
-class SizeForm extends Component {
+class ColorForm extends Component {
   render() {
     const {
       isShowModal,
       currentTypeForm,
       title,
       form,
-      size,
+      color,
       onSave,
       onCancel
     } = this.props;
@@ -29,22 +29,27 @@ class SizeForm extends Component {
           {currentTypeForm === typeForm.update && (
             <Form.Item style={{ display: 'none' }}>
               {getFieldDecorator('id', {
-                initialValue: size && size.id
+                initialValue: color && color.id
               })(<Input placeholder="Id" />)}
             </Form.Item>
           )}
-          <Form.Item label="Kích thước">
+          <Form.Item label="Màu">
             {getFieldDecorator('name', {
-              initialValue: size && size.name,
-              rules: [{ required: true, message: 'Vui lòng nhập kích thước!' }]
-            })(<Input placeholder="Kích thước *" />)}
+              initialValue: color && color.name
+            })(<Input placeholder="Màu" />)}
+          </Form.Item>
+          <Form.Item label="Mã màu">
+            {getFieldDecorator('code', {
+              initialValue: color && color.code,
+              rules: [{ required: true, message: 'Vui lòng nhập mã màu!' }]
+            })(<Input placeholder="Mã màu *" />)}
           </Form.Item>
           {currentTypeForm === typeForm.update &&
-            size &&
-            size.modifiedBy && (
+            color &&
+            color.modifiedBy && (
               <ModifyText>
-                Cập nhật lần cuối bởi {size.modifiedBy} lúc{' '}
-                {formatDateTime(size.modifiedDate)}.
+                Cập nhật lần cuối bởi {color.modifiedBy} lúc{' '}
+                {formatDateTime(color.modifiedDate)}.
               </ModifyText>
             )}
         </Form>
@@ -53,4 +58,4 @@ class SizeForm extends Component {
   }
 }
 
-export default Form.create({ name: 'SizeForm' })(SizeForm);
+export default Form.create({ name: 'ColorForm' })(ColorForm);

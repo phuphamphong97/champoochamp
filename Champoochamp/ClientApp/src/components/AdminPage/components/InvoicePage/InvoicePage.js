@@ -195,7 +195,7 @@ class InvoicePage extends Component {
         dataIndex: 'id',
         width: '10%',
         ...this.getColumnSearchProps('id'),
-        sorter: (a, b) => a.id.localeCompare(b.id),
+        sorter: (a, b) => a.id.toString().localeCompare(b.id),
         sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order,
         ellipsis: true
       },

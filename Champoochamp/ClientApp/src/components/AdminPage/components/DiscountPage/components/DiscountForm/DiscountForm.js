@@ -1,15 +1,9 @@
 ﻿import React, { Component } from 'react';
 import { Modal, Form, Input, InputNumber } from 'antd';
-import styled from '@emotion/styled';
 
 import { typeForm } from '../../../../../../shared/constants';
-import { colors } from '../../../../../../shared/principles';
 import { formatDateTime } from '../../../../../../shared/util';
-
-const ModifyText = styled('span')`
-  color: ${colors.darkGray};
-  font-size: 12px;
-`;
+import { ModifyText } from '../../../../styledUtils';
 
 class DiscountForm extends Component {
   render() {
