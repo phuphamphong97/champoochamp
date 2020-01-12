@@ -93,29 +93,35 @@ class SearchBar extends Component {
   };
 
   onHideSuggestions = () => {
-    const { onCloseMenu } = this.props;
-    onCloseMenu && onCloseMenu();
     this.setState({
       showSuggestions: false
     });
   };
 
+  onSelectedSearchResult = () => {
+    const { onCloseMenu } = this.props;
+    this.onHideSuggestions();
+    onCloseMenu && onCloseMenu();
+  }
+
   onKeyDownInput = e => {
     const { userInput } = this.state;
-    const { location, push } = this.props.history;
+    const { onCloseMenu, history } = this.props;
+    const { location, push } = history;
 
     if (e.keyCode === 13 && userInput) {
-      if (
-        location.pathname.slice(10).toLowerCase() !== userInput.toLowerCase()
-      ) {
-        push(`/tim-kiem/${userInput}`);
-      }
-
       this.setState({
         filteredSuggestions: [],
         showSuggestions: false,
         userInput: ''
       });
+
+      if (
+        location.pathname.slice(10).toLowerCase() !== userInput.toLowerCase()
+      ) {
+        push(`/tim-kiem/${userInput}`);
+        onCloseMenu && onCloseMenu();
+      }      
     }
   };
 
@@ -151,7 +157,7 @@ class SearchBar extends Component {
               <SuggestionItem key={suggestion.data.id}>
                 <ItemLink
                   to={`/san-pham/${suggestion.data.metaTitle}-${suggestion.data.id}`}
-                  onClick={this.onHideSuggestions}
+                  onClick={this.onSelectedSearchResult}
                 >
                   {suggestion.data.name}
                 </ItemLink>
@@ -166,7 +172,7 @@ class SearchBar extends Component {
               <SuggestionItem key={suggestion.data.id}>
                 <ItemLink
                   to={`/chi-tiet/${suggestion.data.metaTitle}-${suggestion.data.id}`}
-                  onClick={this.onHideSuggestions}
+                  onClick={this.onSelectedSearchResult}
                 >
                   {suggestion.data.name}
                 </ItemLink>
@@ -184,7 +190,7 @@ class SearchBar extends Component {
       <Wrapper>
         <NavLink
           to={`/tim-kiem/${userInput}`}
-          onClick={this.onHideSuggestions}
+          onClick={this.onSelectedSearchResult}
           disabled={!userInput}
         >
           <SearchIcon type="search" title="Tìm kiếm" />
@@ -208,7 +214,8 @@ class SearchBar extends Component {
 
 SearchBar.propsTypes = {
   history: PropTypes.object,
-  suggestions: PropTypes.instanceOf(Array)
+  suggestions: PropTypes.instanceOf(Array),
+  onCloseMenu: PropTypes.function
 };
 
 export default listensToClickOutside(SearchBar);

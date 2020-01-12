@@ -33,6 +33,7 @@ class SearchPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isInitedFrom: false,
       searchKey: props.match.params.key,
       isSearchKeyChanged: false,
       isLoadMore: true,
@@ -75,6 +76,7 @@ class SearchPage extends Component {
     callAPI(`Search/GetProductsBySearchKey-${searchKey}`).then(res =>
       this.setState(
         {
+          isInitedFrom: true,
           isSearchKeyChanged: false,
           isLoadMore: true,
           page: 1,
@@ -146,27 +148,29 @@ class SearchPage extends Component {
     });
 
   render() {
-    const { totalProducts, showingProductList } = this.state;
+    const { isInitedFrom, totalProducts, showingProductList } = this.state;
 
     return (
       <PageContainer>
         <Section>
           <SectionTitle content="Kết quả tìm kiếm" />
-          {totalProducts ? (
-            <Fragment>
-              <ResultText>{totalProducts} sản phẩm</ResultText>
-              <Row>{this.renderProductCard(showingProductList)}</Row>
-            </Fragment>
-          ) : (
-            <Fragment>
-              <span>Không tìm thấy sản phẩm nào.</span>
-              <NavLink to="/">
-                <BackButton>
-                  <Link content="Về trang chủ" iconType="fas fa-chevron-left" />
-                </BackButton>
-              </NavLink>
-            </Fragment>
-          )}
+          {
+            !isInitedFrom ? null :
+            totalProducts ? (
+              <Fragment>
+                <ResultText>{totalProducts} sản phẩm</ResultText>
+                <Row>{this.renderProductCard(showingProductList)}</Row>
+              </Fragment>
+            ) : (
+              <Fragment>
+                <span>Không tìm thấy sản phẩm nào.</span>
+                <NavLink to="/">
+                  <BackButton>
+                    <Link content="Về trang chủ" iconType="fas fa-chevron-left" />
+                  </BackButton>
+                </NavLink>
+              </Fragment>
+            )}
         </Section>
       </PageContainer>
     );
