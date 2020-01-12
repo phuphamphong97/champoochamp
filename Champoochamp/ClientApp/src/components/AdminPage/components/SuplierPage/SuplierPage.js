@@ -29,7 +29,7 @@ class SuplierPage extends Component {
 
   getAllSupliers = () => {
     callAPI('Suplier/GetAllSupliers').then(res =>
-      this.setState({ suplierList: res.data })
+      this.setState({ suplierList: res.data ? res.data : [] })
     );
   };
 

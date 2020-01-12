@@ -29,7 +29,7 @@ class DiscountPage extends Component {
 
   getAllDiscounts = () => {
     callAPI('Discount/GetAllDiscounts').then(res =>
-      this.setState({ discountList: res.data })
+      this.setState({ discountList: res.data ? res.data : [] })
     );
   };
 

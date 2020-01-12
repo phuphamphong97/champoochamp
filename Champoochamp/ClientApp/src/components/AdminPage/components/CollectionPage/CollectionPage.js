@@ -31,7 +31,7 @@ class CollectionPage extends Component {
 
   getAllCollections = () => {
     callAPI('Collection/GetAllCollections')
-      .then(res => this.setState({ collectionList: res.data }));
+      .then(res => this.setState({ collectionList: res.data ? res.data : [] }));
   }
 
   getAvatarInfo = (fileName, imageUrl) => {

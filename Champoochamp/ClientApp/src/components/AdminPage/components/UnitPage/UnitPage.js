@@ -30,7 +30,7 @@ class UnitPage extends Component {
 
   getAllUnits = () => {
     callAPI('Unit/GetAllUnits').then(res =>
-      this.setState({ unitList: res.data })
+      this.setState({ unitList: res.data ? res.data : [] })
     );
   };
 
