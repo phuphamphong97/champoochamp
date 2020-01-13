@@ -1,14 +1,22 @@
 ﻿import React, { Component } from 'react';
 import { Modal, Form, Input, Select } from 'antd';
+import styled from '@emotion/styled';
 
 import { typeForm } from '../../../../../../shared/constants';
+import { colors } from '../../../../../../shared/principles';
+import { formatDateTime } from '../../../../../../shared/util';
 import { cities, districts, wards } from '../../../../../../shared/address';
 
 import Avatar from '../../../../../elements/Avatar';
 
+const ModifyText = styled('span')`
+  color: ${colors.darkGray};
+  font-size: 12px;
+`;
+
 const { Option } = Select;
 
-class SuplierForm extends Component {
+class UserForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -64,7 +72,7 @@ class SuplierForm extends Component {
 
   render() {
     const { districtsData, wardsData } = this.state;
-    const { getAvatarInfo, isShowModal, currentTypeForm, title, form, user, onSave, onCancel } = this.props;
+    const { getThumbnailBase64, thumbnailBase64, isShowModal, currentTypeForm, title, form, user, onSave, onCancel } = this.props;
     const { getFieldDecorator } = form;
 
     return (
@@ -81,11 +89,11 @@ class SuplierForm extends Component {
               {getFieldDecorator('id', { initialValue: user && user.id })}
             </Form.Item>
           }
-          <Form.Item label="Họ tên">
+          <Form.Item label="Tên">
             {getFieldDecorator('name', {
               initialValue: user && user.name,
-              rules: [{ required: true, message: 'Vui lòng nhập họ tên!' }]
-            })(<Input placeholder="Họ tên *" />)}
+              rules: [{ required: true, message: 'Vui lòng nhập tên!' }]
+            })(<Input placeholder="Tên *" />)}
           </Form.Item>
           <Form.Item label="Email">
             {getFieldDecorator('email', {
@@ -123,8 +131,11 @@ class SuplierForm extends Component {
             )}
           </Form.Item>
           <Form.Item label="Số điện thoại">
-            {getFieldDecorator('phone', { initialValue: user && user.phone })(
-              <Input placeholder="Số điện thoại" />
+            {getFieldDecorator('phone', {
+              initialValue: user && user.phone,
+              rules: [{ required: true, message: 'Vui lòng nhập số điện thoại!' }]
+            })(
+              <Input placeholder="Số điện thoại *" />
             )}
           </Form.Item>
           <Form.Item label="Tỉnh / thành phố">
@@ -183,15 +194,18 @@ class SuplierForm extends Component {
             })(<Input placeholder="Số nhà, đường" />)}
           </Form.Item>
           <Form.Item label="Ảnh đại diện">
-            {getFieldDecorator('avatar')(<Avatar getAvatarInfo={getAvatarInfo} />)}
+            {getFieldDecorator('thumbnail', { initialValue: user && user.thumbnail })(
+              <Avatar entity={user} imageUrl={thumbnailBase64} getThumbnailBase64={getThumbnailBase64} />
+            )}
           </Form.Item>
           {
             currentTypeForm === typeForm.update && user && user.modifiedBy &&
-            <Form.Item label="Nhân viên cập nhật lần cuối">
-              {getFieldDecorator('modifiedBy', { initialValue: user.modifiedBy })(
-                <Input readOnly />
-              )}
-            </Form.Item>
+            (
+              <ModifyText>
+                Cập nhật lần cuối bởi {user.modifiedBy} lúc{' '}
+                {formatDateTime(user.modifiedDate)}.
+              </ModifyText>
+            )
           }
         </Form>
       </Modal>
@@ -199,4 +213,4 @@ class SuplierForm extends Component {
   }
 }
 
-export default Form.create({ name: 'SuplierForm' })(SuplierForm);
+export default Form.create({ name: 'UserForm' })(UserForm);

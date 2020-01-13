@@ -21,7 +21,7 @@ namespace Data.Entity
         public string District { get; set; }
         public string Ward { get; set; }
         public string Address { get; set; }
-        public string Avatar { get; set; }
+        public string Thumbnail { get; set; }
         public string Favorites { get; set; }
         public string ShoppingCarts { get; set; }
         public string VerificationCode { get; set; }

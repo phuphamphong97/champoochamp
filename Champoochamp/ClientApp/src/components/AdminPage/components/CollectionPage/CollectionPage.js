@@ -1,9 +1,10 @@
 ﻿import React, { Component, Fragment } from 'react';
 import moment from 'moment';
-import { Table, Input, Button, Icon, notification } from 'antd';
+import { Table, Input, Button, Icon, Divider, notification } from 'antd';
 
 import { callAPI, getImageUrl } from '../../../../shared/util';
-import { time, typeForm, imagesGroup } from '../../../../shared/constants';
+import { imagesGroup, time, typeForm } from '../../../../shared/constants';
+import { ButtonsWrapper, ActionButton, LinkButton } from '../../styledUtils';
 
 import CollectionForm from './components/CollectionForm';
 
@@ -20,8 +21,7 @@ class CollectionPage extends Component {
       title: '',
       collection: null,
       currentTypeForm: '',
-      fileName: '',
-      imageUrl: ''
+      thumbnailBase64: ''
     };
   }
 
@@ -34,12 +34,10 @@ class CollectionPage extends Component {
       .then(res => this.setState({ collectionList: res.data }));
   }
 
-  getAvatarInfo = (fileName, imageUrl) => {
-    this.setState({
-      fileName,
-      imageUrl
-    });
+  getThumbnailBase64 = thumbnailBase64 => {
+    this.setState({ thumbnailBase64 });
   }
+
 
   onShowModal = (typeForm, title, collection) => {
     this.setState({
@@ -51,10 +49,18 @@ class CollectionPage extends Component {
   };
 
   onSave = () => {
+    const { currentTypeForm, collectionList, thumbnailBase64 } = this.state;
+    const { employee } = this.props;
     const { form } = this.formRef.props;
+
     form.validateFields((err, values) => {
-      const { currentTypeForm, collectionList } = this.state;
-      const { employee } = this.props;
+      const data = {
+        employee,
+        collection: values,
+        thumbnailBase64,
+        folderName: imagesGroup.collections,
+        collectionList: []
+      }
 
       if (err) {
         return;
@@ -69,12 +75,13 @@ class CollectionPage extends Component {
 
                 this.setState({
                   isShowModal: false,
-                  collectionList
+                  collectionList,
+                  thumbnailBase64: ''
                 });
                 form.resetFields();
 
                 notification.info({
-                  message: 'Tạo mới bộ sưu tập thành công!',
+                  message: 'Tạo mới thành công!',
                   placement: 'topRight',
                   onClick: () => notification.destroy(),
                   duration: time.durationNotification
@@ -82,7 +89,7 @@ class CollectionPage extends Component {
               }
               else {
                 notification.warning({
-                  message: 'Đơn vị tính đã tồn tại!',
+                  message: 'Bộ sưu tập đã tồn tại, vui lòng nhập bộ sưu tập khác!',
                   placement: 'topRight',
                   onClick: () => notification.destroy(),
                   duration: time.durationNotification
@@ -90,11 +97,14 @@ class CollectionPage extends Component {
               }
             }
             else {
-              this.setState({ isShowModal: false });
+              this.setState({
+                isShowModal: false,
+                thumbnailBase64: ''
+              });
               form.resetFields();
 
               notification.warning({
-                message: 'Tạo mới bộ sưu tập thất bại!',
+                message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
@@ -103,11 +113,6 @@ class CollectionPage extends Component {
           });
       }
       else if (currentTypeForm === typeForm.update) {
-        const data = {
-          employee,
-          collection: values,
-          collectionList: []
-        }
         callAPI('Collection/PutCollection', '', 'PUT', data)
           .then(res => {
             if (res.data) {
@@ -118,12 +123,13 @@ class CollectionPage extends Component {
 
                 this.setState({
                   isShowModal: false,
-                  collectionList: lst
+                  collectionList: lst,
+                  thumbnailBase64: ''
                 });
                 form.resetFields();
 
                 notification.info({
-                  message: 'Cập nhật bộ sưu tập thành công!',
+                  message: 'Cập nhật thành công!',
                   placement: 'topRight',
                   onClick: () => notification.destroy(),
                   duration: time.durationNotification
@@ -131,7 +137,7 @@ class CollectionPage extends Component {
               }
               else {
                 notification.warning({
-                  message: 'Đơn vị tính đã tồn tại!',
+                  message: 'Bộ sưu tập đã tồn tại, vui lòng nhập bộ sưu tập khác!',
                   placement: 'topRight',
                   onClick: () => notification.destroy(),
                   duration: time.durationNotification
@@ -139,11 +145,14 @@ class CollectionPage extends Component {
               }
             }
             else {
-              this.setState({ isShowModal: false });
+              this.setState({
+                isShowModal: false,
+                thumbnailBase64: ''
+              });
               form.resetFields();
 
               notification.warning({
-                message: 'Cập nhật bộ sưu tập thất bại!',
+                message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
@@ -155,7 +164,10 @@ class CollectionPage extends Component {
   };
 
   onCancel = () => {
-    this.setState({ isShowModal: false });
+    this.setState({
+      isShowModal: false,
+      thumbnailBase64: ''
+    });
     this.formRef.props.form.resetFields();
   };
 
@@ -177,7 +189,7 @@ class CollectionPage extends Component {
           });
 
           notification.info({
-            message: 'Xóa bộ sưu tập thành công!',
+            message: 'Xóa thành công!',
             placement: 'topRight',
             onClick: () => notification.destroy(),
             duration: time.durationNotification
@@ -185,7 +197,7 @@ class CollectionPage extends Component {
         }
         else {
           notification.warning({
-            message: 'Xóa bộ sưu tập thất bại!',
+            message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
             placement: 'topRight',
             onClick: () => notification.destroy(),
             duration: time.durationNotification
@@ -206,7 +218,7 @@ class CollectionPage extends Component {
           });
 
           notification.info({
-            message: 'Xóa bộ sưu tập thành công!',
+            message: 'Xóa thành công!',
             placement: 'topRight',
             onClick: () => notification.destroy(),
             duration: time.durationNotification
@@ -214,7 +226,7 @@ class CollectionPage extends Component {
         }
         else {
           notification.warning({
-            message: 'Xóa bộ sưu tập thất bại!',
+            message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
             placement: 'topRight',
             onClick: () => notification.destroy(),
             duration: time.durationNotification
@@ -294,9 +306,9 @@ class CollectionPage extends Component {
   };
 
   render() {
-    let { selectedRowKeys, sortedInfo, collectionList, isShowModal, currentTypeForm, title, collection } = this.state;
-    const { handleChange, onSelectChange, wrappedComponentRef, getAvatarInfo, onShowModal, onSave, onCancel, onSelectedDelete, onDelete } = this;
-    const resource = { wrappedComponentRef, getAvatarInfo, isShowModal, currentTypeForm, title, collection, onSave, onCancel };
+    let { selectedRowKeys, sortedInfo, collectionList, isShowModal, currentTypeForm, title, collection, thumbnailBase64 } = this.state;
+    const { handleChange, onSelectChange, wrappedComponentRef, getThumbnailBase64, onShowModal, onSave, onCancel, onSelectedDelete, onDelete } = this;
+    const resource = { wrappedComponentRef, getThumbnailBase64, isShowModal, currentTypeForm, title, collection, onSave, onCancel, thumbnailBase64 };
     const rowSelection = {
       selectedRowKeys,
       onChange: onSelectChange,
@@ -306,18 +318,26 @@ class CollectionPage extends Component {
 
     const columns = [
       {
-        title: 'Ảnh bộ sưu tập',
-        width: '20%',
+        title: 'ID',
+        dataIndex: 'id',
+        width: '10%',
+        ...this.getColumnSearchProps('id'),
+        sorter: (a, b) => a.id.toString().localeCompare(b.id.toString()),
+        sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order
+      },
+      {
+        title: 'Ảnh',
+        width: '10%',
         render: (text, record) => (
           <img
-            src={getImageUrl(record.thumbnail, imagesGroup.collections)}
+            src={getImageUrl(record.thumbnail ? record.thumbnail : 'default.png', imagesGroup.collections)}
             alt=""
             style={{ width: "50px" }}
           />
         ),
       },
       {
-        title: 'Tên bộ sưu tập',
+        title: 'Bộ sưu tập',
         dataIndex: 'name',
         width: '20%',
         ...this.getColumnSearchProps('name'),
@@ -327,28 +347,55 @@ class CollectionPage extends Component {
       {
         title: 'Ngày tạo',
         dataIndex: 'createDate',
-        width: '50%',
+        width: '45%',
         ...this.getColumnSearchProps('createDate'),
         sorter: (a, b) => moment(a.createDate).unix() - moment(b.createDate).unix(),
         sortOrder: sortedInfo.columnKey === 'createDate' && sortedInfo.order,
         render: (text, record) => (<span>{moment(record.createDate).format('DD/MM/YYYY')}</span>),
       },
       {
-        title: 'Action',
-        width: '10%',
+        title: '',
+        width: '15%',
         render: (text, record) => (
           <Fragment>
-            <Icon type="edit" onClick={() => onShowModal(typeForm.update, `Cập nhật bộ sưu tập`, record)} />
-            <Icon type="delete" onClick={() => onDelete(record.id)} />
+            <LinkButton
+              type="link"
+              onClick={() =>
+                onShowModal(typeForm.update, `Cập nhật thông tin bộ sưu tập`, record)
+              }
+            >
+              Sửa
+            </LinkButton>
+            <Divider type="vertical" />
+            <LinkButton type="link" onClick={() => onDelete(record.id)}>
+              Xoá
+            </LinkButton>
           </Fragment>
-        ),
+        )
       },
     ];
 
     return (
-      <div>
-        <Button type="primary" onClick={() => onShowModal(typeForm.create, `Tạo mới bộ sưu tập`, null)}>Tạo mới</Button>
-        <Button type="primary" onClick={() => onSelectedDelete(selectedRowKeys)}>Xóa</Button>
+      <Fragment>
+        <ButtonsWrapper>
+          <ActionButton
+            type="primary"
+            onClick={() =>
+              onShowModal(typeForm.create, `Tạo mới bộ sưu tập`, null)
+            }
+          >
+            Tạo mới
+          </ActionButton>
+          {selectedRowKeys.length > 0 && (
+            <ActionButton
+              type="danger"
+              onClick={() => onSelectedDelete(selectedRowKeys)}
+            >
+              Xóa
+            </ActionButton>
+          )}
+        </ButtonsWrapper>
+
         <Table
           rowKey='id'
           rowSelection={rowSelection}
@@ -357,7 +404,7 @@ class CollectionPage extends Component {
           onChange={handleChange}
         />
         <CollectionForm {...resource} />
-      </div>
+      </Fragment>
     );
   }
 }

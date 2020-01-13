@@ -10,15 +10,16 @@ namespace Business
     public static bool SaveImage(string folderPath, string fileName, string imageUrl)
     {
       try
-      {   
+      {
         //Check if directory exist
-        //if (!Directory.Exists(folderPath))
-        //{
-        //  Directory.CreateDirectory(folderPath); //Create directory if it doesn't exist
-        //}
+        if (!Directory.Exists(folderPath))
+        {
+          Directory.CreateDirectory(folderPath); //Create directory if it doesn't exist
+        }
 
-        string imagePath = folderPath + fileName;
+        string imagePath = Path.Combine(folderPath, fileName); 
         string ImgStr = imageUrl.Replace("data:image/png;base64,", "");
+        ImgStr = ImgStr.Replace("data:image/jpeg;base64,", "");
         byte[] imageBytes = Convert.FromBase64String(ImgStr);
         File.WriteAllBytes(imagePath, imageBytes);
 

@@ -29,43 +29,58 @@ namespace Business
       }
     }
 
-    public Employee createEmployee(EmployeeModel employeeModel)
+    public Employee createEmployee(EmployeeModel employeeModel, string path)
     {
       using (champoochampContext db = new champoochampContext())
       {
-        try
+        using (var transaction = db.Database.BeginTransaction())
         {
-          string folderPath = "http://localhost:5000/assets/images/users";
-          //Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
-          Employee d = db.Employee.Where(p => String.Compare(p.UserName, employeeModel.employee.UserName, false) == 0 && p.Status == true).SingleOrDefault();
-          if (d != null)
+          try
           {
-            return new Employee();
-          }
+            Employee d = db.Employee.Where(p => String.Compare(p.UserName, employeeModel.employee.UserName, false) == 0 && p.Status == true).SingleOrDefault();
+            if (d != null)
+            {
+              return new Employee();
+            }
 
-          employeeModel.employee.Password = PasswordConverter.Encrypt(employeeModel.employee.Password);
-          if (String.IsNullOrEmpty(employeeModel.employee.Avatar))
-          {
-            employeeModel.employee.Avatar = "default.png";
-          }
-          else
-          {
-            Services.SaveImage(folderPath, employeeModel.employee.Avatar, employeeModel.imageUrl);
-          }
-          db.Add(employeeModel.employee);
+            employeeModel.employee.Password = PasswordConverter.Encrypt(employeeModel.employee.Password);
+            db.Add(employeeModel.employee);
+            db.SaveChanges();
+            if (String.IsNullOrEmpty(employeeModel.thumbnailBase64))
+            {
+              employeeModel.employee.Thumbnail = "default.png";
+            }
+            else
+            {
+              string imageType = employeeModel.thumbnailBase64.IndexOf("image/png") > 0 ? ".png" : ".jpg";
+              string thumbnail = "Employee_" + employeeModel.employee.Id.ToString() + imageType;
+              bool isSave = Services.SaveImage(path, thumbnail, employeeModel.thumbnailBase64);
+              if (isSave)
+              {
+                employeeModel.employee.Thumbnail = thumbnail;
+              }
+              else
+              {
+                transaction.Rollback();
+                return null;
+              }
+            }
 
-          db.SaveChanges();
-          return employeeModel.employee;
-        }
-        catch (Exception e)
-        {
-          Console.WriteLine(e.Message);
-          return null;
-        }
+            db.SaveChanges();
+            transaction.Commit();
+            return employeeModel.employee;
+          }
+          catch (Exception e)
+          {
+            Console.WriteLine(e.Message);
+            transaction.Rollback();
+            return null;
+          }
+        }        
       }
     }
 
-    public Employee putEmployee(EmployeeModel employeeModel)
+    public Employee putEmployee(EmployeeModel employeeModel, string path)
     {
       using (champoochampContext db = new champoochampContext())
       {
@@ -85,13 +100,12 @@ namespace Business
           employee.Address = employeeModel.employee.Address;
           employee.ModifiedDate = DateTime.Now;
           employee.ModifiedBy = employeeModel.employeeLogin.UserName;
-          if (String.IsNullOrEmpty(employeeModel.employee.Avatar))
+          if (!String.IsNullOrEmpty(employeeModel.thumbnailBase64))
           {
-            employee.Avatar = "default.png";
-          }
-          else
-          {
-            employee.Avatar = employeeModel.employee.Avatar;
+            if (!Services.SaveImage(path, employeeModel.employee.Thumbnail, employeeModel.thumbnailBase64))
+            {
+              return null;
+            }
           }
 
           db.SaveChanges();
@@ -158,12 +172,12 @@ namespace Business
 
     public List<Employee> decryptPassword(List<Employee> employeeList)
     {
-      if(employeeList.Count() == 0)
+      if (employeeList.Count() == 0)
       {
         return null;
       }
 
-      foreach(Employee e in employeeList)
+      foreach (Employee e in employeeList)
       {
         e.Password = PasswordConverter.Decrypt(e.Password);
       }

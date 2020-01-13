@@ -11,6 +11,8 @@ import {
 import { time } from '../../../../shared/constants';
 import { ButtonsWrapper, ActionButton, LinkButton } from '../../styledUtils';
 
+import InvoiceForm from './components/InvoiceForm';
+
 const { Option } = Select;
 
 const invoiceStatus = [
@@ -44,7 +46,9 @@ class InvoicePage extends Component {
       searchedColumn: '',
       sortedInfo: null,
       invoiceList: [],
-      isEdit: false
+      isEdit: false,
+      isShowModal: false,
+      invoice: null
     };
     this.mapCheckInvoice = new Map();
   }
@@ -57,6 +61,13 @@ class InvoicePage extends Component {
     callAPI('Invoice/GetAllInvoices').then(res =>
       this.setState({ invoiceList: res.data })
     );
+  };
+
+  onShowModal = invoice => {
+    this.setState({
+      isShowModal: true,
+      invoice
+    });
   };
 
   onEdit = () => {
@@ -103,6 +114,15 @@ class InvoicePage extends Component {
       isEdit: false
     });
     this.mapCheckInvoice = new Map();
+  };
+
+  onCancel = () => {
+    this.setState({ isShowModal: false });
+    this.formRef.props.form.resetFields();
+  };
+
+  wrappedComponentRef = formRef => {
+    this.formRef = formRef;
   };
 
   onChangeStatus = (invoice, value) => {
@@ -186,7 +206,9 @@ class InvoicePage extends Component {
   };
 
   render() {
-    let { sortedInfo, invoiceList, isEdit } = this.state;
+    let { isShowModal, sortedInfo, invoiceList, isEdit, invoice } = this.state;
+    const { wrappedComponentRef, onShowModal, onCancel } = this;
+    const resource = { isShowModal, wrappedComponentRef, invoice, onCancel, invoiceStatus };
     sortedInfo = sortedInfo || {};
 
     const columns = [
@@ -272,7 +294,14 @@ class InvoicePage extends Component {
       {
         title: '',
         width: '5%',
-        render: (text, record) => <LinkButton type="link">Xem</LinkButton>
+        render: (text, record) => (
+          <LinkButton
+            type="link"
+            onClick={() => onShowModal(record)}
+          >
+            Xem
+          </LinkButton>
+        )
       }
     ];
 
@@ -301,6 +330,7 @@ class InvoicePage extends Component {
           dataSource={invoiceList}
           onChange={this.handleChange}
         />
+        <InvoiceForm {...resource} />
       </Fragment>
     );
   }

@@ -1,9 +1,10 @@
 ﻿import React, { Component, Fragment } from 'react';
 import moment from 'moment';
-import { Table, Input, Button, Icon, notification } from 'antd';
+import { Table, Input, Button, Icon, Divider, notification } from 'antd';
 
 import { callAPI } from '../../../../shared/util';
 import { time, typeForm } from '../../../../shared/constants';
+import { ButtonsWrapper, ActionButton, LinkButton } from '../../styledUtils';
 
 import UnitForm from './components/UnitForm';
 
@@ -65,7 +66,7 @@ class UnitPage extends Component {
                 form.resetFields();
 
                 notification.info({
-                  message: 'Tạo mới đơn vị tính thành công!',
+                  message: 'Tạo mới thành công!',
                   placement: 'topRight',
                   onClick: () => notification.destroy(),
                   duration: time.durationNotification
@@ -73,7 +74,7 @@ class UnitPage extends Component {
               }
               else {
                 notification.warning({
-                  message: 'Đơn vị tính đã tồn tại!',
+                  message: 'Đơn vị tính đã tồn tại, vui lòng nhập đơn vị khác!',
                   placement: 'topRight',
                   onClick: () => notification.destroy(),
                   duration: time.durationNotification
@@ -85,7 +86,7 @@ class UnitPage extends Component {
               form.resetFields();
 
               notification.warning({
-                message: 'Tạo mới đơn vị tính thất bại!',
+                message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
@@ -114,7 +115,7 @@ class UnitPage extends Component {
                 form.resetFields();
 
                 notification.info({
-                  message: 'Cập nhật đơn vị tính thành công!',
+                  message: 'Cập nhật thành công!',
                   placement: 'topRight',
                   onClick: () => notification.destroy(),
                   duration: time.durationNotification
@@ -122,7 +123,7 @@ class UnitPage extends Component {
               }
               else {
                 notification.warning({
-                  message: 'Đơn vị tính đã tồn tại!',
+                  message: 'Đơn vị tính đã tồn tại, vui lòng nhập đơn vị khác!',
                   placement: 'topRight',
                   onClick: () => notification.destroy(),
                   duration: time.durationNotification
@@ -134,7 +135,7 @@ class UnitPage extends Component {
               form.resetFields();
 
               notification.warning({
-                message: 'Cập nhật đơn vị tính thất bại!',
+                message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
@@ -168,7 +169,7 @@ class UnitPage extends Component {
           });
 
           notification.info({
-            message: 'Xóa đơn vị tính thành công!',
+            message: 'Xóa thành công!',
             placement: 'topRight',
             onClick: () => notification.destroy(),
             duration: time.durationNotification
@@ -176,7 +177,7 @@ class UnitPage extends Component {
         }
         else {
           notification.warning({
-            message: 'Xóa đơn vị tính thất bại!',
+            message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
             placement: 'topRight',
             onClick: () => notification.destroy(),
             duration: time.durationNotification
@@ -197,7 +198,7 @@ class UnitPage extends Component {
           });
 
           notification.info({
-            message: 'Xóa đơn vị tính thành công!',
+            message: 'Xóa thành công!',
             placement: 'topRight',
             onClick: () => notification.destroy(),
             duration: time.durationNotification
@@ -205,7 +206,7 @@ class UnitPage extends Component {
         }
         else {
           notification.warning({
-            message: 'Xóa đơn vị tính thất bại!',
+            message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
             placement: 'topRight',
             onClick: () => notification.destroy(),
             duration: time.durationNotification
@@ -297,6 +298,14 @@ class UnitPage extends Component {
 
     const columns = [
       {
+        title: 'ID',
+        dataIndex: 'id',
+        width: '10%',
+        ...this.getColumnSearchProps('id'),
+        sorter: (a, b) => a.id.toString().localeCompare(b.id),
+        sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order
+      },
+      {
         title: 'Đơn vị tính',
         dataIndex: 'name',
         width: '20%',
@@ -307,28 +316,55 @@ class UnitPage extends Component {
       {
         title: 'Ngày tạo',
         dataIndex: 'createdDate',
-        width: '70%',
+        width: '45%',
         ...this.getColumnSearchProps('createdDate'),
         sorter: (a, b) => moment(a.createdDate).unix() - moment(b.createdDate).unix(),
         sortOrder: sortedInfo.columnKey === 'createdDate' && sortedInfo.order,
         render: (text, record) => (<span>{moment(record.createdDate).format('DD/MM/YYYY')}</span>),
       },
       {
-        title: 'Action',
-        width: '10%',
+        title: '',
+        width: '15%',
         render: (text, record) => (
           <Fragment>
-            <Icon type="edit" onClick={() => onShowModal(typeForm.update, `Cập nhật đơn vị tính`, record)} />
-            <Icon type="delete" onClick={() => onDelete(record.id)} />
+            <LinkButton
+              type="link"
+              onClick={() =>
+                onShowModal(typeForm.update, `Cập nhật đơn vị tính`, record)
+              }
+            >
+              Sửa
+            </LinkButton>
+            <Divider type="vertical" />
+            <LinkButton type="link" onClick={() => onDelete(record.id)}>
+              Xoá
+            </LinkButton>
           </Fragment>
-        ),
+        )
       },
     ];
 
     return (
-      <div>
-        <Button type="primary" onClick={() => onShowModal(typeForm.create, `Tạo mới đơn vị tính`, null)}>Tạo mới</Button>
-        <Button type="primary" onClick={() => onSelectedDelete(selectedRowKeys)}>Xóa</Button>
+      <Fragment>
+        <ButtonsWrapper>
+          <ActionButton
+            type="primary"
+            onClick={() =>
+              onShowModal(typeForm.create, `Tạo mới đơn vị tính`, null)
+            }
+          >
+            Tạo mới
+          </ActionButton>
+          {selectedRowKeys.length > 0 && (
+            <ActionButton
+              type="danger"
+              onClick={() => onSelectedDelete(selectedRowKeys)}
+            >
+              Xóa
+            </ActionButton>
+          )}
+        </ButtonsWrapper>
+
         <Table
           rowKey='id'
           rowSelection={rowSelection}
@@ -337,7 +373,7 @@ class UnitPage extends Component {
           onChange={handleChange}
         />
         <UnitForm {...resource} />
-      </div>
+      </Fragment>
     );
   }
 }

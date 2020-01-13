@@ -287,8 +287,8 @@ class RegisterPage extends Component {
               <Col xs={24} md={12}>
                 <Form.Item>
                   {getFieldDecorator('address', {
-                    rules: [{ message: 'Vui lòng nhập số nhà, đường!' }]
-                  })(<Input placeholder="Số nhà, đường" />)}
+                    rules: [{ required: true, message: 'Vui lòng nhập số nhà, đường!' }]
+                  })(<Input placeholder="Số nhà, đường *" />)}
                 </Form.Item>
               </Col>
             </Row>

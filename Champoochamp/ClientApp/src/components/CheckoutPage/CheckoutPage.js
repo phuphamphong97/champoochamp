@@ -119,7 +119,7 @@ class CheckoutPage extends Component {
             const ghtkData = {
               token: ghtk.token,
               order: {
-                id: res.data.id,
+                id: res.data.id - 8000,
                 pick_name: champoochampInfo.name,
                 pick_money: paymentMethods === paymentMethod.cod ? res.data.total : 0,
                 pick_address: champoochampInfo.address,
@@ -257,7 +257,7 @@ class CheckoutPage extends Component {
           <p>Mã hóa đơn: {ghtkResponse && ghtkResponse.invoice.id}</p>
           <p>Tổng tiền: {ghtkResponse && formatMoney(ghtkResponse.invoice.total, true)}đ</p>
           {
-            ghtkResponse && ghtkResponse.res && (
+            ghtkResponse && ghtkResponse.res && ghtkResponse.res.order && (
               <p>Thời gian dự kiến giao hàng: {ghtkResponse.res.order.estimated_deliver_time}</p>
             )
           }

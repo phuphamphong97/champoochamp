@@ -63,8 +63,6 @@ namespace Data.Entity
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.Logo).HasColumnType("varchar(200)");
-
                 entity.Property(e => e.MetaTitle).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
@@ -77,6 +75,8 @@ namespace Data.Entity
                     .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("'b\\'1\\''");
+
+                entity.Property(e => e.Thumbnail).HasColumnType("varchar(200)");
             });
 
             modelBuilder.Entity<Category>(entity =>
@@ -231,8 +231,6 @@ namespace Data.Entity
 
                 entity.Property(e => e.Email).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.Logo).HasColumnType("varchar(200)");
-
                 entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
@@ -247,6 +245,8 @@ namespace Data.Entity
                     .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("'b\\'1\\''");
+
+                entity.Property(e => e.Thumbnail).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Ward).HasColumnType("varchar(200)");
             });
@@ -289,8 +289,6 @@ namespace Data.Entity
 
                 entity.Property(e => e.Address).HasColumnType("varchar(2000)");
 
-                entity.Property(e => e.Avatar).HasColumnType("varchar(200)");
-
                 entity.Property(e => e.CreatedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.CreatedDate)
@@ -313,6 +311,8 @@ namespace Data.Entity
                     .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("'b\\'1\\''");
+
+                entity.Property(e => e.Thumbnail).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.UserName)
                     .IsRequired()
@@ -872,8 +872,6 @@ namespace Data.Entity
                     .HasColumnType("int(11)")
                     .HasDefaultValueSql("'1'");
 
-                entity.Property(e => e.Image).HasColumnType("varchar(200)");
-
                 entity.Property(e => e.Link).HasColumnType("varchar(2000)");
 
                 entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
@@ -886,6 +884,8 @@ namespace Data.Entity
                     .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("'b\\'1\\''");
+
+                entity.Property(e => e.Thumbnail).HasColumnType("varchar(200)");
             });
 
             modelBuilder.Entity<Suplier>(entity =>
@@ -904,8 +904,6 @@ namespace Data.Entity
 
                 entity.Property(e => e.Email).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.Logo).HasColumnType("varchar(200)");
-
                 entity.Property(e => e.ModifiedBy).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
@@ -920,6 +918,8 @@ namespace Data.Entity
                     .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("'b\\'1\\''");
+
+                entity.Property(e => e.Thumbnail).HasColumnType("varchar(200)");
             });
 
             modelBuilder.Entity<Unit>(entity =>
@@ -954,8 +954,6 @@ namespace Data.Entity
 
                 entity.Property(e => e.Address).HasColumnType("varchar(200)");
 
-                entity.Property(e => e.Avatar).HasColumnType("varchar(200)");
-
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("'current_timestamp()'");
@@ -986,6 +984,8 @@ namespace Data.Entity
                     .IsRequired()
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("'b\\'1\\''");
+
+                entity.Property(e => e.Thumbnail).HasColumnType("varchar(200)");
 
                 entity.Property(e => e.VerificationCode).HasColumnType("varchar(200)");
 

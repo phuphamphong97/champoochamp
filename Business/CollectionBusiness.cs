@@ -11,42 +11,57 @@ namespace Business
 {
   public class CollectionBusiness
   {
-    public Collection createCollection(CollectionModel collectionModel)
+    public Collection createCollection(CollectionModel collectionModel, string path)
     {
       using (champoochampContext db = new champoochampContext())
       {
-        try
+        using (var transaction = db.Database.BeginTransaction())
         {
-          string folderPath = "http://localhost:5000/assets/images/users";
-          //Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
-          Collection d = db.Collection.Where(p => String.Compare(p.Name, collectionModel.collection.Name, false) == 0 && p.Status == true).SingleOrDefault();
-          if (d != null)
+          try
           {
-            return new Collection();
-          }
+            Collection d = db.Collection.Where(p => String.Compare(p.Name, collectionModel.collection.Name, false) == 0 && p.Status == true).SingleOrDefault();
+            if (d != null)
+            {
+              return new Collection();
+            }
 
-          if (String.IsNullOrEmpty(collectionModel.collection.Thumbnail))
-          {
-            collectionModel.collection.Thumbnail = "default.png";
-          }
-          else
-          {
-            Services.SaveImage(folderPath, collectionModel.collection.Thumbnail, collectionModel.imageUrl);
-          }
-          db.Add(collectionModel.collection);
+            db.Add(collectionModel.collection);
+            db.SaveChanges();
+            if (String.IsNullOrEmpty(collectionModel.thumbnailBase64))
+            {
+              collectionModel.collection.Thumbnail = "default.png";
+            }
+            else
+            {
+              string imageType = collectionModel.thumbnailBase64.IndexOf("image/png") > 0 ? ".png" : ".jpg";
+              string thumbnail = "Collection_" + collectionModel.collection.Id.ToString() + imageType;
+              bool isSave = Services.SaveImage(path, thumbnail, collectionModel.thumbnailBase64);
+              if (isSave)
+              {
+                collectionModel.collection.Thumbnail = thumbnail;
+              }
+              else
+              {
+                transaction.Rollback();
+                return null;
+              }
+            }
 
-          db.SaveChanges();
-          return collectionModel.collection;
-        }
-        catch (Exception e)
-        {
-          Console.WriteLine(e.Message);
-          return null;
+            db.SaveChanges();
+            transaction.Commit();
+            return collectionModel.collection;
+          }
+          catch (Exception e)
+          {
+            Console.WriteLine(e.Message);
+            transaction.Rollback();
+            return null;
+          }
         }
       }
     }
 
-    public Collection putCollection(CollectionModel collectionModel)
+    public Collection putCollection(CollectionModel collectionModel, string path)
     {
       using (champoochampContext db = new champoochampContext())
       {
@@ -60,16 +75,14 @@ namespace Business
 
           Collection collection = db.Collection.Find(collectionModel.collection.Id);
           collection.Name = collectionModel.collection.Name;
-          //collection.MetaTitle = collectionModel.collection.Name;
           collection.ModifiedDate = DateTime.Now;
-          collection.ModifiedBy = collectionModel.employee.Name;
-          if (String.IsNullOrEmpty(collectionModel.collection.Thumbnail))
+          collection.ModifiedBy = collectionModel.employee.UserName;
+          if (!String.IsNullOrEmpty(collectionModel.thumbnailBase64))
           {
-            collection.Thumbnail = "default.png";
-          }
-          else
-          {
-            collection.Thumbnail = collectionModel.collection.Thumbnail;
+            if (!Services.SaveImage(path, collectionModel.collection.Thumbnail, collectionModel.thumbnailBase64))
+            {
+              return null;
+            }
           }
 
           db.SaveChanges();

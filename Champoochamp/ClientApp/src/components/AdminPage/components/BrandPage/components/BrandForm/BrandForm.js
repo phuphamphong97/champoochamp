@@ -13,9 +13,9 @@ const ModifyText = styled('span')`
   font-size: 12px;
 `;
 
-class CollectionForm extends Component {
+class BrandForm extends Component {
   render() {
-    const { getThumbnailBase64, thumbnailBase64, isShowModal, currentTypeForm, title, form, collection, onSave, onCancel } = this.props;
+    const { getThumbnailBase64, thumbnailBase64, isShowModal, currentTypeForm, title, form, brand, onSave, onCancel } = this.props;
     const { getFieldDecorator } = form;
 
     return (
@@ -29,28 +29,33 @@ class CollectionForm extends Component {
           {
             currentTypeForm === typeForm.update &&
             <Form.Item style={{ display: 'none' }}>
-              {getFieldDecorator('id', { initialValue: collection && collection.id })(
+              {getFieldDecorator('id', { initialValue: brand && brand.id })(
                 <Input placeholder="Id" />
               )}
             </Form.Item>
           }
           <Form.Item label="Tên">
             {getFieldDecorator('name', {
-              initialValue: collection && collection.name,
+              initialValue: brand && brand.name,
               rules: [{ required: true, message: 'Vui lòng nhập tên!' }]
             })(<Input placeholder="Tên *" />)}
           </Form.Item>
-          <Form.Item label="Ảnh">
-            {getFieldDecorator('thumbnail', { initialValue: collection && collection.thumbnail })(
-              <Avatar entity={collection} imageUrl={thumbnailBase64} getThumbnailBase64={getThumbnailBase64} />
+          <Form.Item label="Quốc gia">
+            {getFieldDecorator('description', { initialValue: brand && brand.country })(
+              <Input placeholder="Quốc gia" />
+            )}
+          </Form.Item>
+          <Form.Item label="Logo">
+            {getFieldDecorator('thumbnail', { initialValue: brand && brand.thumbnail })(
+              <Avatar entity={brand} imageUrl={thumbnailBase64} getThumbnailBase64={getThumbnailBase64} />
             )}
           </Form.Item>
           {
-            currentTypeForm === typeForm.update && collection && collection.modifiedBy &&
+            currentTypeForm === typeForm.update && brand && brand.modifiedBy &&
             (
               <ModifyText>
-                Cập nhật lần cuối bởi {collection.modifiedBy} lúc{' '}
-                {formatDateTime(collection.modifiedDate)}.
+                Cập nhật lần cuối bởi {brand.modifiedBy} lúc{' '}
+                {formatDateTime(brand.modifiedDate)}.
               </ModifyText>
             )
           }
@@ -60,4 +65,4 @@ class CollectionForm extends Component {
   }
 }
 
-export default Form.create({ name: 'CollectionForm' })(CollectionForm);
+export default Form.create({ name: 'BrandForm' })(BrandForm);

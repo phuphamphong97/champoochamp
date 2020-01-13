@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Business;
 using Data.Entity;
 using Data.Model;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,6 +17,12 @@ namespace API.Controllers
   public class SuplierController : ControllerBase
   {
     SuplierBusiness suplierBusiness = new SuplierBusiness();
+
+    private IHostingEnvironment _env;
+    public SuplierController(IHostingEnvironment env)
+    {
+      _env = env;
+    }
 
     [Route("GetAllSupliers")]
     public IEnumerable<Suplier> GetAllSupliers()
@@ -35,16 +43,24 @@ namespace API.Controllers
 
     [Route("CreateSuplier")]
     [HttpPost]
-    public Suplier CreateSuplier(Suplier suplier)
+    public Suplier CreateSuplier(SuplierModel suplierModel)
     {
-      return suplierBusiness.createSuplier(suplier);
+      string webRoot = _env.ContentRootPath;
+      webRoot = webRoot.Replace("API", "Champoochamp");
+      string path = Path.Combine(webRoot, "ClientApp\\src\\assets\\images", suplierModel.folderName);
+
+      return suplierBusiness.createSuplier(suplierModel, path);
     }
 
     [Route("PutSuplier")]
     [HttpPut]
     public Suplier PutSuplier(SuplierModel suplierModel)
     {
-      return suplierBusiness.putSuplier(suplierModel);
+      string webRoot = _env.ContentRootPath;
+      webRoot = webRoot.Replace("API", "Champoochamp");
+      string path = Path.Combine(webRoot, "ClientApp\\src\\assets\\images", suplierModel.folderName);
+
+      return suplierBusiness.putSuplier(suplierModel, path);
     }
 
     [Route("DeleteSuplierById")]
