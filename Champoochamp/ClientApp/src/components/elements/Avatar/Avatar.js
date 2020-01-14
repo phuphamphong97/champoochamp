@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Upload, Icon, message } from 'antd';
+import { getImageUrl } from '../../../shared/util';
 
 function getBase64(img, callback) {
   const reader = new FileReader();
@@ -23,8 +24,19 @@ class Avatar extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      imageUrl: '',
       loading: false,
     };
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.imageUrl !== prevState.imageUrl) {
+      return {
+        imageUrl: nextProps.imageUrl
+      };
+    }
+
+    return null;
   }
 
   handleChange = info => {
@@ -38,7 +50,7 @@ class Avatar extends Component {
         this.setState({
           imageUrl,
           loading: false,
-        }, () => this.props.getAvatarInfo(info.file.name, imageUrl)),
+        }, () => this.props.getThumbnailBase64(imageUrl)),
       );
     }
   };
@@ -54,6 +66,7 @@ class Avatar extends Component {
 
   render() {
     const { imageUrl } = this.state;
+    const { entity, imagesGroup } = this.props;
 
     return (
       <Upload
@@ -65,7 +78,10 @@ class Avatar extends Component {
         beforeUpload={beforeUpload}
         onChange={this.handleChange}
       >
-        {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : this.uploadButton}
+        {
+          imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> :
+            entity ? <img src={getImageUrl(entity.thumbnail ? entity.thumbnail : 'default.png', imagesGroup)} alt="avatar" style={{ width: '100%' }} /> : this.uploadButton()
+        }
       </Upload>
     );
   }

@@ -72,7 +72,7 @@ class CategoryAdminPage extends Component {
               });
             } else {
               notification.warning({
-                message: 'Loại sản phẩm đã tồn tại!',
+                message: 'Loại sản phẩm đã tồn tại, vui lòng nhập loại sản phẩm khác!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
@@ -90,12 +90,14 @@ class CategoryAdminPage extends Component {
             });
           }
         });
-      } else if (currentTypeForm === typeForm.update) {
+      }
+      else if (currentTypeForm === typeForm.update) {
         const data = {
           employee,
           category: values,
           categoryList: []
         };
+
         callAPI('Category/PutCategory', '', 'PUT', data).then(res => {
           if (res.data) {
             if (res.data.id > 0) {
@@ -119,7 +121,7 @@ class CategoryAdminPage extends Component {
               });
             } else {
               notification.warning({
-                message: 'Loại sản phẩm đã tồn tại!',
+                message: 'Loại sản phẩm đã tồn tại, vui lòng nhập loại sản phẩm khác!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Business;
 using Data.Entity;
 using Data.Model;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,6 +17,12 @@ namespace API.Controllers
   public class UserController : ControllerBase
   {
     UserBusiness userBusiness = new UserBusiness();
+
+    private IHostingEnvironment _env;
+    public UserController(IHostingEnvironment env)
+    {
+      _env = env;
+    }
 
     [Route("GetAllUsers")]
     public IEnumerable<User> GetAllUsers()
@@ -83,14 +91,22 @@ namespace API.Controllers
     [HttpPost]
     public User CreateUser(UserModel userModel)
     {
-      return userBusiness.createUser(userModel);
+      string webRoot = _env.ContentRootPath;
+      webRoot = webRoot.Replace("API", "Champoochamp");
+      string path = Path.Combine(webRoot, "ClientApp\\src\\assets\\images", userModel.folderName);
+
+      return userBusiness.createUser(userModel, path);
     }
 
     [Route("PutUser")]
     [HttpPut]
     public User PutUser(UserModel userModel)
     {
-      return userBusiness.putUser(userModel);
+      string webRoot = _env.ContentRootPath;
+      webRoot = webRoot.Replace("API", "Champoochamp");
+      string path = Path.Combine(webRoot, "ClientApp\\src\\assets\\images", userModel.folderName);
+
+      return userBusiness.putUser(userModel, path);
     }
 
     [Route("DeleteUserById")]

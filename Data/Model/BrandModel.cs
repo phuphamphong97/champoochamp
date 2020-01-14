@@ -5,26 +5,26 @@ using System.Text;
 
 namespace Data.Model
 {
-  public class UserModel
+  public class BrandModel
   {
     public Employee employee { get; set; }
-    public User user { get; set; }
+    public Brand brand { get; set; }
     public string thumbnailBase64 { get; set; }
     public string folderName { get; set; }
-    public List<User> userList { get; set; }
+    public List<Brand> brandList { get; set; }
 
-    public UserModel()
+    public BrandModel()
     {
-      userList = new List<User>();
+      brandList = new List<Brand>();
     }
 
-    public UserModel(Employee employee, User user, string thumbnailBase64, string folderName, List<User> userList)
+    public BrandModel(Employee employee, Brand brand, string thumbnailBase64, string folderName, List<Brand> brandList)
     {
       this.employee = employee;
-      this.user = user;
+      this.brand = brand;
       this.thumbnailBase64 = thumbnailBase64;
       this.folderName = folderName;
-      this.userList = userList;
+      this.brandList = brandList;
     }
   }
 }

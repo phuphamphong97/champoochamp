@@ -11,6 +11,8 @@ import {
 import { time } from '../../../../shared/constants';
 import { ButtonsWrapper, ActionButton, LinkButton } from '../../styledUtils';
 
+import InvoiceForm from './components/InvoiceForm';
+
 const { Option } = Select;
 
 const invoiceStatus = [
@@ -44,7 +46,9 @@ class InvoicePage extends Component {
       searchedColumn: '',
       sortedInfo: null,
       invoiceList: [],
-      isEdit: false
+      isEdit: false,
+      isShowModal: false,
+      invoice: null
     };
     this.mapCheckInvoice = new Map();
   }
@@ -57,6 +61,13 @@ class InvoicePage extends Component {
     callAPI('Invoice/GetAllInvoices').then(res =>
       this.setState({ invoiceList: res.data })
     );
+  };
+
+  onShowModal = invoice => {
+    this.setState({
+      isShowModal: true,
+      invoice
+    });
   };
 
   onEdit = () => {
@@ -103,6 +114,68 @@ class InvoicePage extends Component {
       isEdit: false
     });
     this.mapCheckInvoice = new Map();
+  };
+
+  onUpdateDetailInfo = () => {
+    const { form } = this.formRef.props;
+    form.validateFields((err, values) => {
+      const { invoiceList } = this.state;
+      const { employee } = this.props;
+
+      if (err) {
+        return;
+      }
+
+      const data = {
+        employee,
+        invoice: values,
+        invoiceList: []
+      };
+      callAPI('Invoice/PutInvoice', '', 'PUT', data).then(res => {
+        if (res.data) {
+          if (res.data.id > 0) {
+            let lst = invoiceList;
+            lst = invoiceList.filter(
+              invoice => invoice.id !== res.data.id
+            );
+            lst.unshift(res.data);
+
+            this.setState({
+              isShowModal: false,
+              invoiceList: lst
+            });
+            form.resetFields();
+
+            notification.info({
+              message: 'Cập nhật thành công!',
+              placement: 'topRight',
+              onClick: () => notification.destroy(),
+              duration: time.durationNotification
+            });
+          }
+        }
+        else {
+          this.setState({ isShowModal: false });
+          form.resetFields();
+
+          notification.warning({
+            message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
+            placement: 'topRight',
+            onClick: () => notification.destroy(),
+            duration: time.durationNotification
+          });
+        }
+      });
+    });
+  }
+
+  onCancel = () => {
+    this.setState({ isShowModal: false });
+    this.formRef.props.form.resetFields();
+  };
+
+  wrappedComponentRef = formRef => {
+    this.formRef = formRef;
   };
 
   onChangeStatus = (invoice, value) => {
@@ -186,7 +259,9 @@ class InvoicePage extends Component {
   };
 
   render() {
-    let { sortedInfo, invoiceList, isEdit } = this.state;
+    let { isShowModal, sortedInfo, invoiceList, isEdit, invoice } = this.state;
+    const { wrappedComponentRef, onShowModal, onCancel, onUpdateDetailInfo } = this;
+    const resource = { isShowModal, wrappedComponentRef, invoice, onCancel, onUpdateDetailInfo, invoiceStatus };
     sortedInfo = sortedInfo || {};
 
     const columns = [
@@ -272,7 +347,14 @@ class InvoicePage extends Component {
       {
         title: '',
         width: '5%',
-        render: (text, record) => <LinkButton type="link">Xem</LinkButton>
+        render: (text, record) => (
+          <LinkButton
+            type="link"
+            onClick={() => onShowModal(record)}
+          >
+            Xem
+          </LinkButton>
+        )
       }
     ];
 
@@ -301,6 +383,7 @@ class InvoicePage extends Component {
           dataSource={invoiceList}
           onChange={this.handleChange}
         />
+        <InvoiceForm {...resource} />
       </Fragment>
     );
   }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Business;
@@ -17,6 +18,12 @@ namespace API.Controllers
   public class EmployeeController : ControllerBase
   {
     EmployeeBusiness employeeBusiness = new EmployeeBusiness();
+
+    private IHostingEnvironment _env;
+    public EmployeeController(IHostingEnvironment env)
+    {
+      _env = env;
+    }
 
     [Route("GetAllEmployees")]
     public IEnumerable<Employee> GetAllEmployees()
@@ -47,14 +54,22 @@ namespace API.Controllers
     [HttpPost]
     public Employee CreateEmployee(EmployeeModel employeeModel)
     {
-      return employeeBusiness.createEmployee(employeeModel);
+      string webRoot = _env.ContentRootPath;
+      webRoot = webRoot.Replace("API", "Champoochamp");
+      string path = Path.Combine(webRoot, "ClientApp\\src\\assets\\images", employeeModel.folderName);
+
+      return employeeBusiness.createEmployee(employeeModel, path);
     }
 
     [Route("PutEmployee")]
     [HttpPut]
     public Employee PutEmployee(EmployeeModel employeeModel)
     {
-      return employeeBusiness.putEmployee(employeeModel);
+      string webRoot = _env.ContentRootPath;
+      webRoot = webRoot.Replace("API", "Champoochamp");
+      string path = Path.Combine(webRoot, "ClientApp\\src\\assets\\images", employeeModel.folderName);
+
+      return employeeBusiness.putEmployee(employeeModel, path);
     }
 
     [Route("DeleteEmployeeById")]

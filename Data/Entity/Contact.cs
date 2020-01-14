@@ -13,7 +13,7 @@ namespace Data.Entity
         public string District { get; set; }
         public string Ward { get; set; }
         public string Address { get; set; }
-        public string Logo { get; set; }
+        public string Thumbnail { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? ModifiedDate { get; set; }
