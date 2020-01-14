@@ -24,6 +24,8 @@ namespace Business
             db.Add(invoice);
             db.SaveChanges();
 
+            checkoutModel.invoice = invoice;
+
             //Lưu chi tiết hóa đơn
             List<InvoiceDetail> invoiceDetailList = getInvoiceDetail(checkoutModel.shoppingCartList, invoice.Id);
             foreach (InvoiceDetail item in invoiceDetailList)
@@ -48,11 +50,11 @@ namespace Business
 
             //Cập nhật giỏ hàng người dùng
             User user = db.User.Find(checkoutModel.user.Id);
-            if(user != null)
+            if (user != null)
             {
               user.ShoppingCarts = string.Empty;
             }
-            else if(checkoutModel.user.Id > 0)
+            else if (checkoutModel.user.Id > 0)
             {
               return null;
             }
@@ -73,7 +75,7 @@ namespace Business
             transaction.Rollback();
             return null;
           }
-        }          
+        }
       }
     }
 
@@ -161,23 +163,14 @@ namespace Business
       {
         User user = checkoutModel.user;
 
-        //string body = string.Empty;
-        //using (StreamReader reader = new StreamReader(Server.MapPath("~/HtmlTemplate.html")))
-        //{
-        //  body = reader.ReadToEnd();
-        //}
-        //body = body.Replace("{UserName}", userName);  
-        //body = body.Replace("{Title}", title);
-        //body = body.Replace("{message}", message);
-
         // Credentials
         var credentials = new NetworkCredential("no.reply.guitarshop@gmail.com", "guitarshop.com");
         // Mail message
         var mail = new MailMessage()
         {
           From = new MailAddress("no.reply.guitarshop@gmail.com"),
-          Subject = "Email Sender App",
-          Body = "Hello"
+          Subject = "Champoochamp - Đặt hàng thành công",
+          Body = "Xin chào, đơn hàng #" + checkoutModel.invoice.Id + " được đặt thành công.\nTrị giá đơn hàng: " + checkoutModel.invoice.Total + "đ.\n Cảm ơn quý khách đã lựa chọn Champoochamp."
         };
         mail.IsBodyHtml = true;
         mail.To.Add(new MailAddress(user.Email));
@@ -200,5 +193,5 @@ namespace Business
       }
 
     }
-  }  
+  }
 }
