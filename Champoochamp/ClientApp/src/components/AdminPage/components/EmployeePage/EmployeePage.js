@@ -2,7 +2,7 @@
 import { Table, Input, Button, Icon, Divider, notification } from 'antd';
 
 import { callAPI, getImageUrl } from '../../../../shared/util';
-import { imagesGroup, time, typeForm } from '../../../../shared/constants';
+import { imagesGroup, time, typeForm, localStorageKey } from '../../../../shared/constants';
 import { ButtonsWrapper, ActionButton, LinkButton } from '../../styledUtils';
 
 import EmployeeForm from './components/EmployeeForm';
@@ -48,7 +48,7 @@ class EmployeePage extends Component {
 
   onSave = () => {
     const { currentTypeForm, employeeList, thumbnailBase64 } = this.state;
-    const { employeeLogin } = this.props;
+    const { employeeLogin, onLoginAdmin } = this.props;
     const { form } = this.formRef.props;
 
     
@@ -126,6 +126,13 @@ class EmployeePage extends Component {
                   thumbnailBase64: ''
                 });
                 form.resetFields();
+
+                if(res.data.id === employeeLogin.id) {
+                  onLoginAdmin(res.data);
+
+                  localStorage.setItem(localStorageKey.employeeKey, JSON.stringify(res.data));
+                  localStorage.setItem(localStorageKey.timeEmployeeSessionKey, new Date().getTime());
+                }
 
                 notification.info({
                   message: 'Cập nhật thành công!',
