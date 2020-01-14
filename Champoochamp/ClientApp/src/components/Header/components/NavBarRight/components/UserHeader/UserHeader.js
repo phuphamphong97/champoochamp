@@ -97,7 +97,7 @@ class UserHeader extends Component {
         {user ? (
           <UserAvatar
             onClick={this.onShowPanel}
-            url={getImageUrl(user.avatar, imagesGroup.users)}
+            url={getImageUrl(user.thumbnail ? user.thumbnail : 'default.png', imagesGroup.users)}
             title="Tài khoản"
           />
         ) : (

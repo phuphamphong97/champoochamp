@@ -137,6 +137,7 @@ class RouterConfig extends Component {
               {...props}
               employee={employee}
               history={history}
+              onLoginAdmin={this.onLoginAdmin}
             />
           )}
         />

@@ -1,10 +1,12 @@
 ﻿import React, { Component, Fragment } from 'react';
-import { Row, Col } from 'antd';
+import { Row, Col, notification } from 'antd';
 import styled from '@emotion/styled';
 
-import { adminPage } from '../../shared/constants';
+import { adminPage, imagesGroup, localStorageKey, time } from '../../shared/constants';
+import { colors } from '../../shared/principles';
+import { getImageUrl, setCookie } from '../../shared/util';
 
-import { Button } from '../elements';
+import { Link } from '../elements';
 import BrandPage from './components/BrandPage';
 import CategoryPage from './components/CategoryPage';
 import CollectionPage from './components/CollectionPage';
@@ -20,8 +22,63 @@ import UnitPage from './components/UnitPage';
 import UserPage from './components/UserPage';
 
 const Wrapper = styled('div')`
-  width: 95%;
-  margin: auto;
+  margin: 30px auto 0 auto;
+  width: 100%;
+
+  .ant-row {
+    margin: 0 !important;
+  }
+`;
+
+const MenuButton = styled('button')`
+  background: ${props => (props.isSelected ? colors.white : colors.offWhite)};
+  border: none;
+  border-bottom: solid 1px ${colors.gray};
+  color: ${colors.black};
+  cursor: pointer;
+  letter-spacing: 0.8px;
+  outline: none;
+  padding: 1.2rem 2rem;
+  margin: 0;
+  text-align: left;
+  transition: all 0.2s;
+  width: 100%;
+
+  &:hover,
+  &:active,
+  &:focus {
+    background: ${colors.white};
+  }
+`;
+
+const AccountWrapper = styled('div')`
+  background: ${colors.offWhite};
+  border-bottom: solid 1px ${colors.gray};
+  padding: 1.2rem 2rem;
+  width: 100%;
+`;
+
+const AccountAvatar = styled('div')`
+  background-image: url("${props => props.url}");
+  background-position: center;
+  background-size: contain;
+  border-radius: 25px;
+  cursor: pointer;
+  height: 50px;
+  margin-bottom: 10px;
+  width: 50px;
+`;
+
+const AccountName = styled('span')`
+  color: ${colors.black};
+  letter-spacing: 0.8px;
+`;
+
+const LogoutButton = styled('span')`
+  cursor: pointer;
+  display: block;
+  font-size: 12px;
+  text-decoration: underline;
 `;
 
 class AdminPage extends Component {
@@ -42,87 +99,121 @@ class AdminPage extends Component {
     });
   };
 
-  renderButton = pageCurrent => {
+  onLogout = () => {
+    const { onLoginAdmin, history } = this.props;
+
+    localStorage.setItem(localStorageKey.employeeKey, '');
+    localStorage.setItem(localStorageKey.timeEmployeeSessionKey, 0);
+    setCookie(localStorageKey.userNameAdminKey, '', -1);
+    setCookie(localStorageKey.passwordAdminKey, '', -1);
+    onLoginAdmin(null);
+    history.push('/admin/dang-nhap');
+
+    notification.info({
+      message: 'Đăng xuất thành công!',
+      placement: 'topRight',
+      onClick: () => notification.destroy(),
+      duration: time.durationNotification
+    });
+  };
+
+  renderButton = (pageCurrent, employee) => {
+    console.log(employee);
     return (
       <Fragment>
-        <Button
-          title="Hóa đơn"
-          isBlockButton
-          isSecondary={pageCurrent === adminPage.invoicePage ? false : true}
+        <AccountWrapper>
+          <AccountAvatar
+            url={getImageUrl(
+              employee && employee.thumbnail
+                ? employee.thumbnail
+                : 'default.png',
+              imagesGroup.users
+            )}
+          />
+          <AccountName>
+            {employee && employee.name ? employee.name : null}
+          </AccountName>
+          <LogoutButton onClick={() => this.onLogout()}>Đăng xuất</LogoutButton>
+        </AccountWrapper>
+        <MenuButton
+          isSelected={pageCurrent === adminPage.invoicePage}
           onClick={() => this.onPage(adminPage.invoicePage)}
-        />
-        <Button
-          title="Mã giảm giá"
-          isBlockButton
-          isSecondary={pageCurrent === adminPage.discountPage ? false : true}
+        >
+          Hóa đơn
+        </MenuButton>
+        <MenuButton
+          isSelected={pageCurrent === adminPage.discountPage}
           onClick={() => this.onPage(adminPage.discountPage)}
-        />
-        <Button
-          title="Sản phẩm"
-          isBlockButton
-          isSecondary={pageCurrent === adminPage.productPage ? false : true}
+        >
+          Mã giảm giá
+        </MenuButton>
+        <MenuButton
+          isSelected={pageCurrent === adminPage.productPage}
           onClick={() => this.onPage(adminPage.productPage)}
-        />
-        <Button
-          title="Loại sản phẩm"
-          isBlockButton
-          isSecondary={pageCurrent === adminPage.categoryPage ? false : true}
+        >
+          Sản phẩm
+        </MenuButton>
+        <MenuButton
+          isSelected={pageCurrent === adminPage.categoryPage}
           onClick={() => this.onPage(adminPage.categoryPage)}
-        />
-        <Button
-          title="Bộ sưu tập"
-          isBlockButton
-          isSecondary={pageCurrent === adminPage.collectionPage ? false : true}
+        >
+          Loại sản phẩm
+        </MenuButton>
+        <MenuButton
+          isSelected={pageCurrent === adminPage.collectionPage}
           onClick={() => this.onPage(adminPage.collectionPage)}
-        />
-        <Button
-          title="Màu sắc"
-          isBlockButton
-          isSecondary={pageCurrent === adminPage.colorPage ? false : true}
+        >
+          Bộ sưu tập
+        </MenuButton>
+        <MenuButton
+          isSelected={pageCurrent === adminPage.colorPage}
           onClick={() => this.onPage(adminPage.colorPage)}
-        />
-        <Button
-          title="Kích thước"
-          isBlockButton
-          isSecondary={pageCurrent === adminPage.sizePage ? false : true}
+        >
+          Màu sắc
+        </MenuButton>
+        <MenuButton
+          isSelected={pageCurrent === adminPage.sizePage}
           onClick={() => this.onPage(adminPage.sizePage)}
-        />
-        <Button
-          title="Thương hiệu"
-          isBlockButton
-          isSecondary={pageCurrent === adminPage.brandPage ? false : true}
+        >
+          Kích thước
+        </MenuButton>
+        <MenuButton
+          isSelected={pageCurrent === adminPage.brandPage}
           onClick={() => this.onPage(adminPage.brandPage)}
-        />
-        <Button
+        >
+          Thương hiệu
+        </MenuButton>
+        <MenuButton
           title="Đơn vị tính"
-          isBlockButton
-          isSecondary={pageCurrent === adminPage.unitPage ? false : true}
+          isSelected={pageCurrent === adminPage.unitPage}
           onClick={() => this.onPage(adminPage.unitPage)}
-        />
-        <Button
-          title="Nhà cung cấp"
-          isBlockButton
-          isSecondary={pageCurrent === adminPage.suplierPage ? false : true}
+        >
+          Đơn vị tính
+        </MenuButton>
+        <MenuButton
+          isSelected={pageCurrent === adminPage.suplierPage}
           onClick={() => this.onPage(adminPage.suplierPage)}
-        />
-        <Button
-          title="Khách hàng"
-          isBlockButton
-          isSecondary={pageCurrent === adminPage.userPage ? false : true}
+        >
+          Nhà cung cấp
+        </MenuButton>
+        <MenuButton
+          isSelected={pageCurrent === adminPage.userPage}
           onClick={() => this.onPage(adminPage.userPage)}
-        />
-        <Button
-          title="Nhân viên"
-          isBlockButton
-          isSecondary={pageCurrent === adminPage.employeePage ? false : true}
+        >
+          Khách hàng
+        </MenuButton>
+        <MenuButton
+          isSelected={pageCurrent === adminPage.employeePage}
           onClick={() => this.onPage(adminPage.employeePage)}
-        />
-        <Button
-          title="Dự báo"
-          isBlockButton
-          isSecondary={pageCurrent === adminPage.prophetPage ? false : true}
+        >
+          Nhân viên
+        </MenuButton>
+        <MenuButton
+          isSelected={pageCurrent === adminPage.prophetPage}
           onClick={() => this.onPage(adminPage.prophetPage)}
-        />
+        >
+          Dự báo
+        </MenuButton>
       </Fragment>
     );
   };
@@ -152,7 +243,12 @@ class AdminPage extends Component {
       case adminPage.userPage:
         return <UserPage employee={employee} />;
       case adminPage.employeePage:
-        return <EmployeePage employeeLogin={employee} />;
+        return (
+          <EmployeePage
+            employeeLogin={employee}
+            onLoginAdmin={this.props.onLoginAdmin}
+          />
+        );
       case adminPage.prophetPage:
         return <ProphetPage />;
       default:
@@ -166,13 +262,9 @@ class AdminPage extends Component {
 
     return (
       <Wrapper>
-        <Row className="product-list-wrapper" gutter={32}>
-          <Col span={4}>
-            {this.renderButton(pageCurrent)}
-          </Col>
-          <Col span={20}>
-            {this.renderPage(pageCurrent, employee)}
-          </Col>
+        <Row gutter={32}>
+          <Col span={4}>{this.renderButton(pageCurrent, employee)}</Col>
+          <Col span={20}>{this.renderPage(pageCurrent, employee)}</Col>
         </Row>
       </Wrapper>
     );
