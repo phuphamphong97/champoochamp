@@ -1,8 +1,11 @@
-﻿import React, { Component } from 'react';
-import { Table, Input, Button, Icon } from 'antd';
+﻿import React, { Component, Fragment } from 'react';
+import { Table, Input, Button, Icon, Divider, notification } from 'antd';
 
 import { callAPI, formatMoney, getImageUrl } from '../../../../shared/util';
-import { imagesGroup } from '../../../../shared/constants';
+import { time, typeForm, imagesGroup } from '../../../../shared/constants';
+import { ButtonsWrapper, ActionButton, LinkButton } from '../../styledUtils';
+
+import ProductForm from './components/ProductForm';
 
 class ProductPage extends Component {
   constructor(props) {
@@ -12,18 +15,208 @@ class ProductPage extends Component {
       searchText: '',
       searchedColumn: '',
       sortedInfo: null,
-      productList: []
+      productList: [],
+      isShowModal: false,
+      title: '',
+      product: null,
+      currentTypeForm: ''
     };
   }
 
   componentDidMount() {
-    this.getAllProducts();
+    this.getAdminAllProducts();
   }
 
-  getAllProducts = () => {
-    callAPI('Product/GetAllProducts')
+  getAdminAllProducts = () => {
+    callAPI('Product/GetAdminAllProducts')
       .then(res => this.setState({ productList: res.data }));
   }
+
+  onShowModal = (typeForm, title, product) => {
+    this.setState({
+      isShowModal: true,
+      currentTypeForm: typeForm,
+      title,
+      product
+    });
+  };
+
+  onSave = productVariantModelList => {
+    const { currentTypeForm, productList } = this.state;
+    const { employee } = this.props;
+    const { form } = this.formRef.props;
+
+    form.validateFields((err, values) => {
+      const data = {
+        employee,
+        product: values,
+        productVariantModelList,
+        productList: []
+      }
+
+      if (err) {
+        return;
+      }
+
+      if (currentTypeForm === typeForm.create) {
+        callAPI('Product/CreateProduct', '', 'POST', data).then(res => {
+          if (res.data) {
+            if (res.data.id > 0) {
+              productList.push(res.data);
+
+              this.setState({
+                isShowModal: false,
+                productList
+              });
+              form.resetFields();
+
+              notification.info({
+                message: 'Tạo mới thành công!',
+                placement: 'topRight',
+                onClick: () => notification.destroy(),
+                duration: time.durationNotification
+              });
+            } else {
+              notification.warning({
+                message: 'Sản phẩm đã tồn tại, vui lòng nhập sản phẩm khác!',
+                placement: 'topRight',
+                onClick: () => notification.destroy(),
+                duration: time.durationNotification
+              });
+            }
+          } else {
+            this.setState({ isShowModal: false });
+            form.resetFields();
+
+            notification.warning({
+              message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
+              placement: 'topRight',
+              onClick: () => notification.destroy(),
+              duration: time.durationNotification
+            });
+          }
+        });
+      }
+      else if (currentTypeForm === typeForm.update) {
+        callAPI('Product/PutProduct', '', 'PUT', data).then(res => {
+          if (res.data) {
+            if (res.data.id > 0) {
+              let lst = productList;
+              lst = productList.filter(
+                product => product.id !== res.data.id
+              );
+              lst.unshift(res.data);
+
+              this.setState({
+                isShowModal: false,
+                productList: lst
+              });
+              form.resetFields();
+
+              notification.info({
+                message: 'Cập nhật thành công!',
+                placement: 'topRight',
+                onClick: () => notification.destroy(),
+                duration: time.durationNotification
+              });
+            } else {
+              notification.warning({
+                message: 'Sản phẩm đã tồn tại, vui lòng nhập sản phẩm khác!',
+                placement: 'topRight',
+                onClick: () => notification.destroy(),
+                duration: time.durationNotification
+              });
+            }
+          } else {
+            this.setState({ isShowModal: false });
+            form.resetFields();
+
+            notification.warning({
+              message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
+              placement: 'topRight',
+              onClick: () => notification.destroy(),
+              duration: time.durationNotification
+            });
+          }
+        });
+      }
+    });
+  };
+
+  onCancel = () => {
+    this.setState({ isShowModal: false });
+    this.formRef.props.form.resetFields();
+  };
+
+  onSelectedDelete = ids => {
+    let productList = [];
+    ids.map(id => productList.push({ id }));
+    const data = {
+      employee: null,
+      product: null,
+      productList
+    };
+
+    callAPI('Product/DeleteProductByIds', '', 'DELETE', data).then(res => {
+      if (res.data) {
+        this.setState({
+          selectedRowKeys: this.state.selectedRowKeys.filter(
+            key => !ids.includes(key)
+          ),
+          productList: this.state.productList.filter(
+            product => !ids.includes(product.id)
+          )
+        });
+
+        notification.info({
+          message: 'Xóa thành công!',
+          placement: 'topRight',
+          onClick: () => notification.destroy(),
+          duration: time.durationNotification
+        });
+      } else {
+        notification.error({
+          message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
+          placement: 'topRight',
+          onClick: () => notification.destroy(),
+          duration: time.durationNotification
+        });
+      }
+    });
+  };
+
+  onDelete = id => {
+    const data = { id };
+
+    callAPI('Product/DeleteProductById', '', 'DELETE', data).then(res => {
+      if (res.data) {
+        this.setState({
+          selectedRowKeys: this.state.selectedRowKeys.filter(key => key !== id),
+          productList: this.state.productList.filter(
+            product => product.id !== id
+          )
+        });
+
+        notification.info({
+          message: 'Xóa thành công!',
+          placement: 'topRight',
+          onClick: () => notification.destroy(),
+          duration: time.durationNotification
+        });
+      } else {
+        notification.error({
+          message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
+          placement: 'topRight',
+          onClick: () => notification.destroy(),
+          duration: time.durationNotification
+        });
+      }
+    });
+  };
+
+  wrappedComponentRef = formRef => {
+    this.formRef = formRef;
+  };
 
   onSelectChange = selectedRowKeys => {
     this.setState({ selectedRowKeys });
@@ -92,18 +285,53 @@ class ProductPage extends Component {
   };
 
   render() {
-    let { selectedRowKeys, sortedInfo, productList } = this.state;
+    let {
+      selectedRowKeys,
+      sortedInfo,
+      productList,
+      isShowModal,
+      currentTypeForm,
+      title,
+      product
+    } = this.state;
+    const {
+      handleChange,
+      onSelectChange,
+      wrappedComponentRef,
+      onShowModal,
+      onSave,
+      onCancel,
+      onSelectedDelete,
+      onDelete
+    } = this;
+    const resource = {
+      wrappedComponentRef,
+      isShowModal,
+      currentTypeForm,
+      title,
+      product,
+      onSave,
+      onCancel
+    };
     const rowSelection = {
       selectedRowKeys,
-      onChange: this.onSelectChange,
+      onChange: onSelectChange
     };
     sortedInfo = sortedInfo || {};
 
 
     const columns = [
       {
-        title: 'Ảnh sản phẩm',
-        width: '20%',
+        title: 'ID',
+        dataIndex: 'id',
+        width: '10%',
+        ...this.getColumnSearchProps('id'),
+        sorter: (a, b) => a.id.toString().localeCompare(b.id),
+        sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order
+      },
+      {
+        title: 'Ảnh',
+        width: '10%',
         render: (text, record) => (
           <img
             src={getImageUrl(record.productVariant[0].thumbnail, imagesGroup.products)}
@@ -121,7 +349,7 @@ class ProductPage extends Component {
         sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
       },
       {
-        title: 'Giá gốc',
+        title: 'Giá',
         dataIndex: 'price',
         width: '15%',
         ...this.getColumnSearchProps('price'),
@@ -136,28 +364,68 @@ class ProductPage extends Component {
         ...this.getColumnSearchProps('discountAmount'),
         sorter: (a, b) => a.discountAmount - b.discountAmount,
         sortOrder: sortedInfo.columnKey === 'discountAmount' && sortedInfo.order,
-        render: (text, record) => (<span>{record.discountAmount}%</span>),
+        render: (text, record) => (<span>{record.discountAmount || 0}%</span>),
       },
       {
-        title: 'Tổng số lượng',
+        title: 'Tổng SL',
         dataIndex: 'totalQuantity',
-        width: '20%',
+        width: '15%',
         ...this.getColumnSearchProps('totalQuantity'),
         sorter: (a, b) => a.totalQuantity - b.totalQuantity,
-        sortOrder: sortedInfo.columnKey === 'discountAmount' && sortedInfo.order,
-      },      
+        sortOrder: sortedInfo.columnKey === 'productAmount' && sortedInfo.order,
+      },
+      {
+        title: '',
+        width: '15%',
+        render: (text, record) => (
+          <Fragment>
+            <LinkButton
+              type="link"
+              onClick={() =>
+                onShowModal(typeForm.update, `Cập nhật sản phẩm`, record)
+              }
+            >
+              Sửa
+            </LinkButton>
+            <Divider type="vertical" />
+            <LinkButton type="link" onClick={() => onDelete(record.id)}>
+              Xoá
+            </LinkButton>
+          </Fragment>
+        )
+      }
     ];
 
     return (
-      <div>
+      <Fragment>
+        <ButtonsWrapper>
+          <ActionButton
+            type="primary"
+            onClick={() =>
+              onShowModal(typeForm.create, `Tạo mới sản phẩm`, null)
+            }
+          >
+            Tạo mới
+          </ActionButton>
+          {selectedRowKeys.length > 0 && (
+            <ActionButton
+              type="danger"
+              onClick={() => onSelectedDelete(selectedRowKeys)}
+            >
+              Xóa
+            </ActionButton>
+          )}
+        </ButtonsWrapper>
+
         <Table
           rowKey='id'
           rowSelection={rowSelection}
           columns={columns}
           dataSource={productList}
-          onChange={this.handleChange}
+          onChange={handleChange}
         />
-      </div>
+        <ProductForm {...resource} />
+      </Fragment>
     );
   }
 }

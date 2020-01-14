@@ -72,7 +72,7 @@ class DiscountPage extends Component {
               });
             } else {
               notification.warning({
-                message: 'Mã giảm giá đã tồn tại!',
+                message: 'Mã giảm giá đã tồn tại, vui lòng nhập mã khác!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
@@ -119,7 +119,7 @@ class DiscountPage extends Component {
               });
             } else {
               notification.warning({
-                message: 'Mã giảm giá đã tồn tại!',
+                message: 'Mã giảm giá đã tồn tại, vui lòng nhập mã khác!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification

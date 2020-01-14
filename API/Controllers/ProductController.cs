@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Business;
 using Data.Entity;
 using Data.Model;
 using Microsoft.AspNet.OData;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +19,12 @@ namespace API.Controllers
   public class ProductController : ControllerBase
   {
     ProductBusiness productBusiness = new ProductBusiness();
+
+    private IHostingEnvironment _env;
+    public ProductController(IHostingEnvironment env)
+    {
+      _env = env;
+    }
 
     [EnableQuery]
     [Route("GetAllProducts")]
@@ -168,6 +176,77 @@ namespace API.Controllers
           return null;
         }
       }
+    }
+
+    [EnableQuery]
+    [Route("GetAdminAllProducts")]
+    public IEnumerable<Product> GetAdminAllProducts()
+    {
+      using (champoochampContext db = new champoochampContext())
+      {
+        try
+        {
+          List<Product> productList = db.Product.Where(p => p.Status == true)
+                                      .Include(p => p.Material)
+                                      .Include(p => p.Category)
+                                      .Include(p => p.Brand)
+                                      .Include(p => p.Unit)
+                                      .Include(p => p.Suplier)
+                                      .Include(p => p.ProductVariant)
+                                        .ThenInclude(p => p.Color)
+                                      .Include(p => p.ProductVariant)
+                                        .ThenInclude(p => p.Size)
+                                      .Include(p => p.ProductVariant)
+                                        .ThenInclude(p => p.ProductImages)
+                                      .ToList();
+          return productBusiness.ShortAdminProductList(productList);
+        }
+        catch (Exception e)
+        {
+          Console.WriteLine(e.Message);
+          return null;
+        }
+      }
+    }
+
+    [Route("GetAllProductVariantsByProductId-{id}")]
+    public IEnumerable<ProductVariantModel> GetAllProductVariantsByProductId(int id)
+    {
+      using (champoochampContext db = new champoochampContext())
+      {
+        try
+        {
+          List<ProductVariantModel> productVariantModelList = new List<ProductVariantModel>();
+          List<ProductVariant> productVariantList = db.ProductVariant.Where(p => p.ProductId == id)
+                                                    .Include(p => p.Color)
+                                                    .Include(p => p.Size)
+                                                    .Include(p => p.ProductImages)
+                                                    .ToList();
+          foreach (ProductVariant pv in productVariantList)
+          {
+            ProductVariantModel pvm = new ProductVariantModel(pv, new List<ImageUrl>());
+            productVariantModelList.Add(pvm);
+          }
+
+          return productVariantModelList;
+        }
+        catch (Exception e)
+        {
+          Console.WriteLine(e.Message);
+          return null;
+        }
+      }
+    }
+
+    [Route("CreateProduct")]
+    [HttpPost]
+    public Product CreateProduct(ProductModel productModel)
+    {
+      string webRoot = _env.ContentRootPath;
+      webRoot = webRoot.Replace("API", "Champoochamp");
+      string path = Path.Combine(webRoot, "ClientApp\\src\\assets\\images", "products");
+
+      return productBusiness.createProduct(productModel, path);
     }
   }
 }
