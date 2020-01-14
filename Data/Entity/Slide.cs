@@ -6,7 +6,7 @@ namespace Data.Entity
     public partial class Slide
     {
         public int Id { get; set; }
-        public string Image { get; set; }
+        public string Thumbnail { get; set; }
         public int? DisplayOrder { get; set; }
         public string Link { get; set; }
         public string Note { get; set; }

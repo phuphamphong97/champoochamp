@@ -107,7 +107,7 @@ class CartPage extends Component {
 
   render() {
     const { isInitedFrom, shoppingCartList } = this.state;
-    const { user, discount, getDiscount } = this.props;
+    const { discount, getDiscount } = this.props;
 
     return (
       <PageContainer>

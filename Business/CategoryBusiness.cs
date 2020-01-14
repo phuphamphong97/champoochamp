@@ -49,6 +49,8 @@ namespace Business
 
           db.Add(category);
           db.SaveChanges();
+          Category categoryParent = db.Category.Find(category.ParentId);
+          category.Parent = categoryParent;
           return category;
         }
         catch (Exception e)
@@ -73,11 +75,13 @@ namespace Business
 
           Category category = db.Category.Find(categoryModel.category.Id);
           category.Name = categoryModel.category.Name;
-          category.ParentId = categoryModel.category.ParentId;          
+          category.ParentId = categoryModel.category.ParentId;
           category.ModifiedDate = DateTime.Now;
           category.ModifiedBy = categoryModel.employee.UserName;
 
           db.SaveChanges();
+          Category categoryParent = db.Category.Find(category.ParentId);
+          category.Parent = categoryParent;
           return category;
         }
         catch (Exception e)

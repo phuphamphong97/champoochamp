@@ -1,16 +1,23 @@
 ﻿import React, { Component, Fragment } from 'react';
 import { Modal, Form, Input } from 'antd';
+import styled from '@emotion/styled';
 
-import { typeForm } from '../../../../../../shared/constants';
+import { typeForm, imagesGroup } from '../../../../../../shared/constants';
+import { colors } from '../../../../../../shared/principles';
+import { formatDateTime } from '../../../../../../shared/util';
+
 import Avatar from '../../../../../elements/Avatar';
+
+const ModifyText = styled('span')`
+  color: ${colors.darkGray};
+  font-size: 12px;
+`;
 
 class EmployeeForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      confirmDirty: false,
-      imageUrl: '',
-      fileName: ''
+      confirmDirty: false
     };
   }
 
@@ -37,7 +44,7 @@ class EmployeeForm extends Component {
   };
 
   render() {
-    const { getAvatarInfo, isShowModal, currentTypeForm, title, form, employee, onSave, onCancel, employeeLogin } = this.props;
+    const { getThumbnailBase64, thumbnailBase64, isShowModal, currentTypeForm, title, form, employee, onSave, onCancel, employeeLogin } = this.props;
     const { getFieldDecorator } = form;
 
     return (
@@ -51,14 +58,16 @@ class EmployeeForm extends Component {
           {
             currentTypeForm === typeForm.update &&
             <Form.Item style={{ display: 'none' }}>
-              {getFieldDecorator('id', { initialValue: employee && employee.id })}
+              {getFieldDecorator('id', { initialValue: employee && employee.id })(
+                <Input placeholder="Id" />
+              )}
             </Form.Item>
           }
-          <Form.Item label="Họ tên">
+          <Form.Item label="Tên">
             {getFieldDecorator('name', {
               initialValue: employee && employee.name,
-              rules: [{ required: true, message: 'Vui lòng nhập họ tên!' }]
-            })(<Input placeholder="Họ tên *" />)}
+              rules: [{ required: true, message: 'Vui lòng nhập tên!' }]
+            })(<Input placeholder="Tên *" />)}
           </Form.Item>
           <Form.Item label="Tài khoản">
             {getFieldDecorator('userName', {
@@ -111,15 +120,18 @@ class EmployeeForm extends Component {
             )}
           </Form.Item>
           <Form.Item label="Ảnh đại diện">
-            {getFieldDecorator('avatar')(<Avatar getAvatarInfo={getAvatarInfo} />)}
+            {getFieldDecorator('thumbnail', { initialValue: employee && employee.thumbnail })(
+              <Avatar entity={employee} imagesGroup={imagesGroup.users} imageUrl={thumbnailBase64} getThumbnailBase64={getThumbnailBase64} />
+            )}
           </Form.Item>
           {
             currentTypeForm === typeForm.update && employee && employee.modifiedBy &&
-            <Form.Item label="Nhân viên cập nhật lần cuối">
-              {getFieldDecorator('modifiedBy', { initialValue: employee.modifiedBy })(
-                <Input readOnly />
-              )}
-            </Form.Item>
+            (
+              <ModifyText>
+                Cập nhật lần cuối bởi {employee.modifiedBy} lúc{' '}
+                {formatDateTime(employee.modifiedDate)}.
+              </ModifyText>
+            )
           }
         </Form>
       </Modal>

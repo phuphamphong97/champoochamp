@@ -1,21 +1,21 @@
 ﻿import React, { Component } from 'react';
 import { Modal, Form, Input } from 'antd';
+import styled from '@emotion/styled';
 
-import { typeForm } from '../../../../../../shared/constants';
+import { typeForm, imagesGroup } from '../../../../../../shared/constants';
+import { colors } from '../../../../../../shared/principles';
 import { formatDateTime } from '../../../../../../shared/util';
-import { ModifyText } from '../../../../styledUtils';
+
+import Avatar from '../../../../../elements/Avatar';
+
+const ModifyText = styled('span')`
+  color: ${colors.darkGray};
+  font-size: 12px;
+`;
 
 class SuplierForm extends Component {
   render() {
-    const {
-      isShowModal,
-      currentTypeForm,
-      title,
-      form,
-      suplier,
-      onSave,
-      onCancel
-    } = this.props;
+    const { getThumbnailBase64, thumbnailBase64, isShowModal, currentTypeForm, title, form, suplier, onSave, onCancel } = this.props;
     const { getFieldDecorator } = form;
 
     return (
@@ -28,15 +28,15 @@ class SuplierForm extends Component {
         <Form>
           {currentTypeForm === typeForm.update && (
             <Form.Item style={{ display: 'none' }}>
-              {getFieldDecorator('id', { initialValue: suplier && suplier.id })}
+              {getFieldDecorator('id', { initialValue: suplier && suplier.id })(
+                <Input placeholder="Id" />
+              )}
             </Form.Item>
           )}
           <Form.Item label="Tên">
             {getFieldDecorator('name', {
               initialValue: suplier && suplier.name,
-              rules: [
-                { required: true, message: 'Vui lòng nhập tên nhà cung cấp!' }
-              ]
+              rules: [{ required: true, message: 'Vui lòng nhập tên!' }]
             })(<Input placeholder="Tên *" />)}
           </Form.Item>
           <Form.Item label="Email">
@@ -59,14 +59,20 @@ class SuplierForm extends Component {
               initialValue: suplier && suplier.description
             })(<Input placeholder="Ghi chú" />)}
           </Form.Item>
-          {currentTypeForm === typeForm.update &&
-            suplier &&
-            suplier.modifiedBy && (
+          <Form.Item label="Logo">
+            {getFieldDecorator('thumbnail', { initialValue: suplier && suplier.thumbnail })(
+              <Avatar entity={suplier} imagesGroup={imagesGroup.logos} imageUrl={thumbnailBase64} getThumbnailBase64={getThumbnailBase64} />
+            )}
+          </Form.Item>
+          {
+            currentTypeForm === typeForm.update && suplier && suplier.modifiedBy &&
+            (
               <ModifyText>
                 Cập nhật lần cuối bởi {suplier.modifiedBy} lúc{' '}
                 {formatDateTime(suplier.modifiedDate)}.
               </ModifyText>
-            )}
+            )
+          }
         </Form>
       </Modal>
     );

@@ -15,6 +15,10 @@ class CategoryForm extends Component {
     };
   }
 
+  componentDidMount() {
+    this.getAllParentCategories();
+  }
+
   getAllParentCategories = () => {
     callAPI('Category/GetAllParentCategories').then(res => {
       if (res.data) {
@@ -25,7 +29,7 @@ class CategoryForm extends Component {
 
   handleParentCategoryChange = value => {
     this.props.form.setFieldsValue({
-      parentId: value.id
+      parentId: value
     });
   };
 
@@ -58,29 +62,29 @@ class CategoryForm extends Component {
             </Form.Item>
           )}
           <Form.Item label="Tên">
-            {getFieldDecorator('code', {
+            {getFieldDecorator('name', {
               initialValue: category && category.name,
               rules: [{ required: true, message: 'Vui lòng nhập tên!' }]
             })(<Input placeholder="Tên *" />)}
           </Form.Item>
           <Form.Item label="Nhóm loại sản phẩm">
-                  {getFieldDecorator('parentId', {
-                    initialValue: category ? category.parent.name : undefined,
-                    rules: [
-                      {
-                        required: true,
-                        message: 'Vui lòng chọn nhóm loại sản phẩm!'
-                      }
-                    ],
-                    onChange: this.handleParentCategoryChange
-                  })(
-                    <Select showSearch placeholder="Nhóm loại sản phẩm *">
-                      {parentCategoryList.map(parentCategory => (
-                        <Option key={parentCategory.id}>{parentCategory.name}</Option>
-                      ))}
-                    </Select>
-                  )}
-                </Form.Item>
+            {getFieldDecorator('parentId', {
+              initialValue: category && category.parent ? category.parent.name : undefined,
+              rules: [
+                {
+                  required: true,
+                  message: 'Vui lòng chọn nhóm loại sản phẩm!'
+                }
+              ],
+              onChange: this.handleParentCategoryChange
+            })(
+              <Select showSearch placeholder="Nhóm loại sản phẩm *">
+                {parentCategoryList.map(parentCategory => (
+                  <Option key={parentCategory.id}>{parentCategory.name}</Option>
+                ))}
+              </Select>
+            )}
+          </Form.Item>
           {currentTypeForm === typeForm.update &&
             category &&
             category.modifiedBy && (

@@ -54,88 +54,96 @@ class UnitPage extends Component {
       }
 
       if (currentTypeForm === typeForm.create) {
-        callAPI('Unit/CreateUnit', '', 'POST', values).then(res => {
-          if (res.data) {
-            if (res.data.id > 0) {
-              unitList.push(res.data);
+        callAPI('Unit/CreateUnit', '', 'POST', values)
+          .then(res => {
+            if (res.data) {
+              if (res.data.id > 0) {
+                unitList.push(res.data);
 
-              this.setState({
-                isShowModal: false,
-                unitList
-              });
+                this.setState({
+                  isShowModal: false,
+                  unitList
+                });
+                form.resetFields();
+
+                notification.info({
+                  message: 'Tạo mới thành công!',
+                  placement: 'topRight',
+                  onClick: () => notification.destroy(),
+                  duration: time.durationNotification
+                });
+              }
+              else {
+                notification.warning({
+                  message: 'Đơn vị tính đã tồn tại, vui lòng nhập đơn vị khác!',
+                  placement: 'topRight',
+                  onClick: () => notification.destroy(),
+                  duration: time.durationNotification
+                });
+              }
+            }
+            else {
+              this.setState({ isShowModal: false });
               form.resetFields();
 
-              notification.info({
-                message: 'Tạo mới thành công!',
-                placement: 'topRight',
-                onClick: () => notification.destroy(),
-                duration: time.durationNotification
-              });
-            } else {
               notification.warning({
-                message: 'Đơn vị tính đã tồn tại, vui lòng nhập mã khác!',
+                message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
               });
             }
-          } else {
-            this.setState({ isShowModal: false });
-            form.resetFields();
-
-            notification.warning({
-              message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
-              placement: 'topRight',
-              onClick: () => notification.destroy(),
-              duration: time.durationNotification
-            });
-          }
-        });
-      } else if (currentTypeForm === typeForm.update) {
+          });
+      }
+      else if (currentTypeForm === typeForm.update) {
         const data = {
           employee,
           unit: values,
           unitList: []
-        };
-        callAPI('Unit/PutUnit', '', 'PUT', data).then(res => {
-          if (res.data) {
-            if (res.data.id > 0) {
-              let lst = unitList;
-              lst = unitList.filter(unit => unit.id !== res.data.id);
-              lst.unshift(res.data);
+        }
 
-              this.setState({
-                isShowModal: false,
-                unitList: lst
-              });
+        callAPI('Unit/PutUnit', '', 'PUT', data)
+          .then(res => {
+            if (res.data) {
+              if (res.data.id > 0) {
+                let lst = unitList;
+                lst = unitList.filter(unit => unit.id !== res.data.id)
+                lst.unshift(res.data);
+
+                this.setState({
+                  isShowModal: false,
+                  unitList: lst
+                });
+                form.resetFields();
+
+                notification.info({
+                  message: 'Cập nhật thành công!',
+                  placement: 'topRight',
+                  onClick: () => notification.destroy(),
+                  duration: time.durationNotification
+                });
+              }
+              else {
+                notification.warning({
+                  message: 'Đơn vị tính đã tồn tại, vui lòng nhập đơn vị khác!',
+                  placement: 'topRight',
+                  onClick: () => notification.destroy(),
+                  duration: time.durationNotification
+                });
+              }
+            }            
+            else {
+              this.setState({ isShowModal: false });
               form.resetFields();
 
-              notification.info({
-                message: 'Cập nhật thành công!',
-                placement: 'topRight',
-                onClick: () => notification.destroy(),
-                duration: time.durationNotification
-              });
-            } else {
               notification.warning({
-                message: 'Đơn vị tính đã tồn tại!',
+                message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
               });
             }
-          } else {
-            this.setState({ isShowModal: false });
-            form.resetFields();
-
-            notification.warning({
-              message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
-              placement: 'topRight',
-              onClick: () => notification.destroy(),
-              duration: time.durationNotification
-            });
-          }
-        });
+          });
       }
     });
   };
@@ -154,57 +162,59 @@ class UnitPage extends Component {
       unitList
     };
 
-    callAPI('Unit/DeleteUnitByIds', '', 'DELETE', data).then(res => {
-      if (res.data) {
-        this.setState({
-          selectedRowKeys: this.state.selectedRowKeys.filter(
-            key => !ids.includes(key)
-          ),
-          unitList: this.state.unitList.filter(unit => !ids.includes(unit.id))
-        });
+    callAPI('Unit/DeleteUnitByIds', '', 'DELETE', data)
+      .then(res => {
+        if (res.data) {
+          this.setState({
+            selectedRowKeys: this.state.selectedRowKeys.filter(key => !ids.includes(key)),
+            unitList: this.state.unitList.filter(unit => !ids.includes(unit.id))
+          });
 
-        notification.info({
-          message: 'Xóa thành công!',
-          placement: 'topRight',
-          onClick: () => notification.destroy(),
-          duration: time.durationNotification
-        });
-      } else {
-        notification.warning({
-          message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
-          placement: 'topRight',
-          onClick: () => notification.destroy(),
-          duration: time.durationNotification
-        });
-      }
-    });
+          notification.info({
+            message: 'Xóa thành công!',
+            placement: 'topRight',
+            onClick: () => notification.destroy(),
+            duration: time.durationNotification
+          });
+        }
+        else {
+          notification.warning({
+            message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
+            placement: 'topRight',
+            onClick: () => notification.destroy(),
+            duration: time.durationNotification
+          });
+        }
+      });    
   };
 
   onDelete = id => {
     const data = { id };
 
-    callAPI('Unit/DeleteUnitById', '', 'DELETE', data).then(res => {
-      if (res.data) {
-        this.setState({
-          selectedRowKeys: this.state.selectedRowKeys.filter(key => key !== id),
-          unitList: this.state.unitList.filter(unit => unit.id !== id)
-        });
+    callAPI('Unit/DeleteUnitById', '', 'DELETE', data)
+      .then(res => {
+        if (res.data) {
+          this.setState({
+            selectedRowKeys: this.state.selectedRowKeys.filter(key => key !== id),
+            unitList: this.state.unitList.filter(unit => unit.id !== id)
+          });
 
-        notification.info({
-          message: 'Xóa thành công!',
-          placement: 'topRight',
-          onClick: () => notification.destroy(),
-          duration: time.durationNotification
-        });
-      } else {
-        notification.warning({
-          message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
-          placement: 'topRight',
-          onClick: () => notification.destroy(),
-          duration: time.durationNotification
-        });
-      }
-    });
+          notification.info({
+            message: 'Xóa thành công!',
+            placement: 'topRight',
+            onClick: () => notification.destroy(),
+            duration: time.durationNotification
+          });
+        }
+        else {
+          notification.warning({
+            message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
+            placement: 'topRight',
+            onClick: () => notification.destroy(),
+            duration: time.durationNotification
+          });
+        }
+      });
   };
 
   wrappedComponentRef = formRef => {
@@ -335,7 +345,7 @@ class UnitPage extends Component {
         sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order
       },
       {
-        title: 'Tên',
+        title: 'Đơn vị tính',
         dataIndex: 'name',
         width: '40%',
         ...this.getColumnSearchProps('name'),
@@ -362,7 +372,7 @@ class UnitPage extends Component {
             <LinkButton
               type="link"
               onClick={() =>
-                onShowModal(typeForm.update, `Cập nhật mã giảm giá`, record)
+                onShowModal(typeForm.update, `Cập nhật đơn vị tính`, record)
               }
             >
               Sửa
@@ -373,7 +383,7 @@ class UnitPage extends Component {
             </LinkButton>
           </Fragment>
         )
-      }
+      },
     ];
 
     return (

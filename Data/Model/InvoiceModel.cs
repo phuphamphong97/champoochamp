@@ -8,6 +8,7 @@ namespace Data.Model
   public class InvoiceModel
   {
     public Employee employee { get; set; }
+    public Invoice invoice { get; set; }
     public List<Invoice> invoiceList { get; set; }
 
     public InvoiceModel()
@@ -15,9 +16,10 @@ namespace Data.Model
       invoiceList = new List<Invoice>();
     }
 
-    public InvoiceModel(Employee employee, List<Invoice> invoiceList)
+    public InvoiceModel(Employee employee, Invoice invoice, List<Invoice> invoiceList)
     {
       this.employee = employee;
+      this.invoice = invoice;
       this.invoiceList = invoiceList;
     }
   }

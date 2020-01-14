@@ -2,7 +2,7 @@
 import moment from 'moment';
 import { Table, Input, Button, Icon, Divider, notification } from 'antd';
 
-import { callAPI } from '../../../../shared/util';
+import { callAPI, formatDateTime } from '../../../../shared/util';
 import { time, typeForm } from '../../../../shared/constants';
 import { ButtonsWrapper, ActionButton, LinkButton } from '../../styledUtils';
 
@@ -350,14 +350,14 @@ class SizePage extends Component {
       },
       {
         title: 'Ngày tạo',
-        dataIndex: 'createDate',
+        dataIndex: 'createdDate',
         width: '55%',
-        ...this.getColumnSearchProps('createDate'),
+        ...this.getColumnSearchProps('createdDate'),
         sorter: (a, b) =>
-          moment(a.createDate).unix() - moment(b.createDate).unix(),
-        sortOrder: sortedInfo.columnKey === 'createDate' && sortedInfo.order,
+          moment(a.createdDate).unix() - moment(b.createdDate).unix(),
+        sortOrder: sortedInfo.columnKey === 'createdDate' && sortedInfo.order,
         render: (text, record) => (
-          <span>{moment(record.createDate).format('DD/MM/YYYY')}</span>
+          <span>{formatDateTime(record.createdDate)}</span>
         )
       },
       {

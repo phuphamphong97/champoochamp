@@ -9,7 +9,8 @@ namespace Data.Model
   {
     public Employee employee { get; set; }
     public Collection collection { get; set; }
-    public string imageUrl { get; set; }
+    public string thumbnailBase64 { get; set; }
+    public string folderName { get; set; }
     public List<Collection> collectionList { get; set; }
     public List<Product> productList { get; set; }
 
@@ -19,11 +20,12 @@ namespace Data.Model
       productList = new List<Product>();
     }
 
-    public CollectionModel(Employee employee, Collection collection, string imageUrl, List<Collection> collectionList, List<Product> productList)
+    public CollectionModel(Employee employee, Collection collection, string thumbnailBase64, string folderName, List<Collection> collectionList, List<Product> productList)
     {
       this.employee = employee;
       this.collection = collection;
-      this.imageUrl = imageUrl;
+      this.thumbnailBase64 = thumbnailBase64;
+      this.folderName = folderName;
       this.collectionList = collectionList;
       this.productList = productList;
     }

@@ -1,8 +1,9 @@
 ﻿import React, { Component, Fragment } from 'react';
-import { Table, Input, Button, Icon, notification } from 'antd';
+import { Table, Input, Button, Icon, Divider, notification } from 'antd';
 
 import { callAPI, getImageUrl } from '../../../../shared/util';
 import { imagesGroup, time, typeForm } from '../../../../shared/constants';
+import { ButtonsWrapper, ActionButton, LinkButton } from '../../styledUtils';
 
 import UserForm from './components/UserForm';
 
@@ -19,8 +20,7 @@ class UserPage extends Component {
       title: '',
       user: null,
       currentTypeForm: '',
-      fileName: '',
-      imageUrl: ''
+      thumbnailBase64: ''
     };
   }
 
@@ -33,11 +33,8 @@ class UserPage extends Component {
       .then(res => this.setState({ userList: res.data }));
   }
 
-  getAvatarInfo = (fileName, imageUrl) => {
-    this.setState({
-      fileName,
-      imageUrl
-    });
+  getThumbnailBase64 = thumbnailBase64 => {
+    this.setState({ thumbnailBase64 });
   }
 
   onShowModal = (typeForm, title, user) => {
@@ -50,18 +47,16 @@ class UserPage extends Component {
   };
 
   onSave = () => {
-    const { currentTypeForm, userList, fileName, imageUrl } = this.state;
+    const { currentTypeForm, userList, thumbnailBase64 } = this.state;
     const { employee } = this.props;
     const { form } = this.formRef.props;
-    form.setFieldsValue({
-      avatar: fileName
-    });
 
     form.validateFields((err, values) => {
       const data = {
         employee,
         user: values,
-        imageUrl,
+        thumbnailBase64,
+        folderName: imagesGroup.users,
         userList: []
       }
 
@@ -78,12 +73,13 @@ class UserPage extends Component {
 
                 this.setState({
                   isShowModal: false,
-                  userList
+                  userList,
+                  thumbnailBase64: ''
                 });
                 form.resetFields();
 
                 notification.info({
-                  message: 'Tạo mới khách hàng thành công!',
+                  message: 'Tạo mới thành công!',
                   placement: 'topRight',
                   onClick: () => notification.destroy(),
                   duration: time.durationNotification
@@ -91,7 +87,7 @@ class UserPage extends Component {
               }
               else {
                 notification.warning({
-                  message: 'Tài khoản đã tồn tại!',
+                  message: 'Email đã tồn tại, vui lòng nhập email khác!',
                   placement: 'topRight',
                   onClick: () => notification.destroy(),
                   duration: time.durationNotification
@@ -99,11 +95,14 @@ class UserPage extends Component {
               }
             }
             else {
-              this.setState({ isShowModal: false });
+              this.setState({
+                isShowModal: false,
+                thumbnailBase64: ''
+              });
               form.resetFields();
 
               notification.warning({
-                message: 'Tạo mới khách hàng thất bại!',
+                message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
@@ -122,12 +121,13 @@ class UserPage extends Component {
 
                 this.setState({
                   isShowModal: false,
-                  userList: lst
+                  userList: lst,
+                  thumbnailBase64: ''
                 });
                 form.resetFields();
 
                 notification.info({
-                  message: 'Cập nhật khách hàng thành công!',
+                  message: 'Cập nhật thành công!',
                   placement: 'topRight',
                   onClick: () => notification.destroy(),
                   duration: time.durationNotification
@@ -135,7 +135,7 @@ class UserPage extends Component {
               }
               else {
                 notification.warning({
-                  message: 'Tài khoản đã tồn tại!',
+                  message: 'Email đã tồn tại, vui lòng nhập email khác!',
                   placement: 'topRight',
                   onClick: () => notification.destroy(),
                   duration: time.durationNotification
@@ -143,11 +143,14 @@ class UserPage extends Component {
               }
             }
             else {
-              this.setState({ isShowModal: false });
+              this.setState({
+                isShowModal: false,
+                thumbnailBase64: ''
+              });
               form.resetFields();
 
               notification.warning({
-                message: 'Cập nhật khách hàng thất bại!',
+                message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
@@ -159,7 +162,10 @@ class UserPage extends Component {
   };
 
   onCancel = () => {
-    this.setState({ isShowModal: false });
+    this.setState({
+      isShowModal: false,
+      thumbnailBase64: ''
+    });
     this.formRef.props.form.resetFields();
   };
 
@@ -181,7 +187,7 @@ class UserPage extends Component {
           });
 
           notification.info({
-            message: 'Xóa khách hàng thành công!',
+            message: 'Xóa thành công!',
             placement: 'topRight',
             onClick: () => notification.destroy(),
             duration: time.durationNotification
@@ -189,7 +195,7 @@ class UserPage extends Component {
         }
         else {
           notification.warning({
-            message: 'Xóa khách hàng thất bại!',
+            message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
             placement: 'topRight',
             onClick: () => notification.destroy(),
             duration: time.durationNotification
@@ -210,7 +216,7 @@ class UserPage extends Component {
           });
 
           notification.info({
-            message: 'Xóa khách hàng thành công!',
+            message: 'Xóa thành công!',
             placement: 'topRight',
             onClick: () => notification.destroy(),
             duration: time.durationNotification
@@ -218,7 +224,7 @@ class UserPage extends Component {
         }
         else {
           notification.warning({
-            message: 'Xóa khách hàng thất bại!',
+            message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
             placement: 'topRight',
             onClick: () => notification.destroy(),
             duration: time.durationNotification
@@ -298,9 +304,9 @@ class UserPage extends Component {
   };
 
   render() {
-    let { selectedRowKeys, sortedInfo, userList, isShowModal, currentTypeForm, title, user } = this.state;
-    const { handleChange, onSelectChange, wrappedComponentRef, getAvatarInfo, onShowModal, onSave, onCancel, onSelectedDelete, onDelete } = this;
-    const resource = { wrappedComponentRef, getAvatarInfo, isShowModal, currentTypeForm, title, user, onSave, onCancel };
+    let { selectedRowKeys, sortedInfo, userList, isShowModal, currentTypeForm, title, user, thumbnailBase64 } = this.state;
+    const { handleChange, onSelectChange, wrappedComponentRef, getThumbnailBase64, onShowModal, onSave, onCancel, onSelectedDelete, onDelete } = this;
+    const resource = { wrappedComponentRef, getThumbnailBase64, isShowModal, currentTypeForm, title, user, onSave, onCancel, thumbnailBase64 };
     const rowSelection = {
       selectedRowKeys,
       onChange: onSelectChange,
@@ -310,11 +316,19 @@ class UserPage extends Component {
 
     const columns = [
       {
-        title: 'Avatar',
+        title: 'ID',
+        dataIndex: 'id',
+        width: '10%',
+        ...this.getColumnSearchProps('id'),
+        sorter: (a, b) => a.id.toString().localeCompare(b.id.toString()),
+        sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order
+      },
+      {
+        title: 'Ảnh',
         width: '10%',
         render: (text, record) => (
           <img
-            src={getImageUrl(record.avatar, imagesGroup.users)}
+            src={getImageUrl(record.thumbnail ? record.thumbnail : 'default.png', imagesGroup.users)}
             alt=""
             style={{ width: "50px" }}
           />
@@ -323,7 +337,7 @@ class UserPage extends Component {
       {
         title: 'Tên khách hàng',
         dataIndex: 'name',
-        width: '18%',
+        width: '30%',
         ...this.getColumnSearchProps('name'),
         sorter: (a, b) => a.name.localeCompare(b.name),
         sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
@@ -331,51 +345,61 @@ class UserPage extends Component {
       {
         title: 'Email',
         dataIndex: 'email',
-        width: '16%',
+        width: '20%',
         ...this.getColumnSearchProps('email'),
         sorter: (a, b) => a.email.localeCompare(b.email),
         sortOrder: sortedInfo.columnKey === 'email' && sortedInfo.order,
       },
       {
-        title: 'Số điện thoại',
+        title: 'SĐT',
         dataIndex: 'phone',
-        width: '16%',
+        width: '15%',
         ...this.getColumnSearchProps('phone'),
         sorter: (a, b) => a.phone.localeCompare(b.phone),
         sortOrder: sortedInfo.columnKey === 'phone' && sortedInfo.order,
       },
       {
-        title: 'Địa chỉ',
-        dataIndex: 'address',
-        width: '30%',
-        ...this.getColumnSearchProps('address'),
-        sorter: (a, b) => a.address.localeCompare(b.address),
-        sortOrder: sortedInfo.columnKey === 'address' && sortedInfo.order,
-        render: (text, record) => (
-          <span>
-            {record.address ? `${record.address}, ` : ``}
-            {record.address ? `${record.ward}, ` : ``}
-            {record.address ? `${record.district}, ` : ``}
-            {record.address ? `${record.province}` : ``}
-          </span>
-        ),
-      },
-      {
-        title: 'Action',
-        width: '10%',
+        title: '',
+        width: '15%',
         render: (text, record) => (
           <Fragment>
-            <Icon type="edit" onClick={() => onShowModal(typeForm.update, `Cập nhật khách hàng`, record)} />
-            <Icon type="delete" onClick={() => onDelete(record.id)} />
+            <LinkButton
+              type="link"
+              onClick={() =>
+                onShowModal(typeForm.update, `Cập nhật khách hàng`, record)
+              }
+            >
+              Sửa
+            </LinkButton>
+            <Divider type="vertical" />
+            <LinkButton type="link" onClick={() => onDelete(record.id)}>
+              Xoá
+            </LinkButton>
           </Fragment>
-        ),
+        )
       },
     ];
 
     return (
-      <div>
-        <Button type="primary" onClick={() => onShowModal(typeForm.create, `Tạo mới khách hàng`, null)}>Tạo mới</Button>
-        <Button type="primary" onClick={() => onSelectedDelete(selectedRowKeys)}>Xóa</Button>
+      <Fragment>
+        <ButtonsWrapper>
+          <ActionButton
+            type="primary"
+            onClick={() =>
+              onShowModal(typeForm.create, `Tạo mới khách hàng`, null)
+            }
+          >
+            Tạo mới
+          </ActionButton>
+          {selectedRowKeys.length > 0 && (
+            <ActionButton
+              type="danger"
+              onClick={() => onSelectedDelete(selectedRowKeys)}
+            >
+              Xóa
+            </ActionButton>
+          )}
+        </ButtonsWrapper>
         <Table
           rowKey='id'
           rowSelection={rowSelection}
@@ -384,7 +408,7 @@ class UserPage extends Component {
           onChange={handleChange}
         />
         <UserForm {...resource} />
-      </div>
+      </Fragment>
     );
   }
 }

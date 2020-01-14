@@ -1,8 +1,9 @@
 ﻿import React, { Component, Fragment } from 'react';
-import { Table, Input, Button, Icon, notification } from 'antd';
+import { Table, Input, Button, Icon, Divider, notification } from 'antd';
 
 import { callAPI, getImageUrl } from '../../../../shared/util';
 import { imagesGroup, time, typeForm } from '../../../../shared/constants';
+import { ButtonsWrapper, ActionButton, LinkButton } from '../../styledUtils';
 
 import EmployeeForm from './components/EmployeeForm';
 
@@ -19,8 +20,7 @@ class EmployeePage extends Component {
       title: '',
       employee: null,
       currentTypeForm: '',
-      fileName: '',
-      imageUrl: ''
+      thumbnailBase64: ''
     };
   }
 
@@ -33,11 +33,8 @@ class EmployeePage extends Component {
       .then(res => this.setState({ employeeList: res.data }));
   }
 
-  getAvatarInfo = (fileName, imageUrl) => {
-    this.setState({
-      fileName,
-      imageUrl
-    });
+  getThumbnailBase64 = thumbnailBase64 => {
+    this.setState({ thumbnailBase64 });
   }
 
   onShowModal = (typeForm, title, employee) => {
@@ -50,18 +47,17 @@ class EmployeePage extends Component {
   };
 
   onSave = () => {
-    const { currentTypeForm, employeeList, fileName, imageUrl } = this.state;
+    const { currentTypeForm, employeeList, thumbnailBase64 } = this.state;
     const { employeeLogin } = this.props;
     const { form } = this.formRef.props;
-    form.setFieldsValue({
-      avatar: fileName
-    });
+
     
     form.validateFields((err, values) => {  
       const data = {
         employeeLogin,
         employee: values,
-        imageUrl,
+        thumbnailBase64,
+        folderName: imagesGroup.users,
         employeeList: []        
       }
 
@@ -72,18 +68,19 @@ class EmployeePage extends Component {
       if (currentTypeForm === typeForm.create) {
         callAPI('Employee/CreateEmployee', '', 'POST', data)
           .then(res => {
-            if (res.data) {
+            if (res.data) {                
               if (res.data.id > 0) {
                 employeeList.push(res.data);
 
                 this.setState({
                   isShowModal: false,
-                  employeeList
+                  employeeList,
+                  thumbnailBase64: ''
                 });
                 form.resetFields();
 
                 notification.info({
-                  message: 'Tạo mới nhân viên thành công!',
+                  message: 'Tạo mới thành công!',
                   placement: 'topRight',
                   onClick: () => notification.destroy(),
                   duration: time.durationNotification
@@ -91,7 +88,7 @@ class EmployeePage extends Component {
               }
               else {
                 notification.warning({
-                  message: 'Tài khoản đã tồn tại!',
+                  message: 'Tài khoản đã tồn tại, vui lòng nhập tài khoản khác!',
                   placement: 'topRight',
                   onClick: () => notification.destroy(),
                   duration: time.durationNotification
@@ -99,11 +96,14 @@ class EmployeePage extends Component {
               }
             }
             else {
-              this.setState({ isShowModal: false });
+              this.setState({
+                isShowModal: false,
+                thumbnailBase64: ''
+              });
               form.resetFields();
 
               notification.warning({
-                message: 'Tạo mới nhân viên thất bại!',
+                message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
@@ -122,12 +122,13 @@ class EmployeePage extends Component {
 
                 this.setState({
                   isShowModal: false,
-                  employeeList: lst
+                  employeeList: lst,
+                  thumbnailBase64: ''
                 });
                 form.resetFields();
 
                 notification.info({
-                  message: 'Cập nhật nhân viên thành công!',
+                  message: 'Cập nhật thành công!',
                   placement: 'topRight',
                   onClick: () => notification.destroy(),
                   duration: time.durationNotification
@@ -135,7 +136,7 @@ class EmployeePage extends Component {
               }
               else {
                 notification.warning({
-                  message: 'Tài khoản đã tồn tại!',
+                  message: 'Tài khoản đã tồn tại, vui lòng nhập tài khoản khác!',
                   placement: 'topRight',
                   onClick: () => notification.destroy(),
                   duration: time.durationNotification
@@ -143,11 +144,14 @@ class EmployeePage extends Component {
               }
             }
             else {
-              this.setState({ isShowModal: false });
+              this.setState({
+                isShowModal: false,
+                thumbnailBase64: ''
+              });
               form.resetFields();
 
               notification.warning({
-                message: 'Cập nhật nhân viên thất bại!',
+                message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
@@ -159,7 +163,10 @@ class EmployeePage extends Component {
   };
 
   onCancel = () => {
-    this.setState({ isShowModal: false });
+    this.setState({
+      isShowModal: false,
+      thumbnailBase64: ''
+    });
     this.formRef.props.form.resetFields();
   };
 
@@ -181,7 +188,7 @@ class EmployeePage extends Component {
           });
 
           notification.info({
-            message: 'Xóa nhân viên thành công!',
+            message: 'Xóa thành công!',
             placement: 'topRight',
             onClick: () => notification.destroy(),
             duration: time.durationNotification
@@ -189,7 +196,7 @@ class EmployeePage extends Component {
         }
         else {
           notification.warning({
-            message: 'Xóa nhân viên thất bại!',
+            message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
             placement: 'topRight',
             onClick: () => notification.destroy(),
             duration: time.durationNotification
@@ -210,7 +217,7 @@ class EmployeePage extends Component {
           });
 
           notification.info({
-            message: 'Xóa nhân viên thành công!',
+            message: 'Xóa thành công!',
             placement: 'topRight',
             onClick: () => notification.destroy(),
             duration: time.durationNotification
@@ -218,7 +225,7 @@ class EmployeePage extends Component {
         }
         else {
           notification.warning({
-            message: 'Xóa nhân viên thất bại!',
+            message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
             placement: 'topRight',
             onClick: () => notification.destroy(),
             duration: time.durationNotification
@@ -232,7 +239,13 @@ class EmployeePage extends Component {
   };
 
   onSelectChange = selectedRowKeys => {
-    this.setState({ selectedRowKeys });
+    const { employeeLogin } = this.props;
+    let selectedList = selectedRowKeys;
+
+    if (employeeLogin) {
+      selectedList = selectedRowKeys.filter(key => key !== employeeLogin.id);
+    }
+    this.setState({ selectedRowKeys: selectedList });
   };
 
   handleChange = (pagination, filters, sorter) => {
@@ -298,10 +311,10 @@ class EmployeePage extends Component {
   };
 
   render() {
-    let { selectedRowKeys, sortedInfo, employeeList, isShowModal, currentTypeForm, title, employee } = this.state;
+    let { selectedRowKeys, sortedInfo, employeeList, isShowModal, currentTypeForm, title, employee, thumbnailBase64 } = this.state;
     const { employeeLogin } = this.props;
-    const { handleChange, onSelectChange, wrappedComponentRef, getAvatarInfo, onShowModal, onSave, onCancel, onSelectedDelete, onDelete } = this;
-    const resource = { wrappedComponentRef, getAvatarInfo, isShowModal, currentTypeForm, title, employee, onSave, onCancel, employeeLogin };
+    const { handleChange, onSelectChange, wrappedComponentRef, getThumbnailBase64, onShowModal, onSave, onCancel, onSelectedDelete, onDelete } = this;
+    const resource = { wrappedComponentRef, getThumbnailBase64, isShowModal, currentTypeForm, title, employee, onSave, onCancel, employeeLogin, thumbnailBase64 };
     const rowSelection = {
       selectedRowKeys,
       onChange: onSelectChange,
@@ -311,20 +324,28 @@ class EmployeePage extends Component {
 
     const columns = [
       {
-        title: 'Avatar',
+        title: 'ID',
+        dataIndex: 'id',
+        width: '10%',
+        ...this.getColumnSearchProps('id'),
+        sorter: (a, b) => a.id.toString().localeCompare(b.id.toString()),
+        sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order
+      },
+      {
+        title: 'Ảnh',
         width: '10%',
         render: (text, record) => (
           <img
-            src={getImageUrl(record.avatar ? record.avatar : 'default.png', imagesGroup.users)}
+            src={getImageUrl(record.thumbnail ? record.thumbnail : 'default.png', imagesGroup.users)}
             alt=""
             style={{ width: "50px" }}
           />
         ),
       },
       {
-        title: 'Tên khách hàng',
+        title: 'Tên',
         dataIndex: 'name',
-        width: '18%',
+        width: '30%',
         ...this.getColumnSearchProps('name'),
         sorter: (a, b) => a.name.localeCompare(b.name),
         sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
@@ -332,43 +353,68 @@ class EmployeePage extends Component {
       {
         title: 'Tài khoản',
         dataIndex: 'userName',
-        width: '16%',
+        width: '20%',
         ...this.getColumnSearchProps('userName'),
         sorter: (a, b) => a.userName.localeCompare(b.userName),
         sortOrder: sortedInfo.columnKey === 'userName' && sortedInfo.order,
       },
       {
-        title: 'Số điện thoại',
+        title: 'SĐT',
         dataIndex: 'phone',
-        width: '16%',
+        width: '15%',
         ...this.getColumnSearchProps('phone'),
         sorter: (a, b) => a.phone.localeCompare(b.phone),
         sortOrder: sortedInfo.columnKey === 'phone' && sortedInfo.order,
       },
       {
-        title: 'Địa chỉ',
-        dataIndex: 'address',
-        width: '20%',
-        ...this.getColumnSearchProps('address'),
-        sorter: (a, b) => a.address.localeCompare(b.address),
-        sortOrder: sortedInfo.columnKey === 'address' && sortedInfo.order,
-      },
-      {
-        title: 'Action',
-        width: '10%',
+        title: '',
+        width: '15%',
         render: (text, record) => (
           <Fragment>
-            <Icon type="edit" onClick={() => onShowModal(typeForm.update, `Cập nhật nhân viên`, record)} />
-            <Icon type="delete" onClick={() => onDelete(record.id)} />
+            <LinkButton
+              type="link"
+              onClick={() =>
+                onShowModal(typeForm.update, `Cập nhật nhân viên`, record)
+              }
+            >
+              Sửa
+            </LinkButton>
+            {
+              this.props.employeeLogin.id && record.id === this.props.employeeLogin.id ? null : (
+                <Fragment>
+                  <Divider type="vertical" />
+                  <LinkButton type="link" onClick={() => onDelete(record.id)}>
+                    Xoá
+                  </LinkButton>
+                </Fragment>
+              )
+            }            
           </Fragment>
-        ),
+        )
       },
     ];
 
     return (
-      <div>
-        <Button type="primary" onClick={() => onShowModal(typeForm.create, `Tạo mới nhân viên`, null)}>Tạo mới</Button>
-        <Button type="primary" onClick={() => onSelectedDelete(selectedRowKeys)}>Xóa</Button>
+      <Fragment>
+        <ButtonsWrapper>
+          <ActionButton
+            type="primary"
+            onClick={() =>
+              onShowModal(typeForm.create, `Tạo mới nhân viên`, null)
+            }
+          >
+            Tạo mới
+          </ActionButton>
+          {selectedRowKeys.length > 0 && (
+            <ActionButton
+              type="danger"
+              onClick={() => onSelectedDelete(selectedRowKeys)}
+            >
+              Xóa
+            </ActionButton>
+          )}
+        </ButtonsWrapper>
+
         <Table
           rowKey='id'
           rowSelection={rowSelection}
@@ -377,7 +423,7 @@ class EmployeePage extends Component {
           onChange={handleChange}
         />
         <EmployeeForm {...resource} />
-      </div>
+      </Fragment>
     );
   }
 }

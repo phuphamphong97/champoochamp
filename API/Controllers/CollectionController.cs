@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Business;
 using Data.Entity;
 using Data.Model;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +18,12 @@ namespace API.Controllers
   public class CollectionController : ControllerBase
   {
     CollectionBusiness collectionBusiness = new CollectionBusiness();
+
+    private IHostingEnvironment _env;
+    public CollectionController(IHostingEnvironment env)
+    {
+      _env = env;
+    }
 
     [Route("GetAllCollections")]
     public IEnumerable<Collection> GetAllCollections()
@@ -38,14 +46,22 @@ namespace API.Controllers
     [HttpPost]
     public Collection CreateCollection(CollectionModel collectionModel)
     {
-      return collectionBusiness.createCollection(collectionModel);
+      string webRoot = _env.ContentRootPath;
+      webRoot = webRoot.Replace("API", "Champoochamp");
+      string path = Path.Combine(webRoot, "ClientApp\\src\\assets\\images", collectionModel.folderName);
+
+      return collectionBusiness.createCollection(collectionModel, path);
     }
 
     [Route("PutCollection")]
     [HttpPut]
     public Collection PutCollection(CollectionModel collectionModel)
     {
-      return collectionBusiness.putCollection(collectionModel);
+      string webRoot = _env.ContentRootPath;
+      webRoot = webRoot.Replace("API", "Champoochamp");
+      string path = Path.Combine(webRoot, "ClientApp\\src\\assets\\images", collectionModel.folderName);
+
+      return collectionBusiness.putCollection(collectionModel, path);
     }
 
     [Route("DeleteCollectionById")]

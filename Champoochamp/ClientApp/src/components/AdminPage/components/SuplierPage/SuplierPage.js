@@ -19,7 +19,8 @@ class SuplierPage extends Component {
       isShowModal: false,
       title: '',
       suplier: null,
-      currentTypeForm: ''
+      currentTypeForm: '',
+      thumbnailBase64: ''
     };
   }
 
@@ -33,6 +34,10 @@ class SuplierPage extends Component {
     );
   };
 
+  getThumbnailBase64 = thumbnailBase64 => {
+    this.setState({ thumbnailBase64 });
+  }
+
   onShowModal = (typeForm, title, suplier) => {
     this.setState({
       isShowModal: true,
@@ -43,104 +48,119 @@ class SuplierPage extends Component {
   };
 
   onSave = () => {
+    const { currentTypeForm, suplierList, thumbnailBase64 } = this.state;
+    const { employee } = this.props;
     const { form } = this.formRef.props;
+
     form.validateFields((err, values) => {
-      const { currentTypeForm, suplierList } = this.state;
-      const { employee } = this.props;
+      const data = {
+        employee,
+        suplier: values,
+        thumbnailBase64,
+        folderName: imagesGroup.logos,
+        suplierList: []
+      }
 
       if (err) {
         return;
       }
 
       if (currentTypeForm === typeForm.create) {
-        callAPI('Suplier/CreateSuplier', '', 'POST', values).then(res => {
-          if (res.data) {
-            if (res.data.id > 0) {
-              suplierList.push(res.data);
+        callAPI('Suplier/CreateSuplier', '', 'POST', data)
+          .then(res => {
+            if (res.data) {
+              if (res.data.id > 0) {
+                suplierList.push(res.data);
 
-              this.setState({
-                isShowModal: false,
-                suplierList
-              });
+                this.setState({
+                  isShowModal: false,
+                  suplierList,
+                  thumbnailBase64: ''
+                });
+                form.resetFields();
+
+                notification.info({
+                  message: 'Tạo mới thành công!',
+                  placement: 'topRight',
+                  onClick: () => notification.destroy(),
+                  duration: time.durationNotification
+                });
+              }
+              else {
+                notification.warning({
+                  message: 'Nhà cung cấp đã tồn tại, vui lòng nhập nhà cung cấp khác!',
+                  placement: 'topRight',
+                  onClick: () => notification.destroy(),
+                  duration: time.durationNotification
+                });
+              }
+            }
+            else {
+              this.setState({ isShowModal: false });
               form.resetFields();
 
-              notification.info({
-                message: 'Tạo mới thành công!',
-                placement: 'topRight',
-                onClick: () => notification.destroy(),
-                duration: time.durationNotification
-              });
-            } else {
               notification.warning({
-                message: 'Nhà cung cấp đã tồn tại!',
+                message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
               });
             }
-          } else {
-            this.setState({ isShowModal: false });
-            form.resetFields();
+          });
+      }
+      else if (currentTypeForm === typeForm.update) {
+        callAPI('Suplier/PutSuplier', '', 'PUT', data)
+          .then(res => {
+            if (res.data) {
+              if (res.data.id > 0) {
+                let lst = suplierList;
+                lst = suplierList.filter(suplier => suplier.id !== res.data.id)
+                lst.unshift(res.data);
 
-            notification.warning({
-              message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
-              placement: 'topRight',
-              onClick: () => notification.destroy(),
-              duration: time.durationNotification
-            });
-          }
-        });
-      } else if (currentTypeForm === typeForm.update) {
-        const data = {
-          employee,
-          suplier: values,
-          suplierList: []
-        };
-        callAPI('Suplier/PutSuplier', '', 'PUT', data).then(res => {
-          if (res.data) {
-            if (res.data.id > 0) {
-              let lst = suplierList;
-              lst = suplierList.filter(suplier => suplier.id !== res.data.id);
-              lst.unshift(res.data);
+                this.setState({
+                  isShowModal: false,
+                  suplierList: lst,
+                  thumbnailBase64: ''
+                });
+                form.resetFields();
 
-              this.setState({
-                isShowModal: false,
-                suplierList: lst
-              });
+                notification.info({
+                  message: 'Cập nhật thành công!',
+                  placement: 'topRight',
+                  onClick: () => notification.destroy(),
+                  duration: time.durationNotification
+                });
+              }
+              else {
+                notification.warning({
+                  message: 'Nhà cung cấp đã tồn tại, vui lòng nhập nhà cung cấp khác!',
+                  placement: 'topRight',
+                  onClick: () => notification.destroy(),
+                  duration: time.durationNotification
+                });
+              }
+            }
+            else {
+              this.setState({ isShowModal: false });
               form.resetFields();
 
-              notification.info({
-                message: 'Cập nhật thành công!',
-                placement: 'topRight',
-                onClick: () => notification.destroy(),
-                duration: time.durationNotification
-              });
-            } else {
               notification.warning({
-                message: 'Nhà cung cấp đã tồn tại!',
+                message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
                 placement: 'topRight',
                 onClick: () => notification.destroy(),
                 duration: time.durationNotification
               });
             }
-          } else {
-            this.setState({ isShowModal: false });
-            form.resetFields();
-
-            notification.warning({
-              message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
-              placement: 'topRight',
-              onClick: () => notification.destroy(),
-              duration: time.durationNotification
-            });
-          }
-        });
+          });
       }
     });
   };
 
   onCancel = () => {
-    this.setState({ isShowModal: false });
+    this.setState({
+      isShowModal: false,
+      thumbnailBase64: ''
+    });
     this.formRef.props.form.resetFields();
   };
 
@@ -153,61 +173,59 @@ class SuplierPage extends Component {
       suplierList
     };
 
-    callAPI('Suplier/DeleteSuplierByIds', '', 'DELETE', data).then(res => {
-      if (res.data) {
-        this.setState({
-          selectedRowKeys: this.state.selectedRowKeys.filter(
-            key => !ids.includes(key)
-          ),
-          suplierList: this.state.suplierList.filter(
-            suplier => !ids.includes(suplier.id)
-          )
-        });
+    callAPI('Suplier/DeleteSuplierByIds', '', 'DELETE', data)
+      .then(res => {
+        if (res.data) {
+          this.setState({
+            selectedRowKeys: this.state.selectedRowKeys.filter(key => !ids.includes(key)),
+            suplierList: this.state.suplierList.filter(suplier => !ids.includes(suplier.id))
+          });
 
-        notification.info({
-          message: 'Xóa thành công!',
-          placement: 'topRight',
-          onClick: () => notification.destroy(),
-          duration: time.durationNotification
-        });
-      } else {
-        notification.warning({
-          message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
-          placement: 'topRight',
-          onClick: () => notification.destroy(),
-          duration: time.durationNotification
-        });
-      }
-    });
+          notification.info({
+            message: 'Xóa thành công!',
+            placement: 'topRight',
+            onClick: () => notification.destroy(),
+            duration: time.durationNotification
+          });
+        }
+        else {
+          notification.warning({
+            message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
+            placement: 'topRight',
+            onClick: () => notification.destroy(),
+            duration: time.durationNotification
+          });
+        }
+      });
   };
 
   onDelete = id => {
     const data = { id };
 
-    callAPI('Suplier/DeleteSuplierById', '', 'DELETE', data).then(res => {
-      if (res.data) {
-        this.setState({
-          selectedRowKeys: this.state.selectedRowKeys.filter(key => key !== id),
-          suplierList: this.state.suplierList.filter(
-            suplier => suplier.id !== id
-          )
-        });
+    callAPI('Suplier/DeleteSuplierById', '', 'DELETE', data)
+      .then(res => {
+        if (res.data) {
+          this.setState({
+            selectedRowKeys: this.state.selectedRowKeys.filter(key => key !== id),
+            suplierList: this.state.suplierList.filter(suplier => suplier.id !== id)
+          });
 
-        notification.info({
-          message: 'Xóa thành công!',
-          placement: 'topRight',
-          onClick: () => notification.destroy(),
-          duration: time.durationNotification
-        });
-      } else {
-        notification.warning({
-          message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
-          placement: 'topRight',
-          onClick: () => notification.destroy(),
-          duration: time.durationNotification
-        });
-      }
-    });
+          notification.info({
+            message: 'Xóa thành công!',
+            placement: 'topRight',
+            onClick: () => notification.destroy(),
+            duration: time.durationNotification
+          });
+        }
+        else {
+          notification.warning({
+            message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
+            placement: 'topRight',
+            onClick: () => notification.destroy(),
+            duration: time.durationNotification
+          });
+        }
+      });
   };
 
   wrappedComponentRef = formRef => {
@@ -294,34 +312,9 @@ class SuplierPage extends Component {
   };
 
   render() {
-    let {
-      selectedRowKeys,
-      sortedInfo,
-      suplierList,
-      isShowModal,
-      currentTypeForm,
-      title,
-      suplier
-    } = this.state;
-    const {
-      handleChange,
-      onSelectChange,
-      wrappedComponentRef,
-      onShowModal,
-      onSave,
-      onCancel,
-      onSelectedDelete,
-      onDelete
-    } = this;
-    const resource = {
-      wrappedComponentRef,
-      isShowModal,
-      currentTypeForm,
-      title,
-      suplier,
-      onSave,
-      onCancel
-    };
+    let { selectedRowKeys, sortedInfo, suplierList, isShowModal, currentTypeForm, title, suplier, thumbnailBase64 } = this.state;
+    const { handleChange, onSelectChange, wrappedComponentRef, getThumbnailBase64, onShowModal, onSave, onCancel, onSelectedDelete, onDelete } = this;
+    const resource = { wrappedComponentRef, getThumbnailBase64, isShowModal, currentTypeForm, title, suplier, onSave, onCancel, thumbnailBase64 };
     const rowSelection = {
       selectedRowKeys,
       onChange: onSelectChange
@@ -342,11 +335,7 @@ class SuplierPage extends Component {
         width: '10%',
         render: (text, record) => (
           <img
-            src={
-              imagesGroup.logos &&
-              record.logo &&
-              getImageUrl(record.logo, imagesGroup.logos)
-            }
+            src={getImageUrl(record.thumbnail ? record.thumbnail : 'default.png', imagesGroup.logos)}
             alt=""
             style={{ width: '50px' }}
           />
@@ -355,7 +344,7 @@ class SuplierPage extends Component {
       {
         title: 'Tên',
         dataIndex: 'name',
-        width: '15%',
+        width: '30%',
         ...this.getColumnSearchProps('name'),
         sorter: (a, b) => a.name.localeCompare(b.name),
         sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order
@@ -363,7 +352,7 @@ class SuplierPage extends Component {
       {
         title: 'Email',
         dataIndex: 'email',
-        width: '15%',
+        width: '20%',
         ...this.getColumnSearchProps('email'),
         sorter: (a, b) => a.email.localeCompare(b.email),
         sortOrder: sortedInfo.columnKey === 'email' && sortedInfo.order
@@ -377,15 +366,7 @@ class SuplierPage extends Component {
         sortOrder: sortedInfo.columnKey === 'phone' && sortedInfo.order
       },
       {
-        title: 'Địa chỉ',
-        dataIndex: 'address',
-        width: '20%',
-        ...this.getColumnSearchProps('address'),
-        sorter: (a, b) => a.address.localeCompare(b.address),
-        sortOrder: sortedInfo.columnKey === 'address' && sortedInfo.order
-      },
-      {
-        title: 'Action',
+        title: '',
         width: '15%',
         render: (text, record) => (
           <Fragment>
@@ -403,7 +384,7 @@ class SuplierPage extends Component {
             </LinkButton>
           </Fragment>
         )
-      }
+      },
     ];
 
     return (

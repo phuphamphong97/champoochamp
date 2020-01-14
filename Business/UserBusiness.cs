@@ -57,9 +57,9 @@ namespace Business
           }          
 
           user.Password = PasswordConverter.Encrypt(user.Password);
-          if (String.IsNullOrEmpty(user.Avatar))
+          if (String.IsNullOrEmpty(user.Thumbnail))
           {
-            user.Avatar = "default.png";
+            user.Thumbnail = "default.png";
           }
           db.User.Add(user);
 
@@ -175,43 +175,58 @@ namespace Business
 
     }
 
-    public User createUser(UserModel userModel)
+    public User createUser(UserModel userModel, string path)
     {
       using (champoochampContext db = new champoochampContext())
       {
-        try
+        using (var transaction = db.Database.BeginTransaction())
         {
-          string folderPath = "http://localhost:5000/assets/images/users";
-          //Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
-          User d = db.User.Where(p => String.Compare(p.Email, userModel.user.Email, false) == 0 && p.Status == true).SingleOrDefault();
-          if (d != null)
+          try
           {
-            return new User();
-          }
+            User d = db.User.Where(p => String.Compare(p.Email, userModel.user.Email, false) == 0 && p.Status == true).SingleOrDefault();
+            if (d != null)
+            {
+              return new User();
+            }
 
-          userModel.user.Password = PasswordConverter.Encrypt(userModel.user.Password);
-          if (String.IsNullOrEmpty(userModel.user.Avatar))
-          {
-            userModel.user.Avatar = "default.png";
-          }
-          else
-          {
-            Services.SaveImage(folderPath, userModel.user.Avatar, userModel.imageUrl);
-          }
-          db.Add(userModel.user);
+            userModel.user.Password = PasswordConverter.Encrypt(userModel.user.Password);
+            db.Add(userModel.user);
+            db.SaveChanges();
+            if (String.IsNullOrEmpty(userModel.thumbnailBase64))
+            {
+              userModel.user.Thumbnail = "default.png";
+            }
+            else
+            {
+              string imageType = userModel.thumbnailBase64.IndexOf("image/png") > 0 ? ".png" : ".jpg";
+              string thumbnail = "User_" + userModel.user.Id.ToString() + imageType;
+              bool isSave = Services.SaveImage(path, thumbnail, userModel.thumbnailBase64);
+              if (isSave)
+              {
+                userModel.user.Thumbnail = thumbnail;
+              }
+              else
+              {
+                transaction.Rollback();
+                return null;
+              }
+            }
 
-          db.SaveChanges();
-          return userModel.user;
-        }
-        catch (Exception e)
-        {
-          Console.WriteLine(e.Message);
-          return null;
+            db.SaveChanges();
+            transaction.Commit();
+            return userModel.user;
+          }
+          catch (Exception e)
+          {
+            Console.WriteLine(e.Message);
+            transaction.Rollback();
+            return null;
+          }
         }
       }
     }
 
-    public User putUser(UserModel userModel)
+    public User putUser(UserModel userModel, string path)
     {
       using (champoochampContext db = new champoochampContext())
       {
@@ -231,13 +246,12 @@ namespace Business
           user.Address = userModel.user.Address;
           user.ModifiedDate = DateTime.Now;
           //user.ModifiedBy = userModel.employee.UserName;
-          if (String.IsNullOrEmpty(userModel.user.Avatar))
+          if (!String.IsNullOrEmpty(userModel.thumbnailBase64))
           {
-            user.Avatar = "default.png";
-          }
-          else
-          {
-            user.Avatar = userModel.user.Avatar;
+            if (!Services.SaveImage(path, userModel.user.Thumbnail, userModel.thumbnailBase64))
+            {
+              return null;
+            }
           }
 
           db.SaveChanges();

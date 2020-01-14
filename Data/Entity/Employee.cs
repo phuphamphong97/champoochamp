@@ -11,7 +11,7 @@ namespace Data.Entity
         public string Name { get; set; }
         public string Phone { get; set; }
         public string Address { get; set; }
-        public string Avatar { get; set; }
+        public string Thumbnail { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? ModifiedDate { get; set; }
