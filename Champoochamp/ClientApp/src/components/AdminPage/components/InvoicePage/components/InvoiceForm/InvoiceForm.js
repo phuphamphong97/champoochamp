@@ -1,10 +1,21 @@
 ﻿import React, { Component } from 'react';
-import { Modal, Form, Input, Select } from 'antd';
+import { Modal, Form, Input, Select, Table, Button, Icon } from 'antd';
 import styled from '@emotion/styled';
 
 import { colors } from '../../../../../../shared/principles';
-import { formatDateTime, formatMoney } from '../../../../../../shared/util';
+import { callAPI, formatDateTime, formatMoney } from '../../../../../../shared/util';
 import { cities, districts, wards } from '../../../../../../shared/address';
+
+const TextRow = styled('div')`
+  color: ${colors.black};
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+`;
+
+const LeftText = styled('span')`
+  margin-right: 10px;
+`;
 
 const ModifyText = styled('span')`
   color: ${colors.darkGray};
@@ -18,15 +29,45 @@ class InvoiceForm extends Component {
     super(props);
     this.state = {
       districtsData: props.invoice ? districts[props.invoice.customerProvince] : [],
-      wardsData: props.invoice ? wards[props.invoice.customerDistrict] : []
+      wardsData: props.invoice ? wards[props.invoice.customerDistrict] : [],
+      searchText: '',
+      searchedColumn: '',
+      sortedInfo: null,
+      isInvoiceIdChange: false,
+      invoice: props.invoice,
+      invoiceDetailList: []
     };
   }
 
-  componentDidMount() {
-    const { form, invoice } = this.props;
-    if (invoice) {
-      this.handleDistrictChange(form.getFieldsValue().customerDistrict)
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.invoice !== prevState.invoice) {
+      return {
+        invoice: nextProps.invoice,
+        isInvoiceIdChange: true
+      };
     }
+
+    return null;
+  }
+
+  componentDidUpdate() {
+    const { isInvoiceIdChange, invoice } = this.state;
+
+    isInvoiceIdChange && this.getAllInvoiceDetailsByInvoiceId(invoice.id);
+  }
+
+  componentDidMount() {
+    const { invoice } = this.state;
+    const { form } = this.props;
+    invoice && this.handleDistrictChange(form.getFieldsValue().customerDistrict)
+  }
+
+  getAllInvoiceDetailsByInvoiceId = invoiceId => {
+    callAPI(`Invoice/GetAllInvoiceDetailsByInvoiceId-${invoiceId}`)
+      .then(res => this.setState({
+        isInvoiceIdChange: false,
+        invoiceDetailList: res.data
+      }));
   }
 
   handleCityChange = value => {
@@ -51,16 +92,131 @@ class InvoiceForm extends Component {
     });
   };
 
+  handleChange = (pagination, filters, sorter) => {
+    this.setState({
+      sortedInfo: sorter
+    });
+  };
+
+  getColumnSearchProps = dataIndex => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={node => {
+            this.searchInput = node;
+          }}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{ width: 188, marginBottom: 8, display: 'block' }}
+        />
+        <Button
+          type="primary"
+          onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          icon="search"
+          size="small"
+          style={{ width: 90, marginRight: 8 }}
+        >
+          Search
+        </Button>
+        <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+          Reset
+        </Button>
+      </div>
+    ),
+    filterIcon: filtered => (
+      <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex]
+        .toString()
+        .toLowerCase()
+        .includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: visible => {
+      if (visible) {
+        setTimeout(() => this.searchInput.select());
+      }
+    },
+    render: text => text
+  });
+
+  handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    this.setState({
+      searchText: selectedKeys[0],
+      searchedColumn: dataIndex,
+    });
+  };
+
+  handleReset = clearFilters => {
+    clearFilters();
+    this.setState({ searchText: '' });
+  };
+
   render() {
-    const { districtsData, wardsData } = this.state;
-    const { isShowModal, form, invoice, onCancel, invoiceStatus } = this.props;
+    let { districtsData, wardsData, sortedInfo, invoiceDetailList, invoice  } = this.state;
+    const { isShowModal, form, onCancel, onUpdateDetailInfo, invoiceStatus } = this.props;
     const { getFieldDecorator } = form;
+    sortedInfo = sortedInfo || {};
+
+    const columns = [
+      {
+        title: 'ID',
+        dataIndex: 'id',
+        width: '10%',
+        ...this.getColumnSearchProps('id'),
+        sorter: (a, b) => a.id.toString().localeCompare(b.id),
+        sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order,
+        ellipsis: true
+      },
+      {
+        title: 'Sản phẩm',
+        dataIndex: 'productVariant.product.name',
+        width: '35%',
+        ...this.getColumnSearchProps('productVariant.product.name'),
+        sorter: (a, b) => a.productVariant.product.name.localeCompare(b.productVariant.product.name),
+        sortOrder: sortedInfo.columnKey === 'productVariant.product.name' && sortedInfo.order,
+        ellipsis: true
+      },
+      {
+        title: 'Giá',
+        dataIndex: 'priceCurrent',
+        width: '20%',
+        ...this.getColumnSearchProps('priceCurrent'),
+        sorter: (a, b) => a.priceCurrent.toString().localeCompare(b.priceCurrent),
+        sortOrder: sortedInfo.columnKey === 'priceCurrent' && sortedInfo.order,
+        render: (text, record) => (<span>{formatMoney(record.priceCurrent, true)}đ</span>),
+      },
+      {
+        title: 'SL',
+        dataIndex: 'quantity',
+        width: '15%',
+        ...this.getColumnSearchProps('quantity'),
+        sorter: (a, b) => a.quantity.toString().localeCompare(b.quantity),
+        sortOrder: sortedInfo.columnKey === 'quantity' && sortedInfo.order,
+        ellipsis: true
+      },      
+      {
+        title: 'Thành tiền',
+        dataIndex: 'total',
+        width: '20%',
+        ...this.getColumnSearchProps('total'),
+        sorter: (a, b) => a.total.toString().localeCompare(b.total),
+        sortOrder: sortedInfo.columnKey === 'total' && sortedInfo.order,
+        render: (text, record) => (
+          <span>{formatMoney(record.total, true)}đ</span>
+        )
+      },      
+    ];
 
     return (
       <Modal
         title="Thông tin hóa đơn"
         visible={isShowModal}
+        onOk={onUpdateDetailInfo}
         onCancel={onCancel}
+        width="800px"
       >
         <Form>
           {
@@ -154,6 +310,22 @@ class InvoiceForm extends Component {
               <Input placeholder="Lời nhắn" />
             )}
           </Form.Item>
+          <Form.Item label="Phương thức thanh toán">
+            {getFieldDecorator('paymentMethod', {
+              initialValue: invoice ? invoice.paymentMethod : undefined,
+              rules: [
+                {
+                  required: true,
+                  message: 'Vui lòng chọn phương thức thanh toán!'
+                }
+              ]
+            })(
+              <Select showSearch placeholder="Phương thức thanh toán *">
+                <Option key="COD">COD</Option>
+                <Option key="Banking">Banking</Option>
+              </Select>
+            )}
+          </Form.Item>
           <Form.Item label="Trạng thái">
             {getFieldDecorator('status', {
               initialValue: invoice ? invoice.status : undefined,
@@ -166,53 +338,61 @@ class InvoiceForm extends Component {
             })(
               <Select showSearch placeholder="Trạng thái *">
                 {invoiceStatus.map(status => (
-                  <Option value={status.name}>{status.name}</Option>
+                  <Option key={status.name}>{status.name}</Option>
                 ))}
               </Select>
             )}
           </Form.Item>
           {
-            invoice && invoice.modifiedBy &&
-            (
-              <ModifyText>
-                Cập nhật lần cuối bởi {invoice.modifiedBy} lúc{' '}
-                {formatDateTime(invoice.modifiedDate)}.
-              </ModifyText>
-            )
-          }
-          {
             invoice && invoice.ShipMoney &&
             (
-              <ModifyText>
-                Phí vận chuyển {formatMoney(invoice.shipMoney, true)}đ
-              </ModifyText>
+              <TextRow>
+                <LeftText>
+                  Phí vận chuyển: {formatMoney(invoice.shipMoney, true)}đ
+                </LeftText>
+              </TextRow>              
             )
           }
           {
             invoice && invoice.discountCode && invoice.discountAmount &&
             (
-              <ModifyText>
-                Mã giảm giá {invoice.discountCode} với mức giảm {invoice.discountAmount}%
-              </ModifyText>
+              <TextRow>
+                <LeftText>
+                  Áp dụng mã giảm giá: {invoice.discountCode} với mức giảm {invoice.discountAmount}%
+                </LeftText>
+              </TextRow>               
             )
           }
           {
             invoice &&
             (
-              <ModifyText>
-                Tổng tiền {formatMoney(invoice.total, true)}đ
-              </ModifyText>
+              <TextRow>
+                <LeftText>
+                  Tổng tiền: {formatMoney(invoice.total, true)}đ
+                </LeftText>
+              </TextRow>              
             )
           }
+          <div>
+            <Table
+              rowKey='id'
+              columns={columns}
+              dataSource={invoiceDetailList}
+              onChange={this.handleChange}
+            />
+          </div>
           {
-            invoice && invoice.paymentMethod &&
+            invoice && invoice.modifiedBy &&
             (
-              <ModifyText>
-                Phương thức thanh toán {invoice.paymentMethod}
-              </ModifyText>
+              <div>
+                <ModifyText>
+                  Cập nhật lần cuối bởi {invoice.modifiedBy} lúc{' '}
+                  {formatDateTime(invoice.modifiedDate)}.
+                </ModifyText>
+              </div>
             )
-          }          
-        </Form>
+          }
+        </Form>        
       </Modal>
     );
   }

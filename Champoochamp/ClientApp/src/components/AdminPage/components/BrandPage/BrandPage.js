@@ -2,7 +2,7 @@
 import moment from 'moment';
 import { Table, Input, Button, Icon, Divider, notification } from 'antd';
 
-import { callAPI, getImageUrl } from '../../../../shared/util';
+import { callAPI, getImageUrl, formatDateTime } from '../../../../shared/util';
 import { imagesGroup, time, typeForm } from '../../../../shared/constants';
 import { ButtonsWrapper, ActionButton, LinkButton } from '../../styledUtils';
 
@@ -66,7 +66,7 @@ class BrandPage extends Component {
       }
 
       if (currentTypeForm === typeForm.create) {
-        callAPI('Brand/CreateBrand', '', 'POST', values)
+        callAPI('Brand/CreateBrand', '', 'POST', data)
           .then(res => {
             if (res.data) {
               if (res.data.id > 0) {
@@ -338,7 +338,7 @@ class BrandPage extends Component {
       {
         title: 'Thương hiệu',
         dataIndex: 'name',
-        width: '30%',
+        width: '20%',
         ...this.getColumnSearchProps('name'),
         sorter: (a, b) => a.name.localeCompare(b.name),
         sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
@@ -354,11 +354,13 @@ class BrandPage extends Component {
       {
         title: 'Ngày tạo',
         dataIndex: 'createdDate',
-        width: '15%',
+        width: '25%',
         ...this.getColumnSearchProps('createdDate'),
         sorter: (a, b) => moment(a.createdDate).unix() - moment(b.createdDate).unix(),
         sortOrder: sortedInfo.columnKey === 'createdDate' && sortedInfo.order,
-        render: (text, record) => (<span>{moment(record.createdDate).format('DD/MM/YYYY')}</span>),
+        render: (text, record) => (
+          <span>{formatDateTime(record.createdDate)}</span>
+        )
       },
       {
         title: '',
@@ -368,7 +370,7 @@ class BrandPage extends Component {
             <LinkButton
               type="link"
               onClick={() =>
-                onShowModal(typeForm.update, `Cập nhật thông tin thương hiệu`, record)
+                onShowModal(typeForm.update, `Cập nhật thương hiệu`, record)
               }
             >
               Sửa

@@ -98,9 +98,9 @@ class CheckoutPage extends Component {
           invoice: {
             message: values.message,
             total: formatMoney(
-              getTotalMoney(shoppingCartList, discount && discount.rate), true
+              getTotalMoney(shoppingCartList, discount && discount.rate), false
             ),
-            shipMoney: formatMoney(transportFee, true),
+            shipMoney: formatMoney(transportFee, false),
             paymentMethod: paymentMethods
           },          
           discount    
@@ -119,7 +119,7 @@ class CheckoutPage extends Component {
             const ghtkData = {
               token: ghtk.token,
               order: {
-                id: res.data.id - 8000,
+                id: res.data.id - 80000,
                 pick_name: champoochampInfo.name,
                 pick_money: paymentMethods === paymentMethod.cod ? res.data.total : 0,
                 pick_address: champoochampInfo.address,

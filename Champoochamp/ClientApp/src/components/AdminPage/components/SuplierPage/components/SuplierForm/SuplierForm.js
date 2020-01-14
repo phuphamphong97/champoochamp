@@ -2,7 +2,7 @@
 import { Modal, Form, Input } from 'antd';
 import styled from '@emotion/styled';
 
-import { typeForm } from '../../../../../../shared/constants';
+import { typeForm, imagesGroup } from '../../../../../../shared/constants';
 import { colors } from '../../../../../../shared/principles';
 import { formatDateTime } from '../../../../../../shared/util';
 
@@ -26,14 +26,13 @@ class SuplierForm extends Component {
         onCancel={onCancel}
       >
         <Form>
-          {
-            currentTypeForm === typeForm.update &&
+          {currentTypeForm === typeForm.update && (
             <Form.Item style={{ display: 'none' }}>
               {getFieldDecorator('id', { initialValue: suplier && suplier.id })(
                 <Input placeholder="Id" />
               )}
             </Form.Item>
-          }
+          )}
           <Form.Item label="Tên">
             {getFieldDecorator('name', {
               initialValue: suplier && suplier.name,
@@ -41,28 +40,28 @@ class SuplierForm extends Component {
             })(<Input placeholder="Tên *" />)}
           </Form.Item>
           <Form.Item label="Email">
-            {getFieldDecorator('email', { initialValue: suplier && suplier.email })(
-              <Input type="email" placeholder="Email" />
-            )}
+            {getFieldDecorator('email', {
+              initialValue: suplier && suplier.email
+            })(<Input type="email" placeholder="Email" />)}
           </Form.Item>
           <Form.Item label="Số điện thoại">
-            {getFieldDecorator('phone', { initialValue: suplier && suplier.phone })(
-              <Input placeholder="Số điện thoại" />
-            )}
+            {getFieldDecorator('phone', {
+              initialValue: suplier && suplier.phone
+            })(<Input placeholder="Số điện thoại" />)}
           </Form.Item>
           <Form.Item label="Địa chỉ">
-            {getFieldDecorator('address', { initialValue: suplier && suplier.address })(
-              <Input placeholder="Địa chỉ" />
-            )}
+            {getFieldDecorator('address', {
+              initialValue: suplier && suplier.address
+            })(<Input placeholder="Địa chỉ" />)}
           </Form.Item>
           <Form.Item label="Ghi chú">
-            {getFieldDecorator('description', { initialValue: suplier && suplier.description })(
-              <Input placeholder="Ghi chú" />
-            )}
+            {getFieldDecorator('description', {
+              initialValue: suplier && suplier.description
+            })(<Input placeholder="Ghi chú" />)}
           </Form.Item>
           <Form.Item label="Logo">
             {getFieldDecorator('thumbnail', { initialValue: suplier && suplier.thumbnail })(
-              <Avatar entity={suplier} imageUrl={thumbnailBase64} getThumbnailBase64={getThumbnailBase64} />
+              <Avatar entity={suplier} imagesGroup={imagesGroup.logos} imageUrl={thumbnailBase64} getThumbnailBase64={getThumbnailBase64} />
             )}
           </Form.Item>
           {

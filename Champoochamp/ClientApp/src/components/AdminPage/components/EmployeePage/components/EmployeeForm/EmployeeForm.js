@@ -2,7 +2,7 @@
 import { Modal, Form, Input } from 'antd';
 import styled from '@emotion/styled';
 
-import { typeForm } from '../../../../../../shared/constants';
+import { typeForm, imagesGroup } from '../../../../../../shared/constants';
 import { colors } from '../../../../../../shared/principles';
 import { formatDateTime } from '../../../../../../shared/util';
 
@@ -121,7 +121,7 @@ class EmployeeForm extends Component {
           </Form.Item>
           <Form.Item label="Ảnh đại diện">
             {getFieldDecorator('thumbnail', { initialValue: employee && employee.thumbnail })(
-              <Avatar entity={employee} imageUrl={thumbnailBase64} getThumbnailBase64={getThumbnailBase64} />
+              <Avatar entity={employee} imagesGroup={imagesGroup.users} imageUrl={thumbnailBase64} getThumbnailBase64={getThumbnailBase64} />
             )}
           </Form.Item>
           {

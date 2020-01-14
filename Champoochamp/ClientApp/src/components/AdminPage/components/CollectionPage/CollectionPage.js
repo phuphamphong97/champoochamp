@@ -2,7 +2,7 @@
 import moment from 'moment';
 import { Table, Input, Button, Icon, Divider, notification } from 'antd';
 
-import { callAPI, getImageUrl } from '../../../../shared/util';
+import { callAPI, getImageUrl, formatDateTime } from '../../../../shared/util';
 import { imagesGroup, time, typeForm } from '../../../../shared/constants';
 import { ButtonsWrapper, ActionButton, LinkButton } from '../../styledUtils';
 
@@ -31,7 +31,7 @@ class CollectionPage extends Component {
 
   getAllCollections = () => {
     callAPI('Collection/GetAllCollections')
-      .then(res => this.setState({ collectionList: res.data }));
+      .then(res => this.setState({ collectionList: res.data ? res.data : [] }));
   }
 
   getThumbnailBase64 = thumbnailBase64 => {
@@ -67,7 +67,7 @@ class CollectionPage extends Component {
       }
 
       if (currentTypeForm === typeForm.create) {
-        callAPI('Collection/CreateCollection', '', 'POST', values)
+        callAPI('Collection/CreateCollection', '', 'POST', data)
           .then(res => {
             if (res.data) {
               if (res.data.id > 0) {
@@ -346,12 +346,14 @@ class CollectionPage extends Component {
       },
       {
         title: 'Ngày tạo',
-        dataIndex: 'createDate',
+        dataIndex: 'createdDate',
         width: '45%',
-        ...this.getColumnSearchProps('createDate'),
-        sorter: (a, b) => moment(a.createDate).unix() - moment(b.createDate).unix(),
-        sortOrder: sortedInfo.columnKey === 'createDate' && sortedInfo.order,
-        render: (text, record) => (<span>{moment(record.createDate).format('DD/MM/YYYY')}</span>),
+        ...this.getColumnSearchProps('createdDate'),
+        sorter: (a, b) => moment(a.createdDate).unix() - moment(b.createdDate).unix(),
+        sortOrder: sortedInfo.columnKey === 'createdDate' && sortedInfo.order,
+        render: (text, record) => (
+          <span>{formatDateTime(record.createdDate)}</span>
+        )
       },
       {
         title: '',
@@ -361,7 +363,7 @@ class CollectionPage extends Component {
             <LinkButton
               type="link"
               onClick={() =>
-                onShowModal(typeForm.update, `Cập nhật thông tin bộ sưu tập`, record)
+                onShowModal(typeForm.update, `Cập nhật bộ sưu tập`, record)
               }
             >
               Sửa

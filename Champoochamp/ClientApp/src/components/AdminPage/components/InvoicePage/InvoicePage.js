@@ -116,6 +116,59 @@ class InvoicePage extends Component {
     this.mapCheckInvoice = new Map();
   };
 
+  onUpdateDetailInfo = () => {
+    const { form } = this.formRef.props;
+    form.validateFields((err, values) => {
+      const { invoiceList } = this.state;
+      const { employee } = this.props;
+
+      if (err) {
+        return;
+      }
+
+      const data = {
+        employee,
+        invoice: values,
+        invoiceList: []
+      };
+      callAPI('Invoice/PutInvoice', '', 'PUT', data).then(res => {
+        if (res.data) {
+          if (res.data.id > 0) {
+            let lst = invoiceList;
+            lst = invoiceList.filter(
+              invoice => invoice.id !== res.data.id
+            );
+            lst.unshift(res.data);
+
+            this.setState({
+              isShowModal: false,
+              invoiceList: lst
+            });
+            form.resetFields();
+
+            notification.info({
+              message: 'Cập nhật thành công!',
+              placement: 'topRight',
+              onClick: () => notification.destroy(),
+              duration: time.durationNotification
+            });
+          }
+        }
+        else {
+          this.setState({ isShowModal: false });
+          form.resetFields();
+
+          notification.warning({
+            message: 'Đã xảy ra lỗi, vui lòng thử lại sau!',
+            placement: 'topRight',
+            onClick: () => notification.destroy(),
+            duration: time.durationNotification
+          });
+        }
+      });
+    });
+  }
+
   onCancel = () => {
     this.setState({ isShowModal: false });
     this.formRef.props.form.resetFields();
@@ -207,8 +260,8 @@ class InvoicePage extends Component {
 
   render() {
     let { isShowModal, sortedInfo, invoiceList, isEdit, invoice } = this.state;
-    const { wrappedComponentRef, onShowModal, onCancel } = this;
-    const resource = { isShowModal, wrappedComponentRef, invoice, onCancel, invoiceStatus };
+    const { wrappedComponentRef, onShowModal, onCancel, onUpdateDetailInfo } = this;
+    const resource = { isShowModal, wrappedComponentRef, invoice, onCancel, onUpdateDetailInfo, invoiceStatus };
     sortedInfo = sortedInfo || {};
 
     const columns = [
@@ -217,7 +270,7 @@ class InvoicePage extends Component {
         dataIndex: 'id',
         width: '10%',
         ...this.getColumnSearchProps('id'),
-        sorter: (a, b) => a.id.localeCompare(b.id),
+        sorter: (a, b) => a.id.toString().localeCompare(b.id),
         sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order,
         ellipsis: true
       },

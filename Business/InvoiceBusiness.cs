@@ -36,5 +36,36 @@ namespace Business
         }
       }
     }
+
+    public Invoice putInvoice(InvoiceModel invoiceModel)
+    {
+      using (champoochampContext db = new champoochampContext())
+      {
+        try
+        {
+          Invoice invoice = db.Invoice.Find(invoiceModel.invoice.Id);
+          invoice.CustomerName = invoiceModel.invoice.CustomerName;
+          invoice.CustomerEmail = invoiceModel.invoice.CustomerEmail;
+          invoice.CustomerPhone = invoiceModel.invoice.CustomerPhone;
+          invoice.CustomerProvince = invoiceModel.invoice.CustomerProvince;
+          invoice.CustomerDistrict = invoiceModel.invoice.CustomerDistrict;
+          invoice.CustomerWard = invoiceModel.invoice.CustomerWard;
+          invoice.CustomerAddress = invoiceModel.invoice.CustomerAddress;
+          invoice.Message = invoiceModel.invoice.Message;
+          invoice.PaymentMethod = invoiceModel.invoice.PaymentMethod;
+          invoice.Status = invoiceModel.invoice.Status;
+          invoice.ModifiedDate = DateTime.Now;
+          invoice.ModifiedBy = invoiceModel.employee.UserName;
+
+          db.SaveChanges();
+          return invoice;
+        }
+        catch (Exception e)
+        {
+          Console.WriteLine(e.Message);
+          return null;
+        }
+      }
+    }
   }
 }

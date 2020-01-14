@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Upload, Icon, message } from 'antd';
 import { getImageUrl } from '../../../shared/util';
-import { imagesGroup } from '../../../shared/constants';
 
 function getBase64(img, callback) {
   const reader = new FileReader();
@@ -67,7 +66,7 @@ class Avatar extends Component {
 
   render() {
     const { imageUrl } = this.state;
-    const { entity } = this.props;
+    const { entity, imagesGroup } = this.props;
 
     return (
       <Upload
@@ -81,7 +80,7 @@ class Avatar extends Component {
       >
         {
           imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> :
-            entity ? <img src={getImageUrl(entity.thumbnail, imagesGroup.users)} alt="avatar" style={{ width: '100%' }} /> : this.uploadButton()
+            entity ? <img src={getImageUrl(entity.thumbnail ? entity.thumbnail : 'default.png', imagesGroup)} alt="avatar" style={{ width: '100%' }} /> : this.uploadButton()
         }
       </Upload>
     );

@@ -2,7 +2,7 @@
 import { Modal, Form, Input } from 'antd';
 import styled from '@emotion/styled';
 
-import { typeForm } from '../../../../../../shared/constants';
+import { typeForm, imagesGroup } from '../../../../../../shared/constants';
 import { colors } from '../../../../../../shared/principles';
 import { formatDateTime } from '../../../../../../shared/util';
 
@@ -47,7 +47,7 @@ class BrandForm extends Component {
           </Form.Item>
           <Form.Item label="Logo">
             {getFieldDecorator('thumbnail', { initialValue: brand && brand.thumbnail })(
-              <Avatar entity={brand} imageUrl={thumbnailBase64} getThumbnailBase64={getThumbnailBase64} />
+              <Avatar entity={brand} imagesGroup={imagesGroup.logos} imageUrl={thumbnailBase64} getThumbnailBase64={getThumbnailBase64} />
             )}
           </Form.Item>
           {

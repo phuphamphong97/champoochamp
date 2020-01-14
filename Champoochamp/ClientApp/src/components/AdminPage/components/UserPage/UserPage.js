@@ -366,7 +366,7 @@ class UserPage extends Component {
             <LinkButton
               type="link"
               onClick={() =>
-                onShowModal(typeForm.update, `Cập nhật thông tin khách hàng`, record)
+                onShowModal(typeForm.update, `Cập nhật khách hàng`, record)
               }
             >
               Sửa

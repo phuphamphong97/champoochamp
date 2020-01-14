@@ -374,7 +374,7 @@ class EmployeePage extends Component {
             <LinkButton
               type="link"
               onClick={() =>
-                onShowModal(typeForm.update, `Cập nhật thông tin nhân viên`, record)
+                onShowModal(typeForm.update, `Cập nhật nhân viên`, record)
               }
             >
               Sửa

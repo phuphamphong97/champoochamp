@@ -29,9 +29,10 @@ class SuplierPage extends Component {
   }
 
   getAllSupliers = () => {
-    callAPI('Suplier/GetAllSupliers')
-      .then(res => this.setState({ suplierList: res.data }));
-  }
+    callAPI('Suplier/GetAllSupliers').then(res =>
+      this.setState({ suplierList: res.data ? res.data : [] })
+    );
+  };
 
   getThumbnailBase64 = thumbnailBase64 => {
     this.setState({ thumbnailBase64 });
@@ -65,7 +66,7 @@ class SuplierPage extends Component {
       }
 
       if (currentTypeForm === typeForm.create) {
-        callAPI('Suplier/CreateSuplier', '', 'POST', values)
+        callAPI('Suplier/CreateSuplier', '', 'POST', data)
           .then(res => {
             if (res.data) {
               if (res.data.id > 0) {
@@ -95,10 +96,7 @@ class SuplierPage extends Component {
               }
             }
             else {
-              this.setState({
-                isShowModal: false,
-                thumbnailBase64: ''
-              });
+              this.setState({ isShowModal: false });
               form.resetFields();
 
               notification.warning({
@@ -143,10 +141,7 @@ class SuplierPage extends Component {
               }
             }
             else {
-              this.setState({
-                isShowModal: false,
-                thumbnailBase64: ''
-              });
+              this.setState({ isShowModal: false });
               form.resetFields();
 
               notification.warning({
@@ -248,7 +243,12 @@ class SuplierPage extends Component {
   };
 
   getColumnSearchProps = dataIndex => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters
+    }) => (
       <div style={{ padding: 8 }}>
         <Input
           ref={node => {
@@ -256,8 +256,12 @@ class SuplierPage extends Component {
           }}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          onChange={e =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            this.handleSearch(selectedKeys, confirm, dataIndex)
+          }
           style={{ width: 188, marginBottom: 8, display: 'block' }}
         />
         <Button
@@ -269,7 +273,11 @@ class SuplierPage extends Component {
         >
           Search
         </Button>
-        <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+        <Button
+          onClick={() => this.handleReset(clearFilters)}
+          size="small"
+          style={{ width: 90 }}
+        >
           Reset
         </Button>
       </div>
@@ -294,7 +302,7 @@ class SuplierPage extends Component {
     confirm();
     this.setState({
       searchText: selectedKeys[0],
-      searchedColumn: dataIndex,
+      searchedColumn: dataIndex
     });
   };
 
@@ -309,10 +317,9 @@ class SuplierPage extends Component {
     const resource = { wrappedComponentRef, getThumbnailBase64, isShowModal, currentTypeForm, title, suplier, onSave, onCancel, thumbnailBase64 };
     const rowSelection = {
       selectedRowKeys,
-      onChange: onSelectChange,
+      onChange: onSelectChange
     };
     sortedInfo = sortedInfo || {};
-
 
     const columns = [
       {
@@ -320,7 +327,7 @@ class SuplierPage extends Component {
         dataIndex: 'id',
         width: '10%',
         ...this.getColumnSearchProps('id'),
-        sorter: (a, b) => a.id.toString().localeCompare(b.id.toString()),
+        sorter: (a, b) => a.id.toString().localeCompare(b.id),
         sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order
       },
       {
@@ -330,17 +337,17 @@ class SuplierPage extends Component {
           <img
             src={getImageUrl(record.thumbnail ? record.thumbnail : 'default.png', imagesGroup.logos)}
             alt=""
-            style={{ width: "50px" }}
+            style={{ width: '50px' }}
           />
-        ),
+        )
       },
       {
-        title: 'Nhà cung cấp',
+        title: 'Tên',
         dataIndex: 'name',
         width: '30%',
         ...this.getColumnSearchProps('name'),
         sorter: (a, b) => a.name.localeCompare(b.name),
-        sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
+        sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order
       },
       {
         title: 'Email',
@@ -348,7 +355,7 @@ class SuplierPage extends Component {
         width: '20%',
         ...this.getColumnSearchProps('email'),
         sorter: (a, b) => a.email.localeCompare(b.email),
-        sortOrder: sortedInfo.columnKey === 'email' && sortedInfo.order,
+        sortOrder: sortedInfo.columnKey === 'email' && sortedInfo.order
       },
       {
         title: 'Số điện thoại',
@@ -356,7 +363,7 @@ class SuplierPage extends Component {
         width: '15%',
         ...this.getColumnSearchProps('phone'),
         sorter: (a, b) => a.phone.localeCompare(b.phone),
-        sortOrder: sortedInfo.columnKey === 'phone' && sortedInfo.order,
+        sortOrder: sortedInfo.columnKey === 'phone' && sortedInfo.order
       },
       {
         title: '',
@@ -366,7 +373,7 @@ class SuplierPage extends Component {
             <LinkButton
               type="link"
               onClick={() =>
-                onShowModal(typeForm.update, `Cập nhật thông tin nhà cung cấp`, record)
+                onShowModal(typeForm.update, `Cập nhật nhà cung cấp`, record)
               }
             >
               Sửa
@@ -402,7 +409,7 @@ class SuplierPage extends Component {
         </ButtonsWrapper>
 
         <Table
-          rowKey='id'
+          rowKey="id"
           rowSelection={rowSelection}
           columns={columns}
           dataSource={suplierList}

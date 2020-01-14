@@ -2,7 +2,7 @@
 import moment from 'moment';
 import { Table, Input, Button, Icon, Divider, notification } from 'antd';
 
-import { callAPI } from '../../../../shared/util';
+import { callAPI, formatDateTime } from '../../../../shared/util';
 import { time, typeForm } from '../../../../shared/constants';
 import { ButtonsWrapper, ActionButton, LinkButton } from '../../styledUtils';
 
@@ -29,9 +29,10 @@ class UnitPage extends Component {
   }
 
   getAllUnits = () => {
-    callAPI('Unit/GetAllUnits')
-      .then(res => this.setState({ unitList: res.data }));
-  }
+    callAPI('Unit/GetAllUnits').then(res =>
+      this.setState({ unitList: res.data ? res.data : [] })
+    );
+  };
 
   onShowModal = (typeForm, title, unit) => {
     this.setState({
@@ -100,6 +101,7 @@ class UnitPage extends Component {
           unit: values,
           unitList: []
         }
+
         callAPI('Unit/PutUnit', '', 'PUT', data)
           .then(res => {
             if (res.data) {
@@ -129,7 +131,7 @@ class UnitPage extends Component {
                   duration: time.durationNotification
                 });
               }
-            }
+            }            
             else {
               this.setState({ isShowModal: false });
               form.resetFields();
@@ -183,7 +185,7 @@ class UnitPage extends Component {
             duration: time.durationNotification
           });
         }
-      });
+      });    
   };
 
   onDelete = id => {
@@ -230,7 +232,12 @@ class UnitPage extends Component {
   };
 
   getColumnSearchProps = dataIndex => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters
+    }) => (
       <div style={{ padding: 8 }}>
         <Input
           ref={node => {
@@ -238,8 +245,12 @@ class UnitPage extends Component {
           }}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          onChange={e =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            this.handleSearch(selectedKeys, confirm, dataIndex)
+          }
           style={{ width: 188, marginBottom: 8, display: 'block' }}
         />
         <Button
@@ -251,7 +262,11 @@ class UnitPage extends Component {
         >
           Search
         </Button>
-        <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+        <Button
+          onClick={() => this.handleReset(clearFilters)}
+          size="small"
+          style={{ width: 90 }}
+        >
           Reset
         </Button>
       </div>
@@ -276,7 +291,7 @@ class UnitPage extends Component {
     confirm();
     this.setState({
       searchText: selectedKeys[0],
-      searchedColumn: dataIndex,
+      searchedColumn: dataIndex
     });
   };
 
@@ -286,15 +301,39 @@ class UnitPage extends Component {
   };
 
   render() {
-    let { selectedRowKeys, sortedInfo, unitList, isShowModal, currentTypeForm, title, unit } = this.state;
-    const { handleChange, onSelectChange, wrappedComponentRef, onShowModal, onSave, onCancel, onSelectedDelete, onDelete } = this;
-    const resource = { wrappedComponentRef, isShowModal, currentTypeForm, title, unit, onSave, onCancel };
+    let {
+      selectedRowKeys,
+      sortedInfo,
+      unitList,
+      isShowModal,
+      currentTypeForm,
+      title,
+      unit
+    } = this.state;
+    const {
+      handleChange,
+      onSelectChange,
+      wrappedComponentRef,
+      onShowModal,
+      onSave,
+      onCancel,
+      onSelectedDelete,
+      onDelete
+    } = this;
+    const resource = {
+      wrappedComponentRef,
+      isShowModal,
+      currentTypeForm,
+      title,
+      unit,
+      onSave,
+      onCancel
+    };
     const rowSelection = {
       selectedRowKeys,
-      onChange: onSelectChange,
+      onChange: onSelectChange
     };
     sortedInfo = sortedInfo || {};
-
 
     const columns = [
       {
@@ -308,19 +347,22 @@ class UnitPage extends Component {
       {
         title: 'Đơn vị tính',
         dataIndex: 'name',
-        width: '20%',
+        width: '40%',
         ...this.getColumnSearchProps('name'),
         sorter: (a, b) => a.name.localeCompare(b.name),
-        sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
+        sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order
       },
       {
-        title: 'Ngày tạo',
+        title: 'Thời gian tạo',
         dataIndex: 'createdDate',
-        width: '45%',
+        width: '35%',
         ...this.getColumnSearchProps('createdDate'),
-        sorter: (a, b) => moment(a.createdDate).unix() - moment(b.createdDate).unix(),
+        sorter: (a, b) =>
+          moment(a.createdDate).unix() - moment(b.createdDate).unix(),
         sortOrder: sortedInfo.columnKey === 'createdDate' && sortedInfo.order,
-        render: (text, record) => (<span>{moment(record.createdDate).format('DD/MM/YYYY')}</span>),
+        render: (text, record) => (
+          <span>{formatDateTime(record.createdDate)}</span>
+        )
       },
       {
         title: '',
@@ -366,7 +408,7 @@ class UnitPage extends Component {
         </ButtonsWrapper>
 
         <Table
-          rowKey='id'
+          rowKey="id"
           rowSelection={rowSelection}
           columns={columns}
           dataSource={unitList}
